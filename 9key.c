@@ -1,4 +1,5 @@
 // 9 keys by GM ver 20240829
+// cmd FF <dev> <key(1..9)><status(01)>
 #define DEV 2
 #define STAY 6
 #define LED 13
