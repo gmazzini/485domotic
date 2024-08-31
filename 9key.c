@@ -1,14 +1,16 @@
-// 9 keys by GM ver 20240829
+// 9 keys by GM ver 20240831
 // cmd FF <dev> <key(1..9)><status(01)>
+
 #define DEV 2
 #define STAY 6
 #define LED 13
 #define ENABLETX 11
-int o[9],c[9],u[9],toreset;
+char mymap[9]={0x70,0x80,0x90,0x40,0x50,0x60,0x10,0x20,0x30};
+char o[9],c[9],u[9],toreset;
 unsigned long laststart;
 
 void setup() {
-  int i;
+  char i;
   Serial.begin(9600);
   for(i=0;i<9;i++){
     pinMode(i+2,INPUT_PULLUP);
@@ -24,7 +26,7 @@ void setup() {
 }
 
 void loop() {
-  int i,j;
+  char i,j;
   for(i=0;i<9;i++){
     if(toreset && (unsigned long)millis()-laststart>4){
       toreset=0;
@@ -42,7 +44,7 @@ void loop() {
           delay(1);
           Serial.write(0xff);
           Serial.write(DEV);
-          Serial.write((9-i)<<4|(1-j));
+          Serial.write(mymap[i]|(1-j));
           toreset=1;
           laststart=millis();
         }
