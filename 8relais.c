@@ -33,9 +33,9 @@ void setup(){
   for(r=1;r<=8;r++){
     pinMode(r+1,OUTPUT);
     digitalWrite(r+1,1);
-    pinMode(13,OUTPUT);
-    digitalWrite(13,0);
   }
+  pinMode(13,OUTPUT);
+  digitalWrite(13,0);
 }
 
 unsigned char ss=0,v[4];
