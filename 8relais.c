@@ -1,7 +1,7 @@
-// 8 relais by GM ver 20240909
+// 8 relais by GM ver 20240918
 // cmd CC <dev,0=all> <relais(1..8,f=all)><status(01)> <crc8>
 
-#define DEV 1
+#define DEV 2
 
 static unsigned char const crc8_table[] = {
   0xea, 0xd4, 0x96, 0xa8, 0x12, 0x2c, 0x6e, 0x50, 0x7f, 0x41, 0x03, 0x3d,
@@ -26,30 +26,56 @@ static unsigned char const crc8_table[] = {
   0x67, 0x59, 0x1b, 0x25, 0x0a, 0x34, 0x76, 0x48, 0xf2, 0xcc, 0x8e, 0xb0,
   0xd0, 0xee, 0xac, 0x92, 0x28, 0x16, 0x54, 0x6a, 0x45, 0x7b, 0x39, 0x07,
   0xbd, 0x83, 0xc1, 0xff};
-
+  
 void setup(){
   int r;
   Serial.begin(9600);
   for(r=1;r<=8;r++){
     pinMode(r+1,OUTPUT);
     digitalWrite(r+1,1);
+    pinMode(13,OUTPUT);
+    digitalWrite(13,0);
   }
 }
 
+unsigned char ss=0,v[4];
+
 void loop(){
-  unsigned char v[4],i,r,o;
-  if(Serial.available()==0)return;
-  v[0]=Serial.read();
-  if(v[0]!=0xcc)return;
-  v[1]=Serial.read();
-  v[2]=Serial.read();
-  v[3]=Serial.read();
-  for(v[4]=0,i=0;i<3;i++)v[4]=crc8_table[(v[4] ^ v[i])];
-  if(v[3]!=v[4])return;
-  if(v[1]==DEV || v[1]==0){
+  unsigned char cc,i,r,o;
+  int dd;
+  if(Serial.available()>0){
+    dd=Serial.read();
+    if(ss==0 && dd==0xCC){
+      v[0]=dd;
+      ss=1;
+      return;
+    }
+    if(ss>0 && dd==0xCC){
+      ss=0;
+      return;
+    }
+    if(ss==1){
+      v[1]=dd;
+      ss=2;
+      return;
+    }
+    if(ss==2){
+      v[2]=dd;
+      ss=3;
+      return;
+    }
+    v[3]=dd;
+    ss=0;
+    for(cc=0,i=0;i<3;i++)cc=crc8_table[(cc ^ v[i])];
+    if(v[3]!=cc)return;
+    if(v[1]!=DEV && v[1]!=0)return;
     r=v[2]>>4;
     o=v[2]&1;
     if(r>=1 && r<=8)digitalWrite(r+1,1-o);
-    if(r==15)for(r=1;r<=8;r++)digitalWrite(r+1,1-o);
+    else if(r==9)digitalWrite(13,o);
+    else if(r==0x0f){
+      for(r=1;r<=8;r++)digitalWrite(r+1,1-o);
+      digitalWrite(13,o);
+    }
   }
 }
