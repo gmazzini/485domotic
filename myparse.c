@@ -55,6 +55,7 @@ int main(){
           if(strcmp(token+1,"onoff")==0)slC=1;
           else if(strcmp(token+1,"on")==0)slC=2;
           else if(strcmp(token+1,"off")==0)slC=3;
+          printf("C %s %d\n",token+1,slC);
           if(slC>0)lC[nlC++]=slC;
           break;
       }
