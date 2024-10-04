@@ -13,6 +13,7 @@ int main(){
     uint16_t *R;
     uint16_t nC;
     uint16_t *C;
+    struct ek *next;
   } ee[500];
 
   lK=(uint16_t *)malloc(100);
