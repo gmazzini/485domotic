@@ -6,7 +6,7 @@ int main(){
   char buf[100];
   char *token,*f;
   uint16_t q,*lK,nlK,*lR,nlR,*lE,nlE,nLD,nlC,*lC,slC;
-  uint32_t long *lD;
+  uint32_t *lD;
 
   lK=(uint16_t *)malloc(100);
   lR=(uint16_t *)malloc(100);
