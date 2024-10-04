@@ -10,6 +10,7 @@ for(;;){
   $nlE=0; $lE=array();
   $nlO=0; $lO=array();
   $nlD=0; $lD=array();
+  $nlC=0; $lC=array();
   foreach($pp as $v){
     switch($v[0]){
       case "K": // Ki,j -> q=10i+j
@@ -30,10 +31,14 @@ for(;;){
       $q=(int)substr($v,1);
       $lO[$nlO++]=$q;
       break;
-      case "D":
-      $start=((int)substr($v,1,2))*60+((int)substr($v,3,2));
-      $end=((int)substr($v,6,2))*60+((int)substr($v,8,2));
-      
+      case "D": // DHHMM,HHMM -> q=HHl*60+MMl+10000*(HHr*60+MMr)
+      $q=((int)substr($v,1,2))*60+((int)substr($v,3,2))+10000*((int)substr($v,6,2))*60+((int)substr($v,8,2));
+      $lD[$nlD++]=$q;
+      break;
+      case "C":
+      $q=substr($v,1);
+      $lC[$nlC++]=$q;
+      break;
     }
   }
 }
