@@ -5,13 +5,13 @@ int main(){
   FILE *fp;
   char buf[100];
   char *token,*f;
-  unsigned int q,*lK,nlK,*lR,nlR,*lE,nlE,nLD;
-  unsigned long *lD;
+  uint16_t q,*lK,nlK,*lR,nlR,*lE,nlE,nLD,nlC,*lC,slC;
+  uint32_t long *lD;
 
-  lK=(unsigned int)malloc(100);
-  lR=(unsigned int)malloc(100);
-  lE=(unsigned int)malloc(100);
-  lD=(unsigned long)malloc(100);
+  lK=(uint16_t *)malloc(100);
+  lR=(uint16_t *)malloc(100);
+  lE=(uint16_t *)malloc(100);
+  lD=(uint32_t *)malloc(100);
   
   fp=fopen("config","r");
   for(;;){
@@ -33,23 +33,18 @@ int main(){
           break;
         case 'D':
           f=strchr(token,','); *f='\0';
-
-
-          
-          lD[nlD++]=10*atoi(token+1)+atoi(f+1);
-      $q=((int)substr($v,1,2))*60+((int)substr($v,3,2))+10000*((int)substr($v,6,2))*60+((int)substr($v,8,2));
-      $lD[$nlD++]=$q;
-      break;
-      case "C":
-      $q=substr($v,1);
-      $lC[$nlC++]=$q;
-      break;
+          lD[nlD++]=((*(token+1)-'0')*10+(*(token+2)-'0'))*60+(*(token+3)-'0')*10+(*(token+4)-'0')+10000*(((*(f+1)-'0')*10+(*(f+2)-'0'))*60+(*(f+3)-'0')*10+(*(f+4)-'0'));
+          break;
+        case 'C':
+          slC=0;
+          if(strcmp(token+1,"onoff"))slC=1;
+          else if(strcmp(token+1,"on"))slC=2;
+          else if(strcmp(token+1,"off"))slC=3;
+          if(slC>0)lC[nlC++]=slC;
+          break;
+      }
     }
   }
-}
-fclose($fp);
-
-$K=array();
-for($w=0;$w<$nlk;$w++)$K[$lk[$w]]=array($lD,$lC,$lR);
+  fclose(fp);
 
 }
