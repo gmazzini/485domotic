@@ -20,7 +20,7 @@ int main(){
   };
   struct ek *ee,*en,*em;
 
-  // prsing configuration file
+  // parsing configuration file
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
   for(q=0;q<TOTEK;q++)ee[q].act=0;
   lK=(uint16_t *)malloc(100*sizeof(uint16_t));
@@ -51,9 +51,7 @@ int main(){
         case 'D':
           f=strchr(token,','); *f='\0';
           i=((*(f+1)-'0')*10+(*(f+2)-'0'))*60+(*(f+3)-'0')*10+(*(f+4)-'0');
-          for(q=((*(token+1)-'0')*10+(*(token+2)-'0'))*60+(*(token+3)-'0')*10+(*(token+4)-'0');q<=i;q++){
-            printf("%d\n",q);
-          }
+          for(q=((*(token+1)-'0')*10+(*(token+2)-'0'))*60+(*(token+3)-'0')*10+(*(token+4)-'0');q<=i;q++)lD[q>>6]&=(18446744073709551615U^(1>>(q%64)));
           break;
         case 'C':
           slC=0;
