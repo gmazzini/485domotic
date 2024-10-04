@@ -63,20 +63,20 @@ int main(){
     for(q=0;q<nlK;q++){
       i=lK[q];
       en=ee+i;      
-      if(en.act>0){
-        for(;en.next==NULL;en=en.next);
+      if(en->act>0){
+        for(;en->next==NULL;en=en.next);
         em=(struct ek *)malloc(sizeof(struct ek));
-        en.next=em;
+        en->next=em;
         en=em;
       } 
-      en.act=1;
-      en.nR=nlR;
-      en.R=(uint16_t *)malloc(nlR*sizeof(uint16_t));
-      for(j=0;j<nlR;j++)en.R[j]=lR[j];
-      en.nC=nlC;
-      en.C=(uint16_t *)malloc(nlC*sizeof(uint16_t));
-      for(j=0;j<nlC;j++)en.C[j]=lC[j];
-      en.next=NULL;
+      en->act=1;
+      en->nR=nlR;
+      en->R=(uint16_t *)malloc(nlR*sizeof(uint16_t));
+      for(j=0;j<nlR;j++)en->R[j]=lR[j];
+      en->nC=nlC;
+      en->C=(uint16_t *)malloc(nlC*sizeof(uint16_t));
+      for(j=0;j<nlC;j++)en->C[j]=lC[j];
+      en->next=NULL;
     }
     
   }
