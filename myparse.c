@@ -64,9 +64,12 @@ int main(){
       i=lK[q];
       en=ee+i;      
       if(en->act>0){
+        printf(".");
         for(;en->next==NULL;en=en->next);
+        printf(">");
         em=(struct ek *)malloc(sizeof(struct ek));
         en->next=em;
+        printf("<");
         en=em;
       } 
       en->act=1;
