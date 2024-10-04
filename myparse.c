@@ -50,7 +50,7 @@ int main(){
 
   for(q=0;q<nlK;q++)printf("K %d %d\n",q,lK[q]);
   for(q=0;q<nlR;q++)printf("R %d %d\n",q,lR[q]);
-  for(q=0;q<nlC;q++)printf("R %d %l\n",q,lC[q]);
+  for(q=0;q<nlD;q++)printf("D %d %li\n",q,lD[q]);
 
 
 }
