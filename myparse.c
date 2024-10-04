@@ -14,7 +14,10 @@ int main(){
     uint16_t nC;
     uint16_t *C;
     struct ek *next;
-  } ee[500];
+  };
+  struct ek *ee;
+
+  ee=(struct ek *)malloc(500*sizeof(struct ek));
 
   lK=(uint16_t *)malloc(100);
   lR=(uint16_t *)malloc(100);
