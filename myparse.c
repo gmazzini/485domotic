@@ -65,7 +65,7 @@ int main(){
       en=ee+i;      
       if(en->act>0){
         printf(".\n");
-        for(;en->next==NULL;en=en->next);
+        for(;en->next!=NULL;en=en->next);
         printf(">\n");
         em=(struct ek *)malloc(sizeof(struct ek));
         en->next=em;
