@@ -87,8 +87,12 @@ int main(){
   free(lC);
 
   for(q=0;q<TOTEK;q++){
-    for(en=ee+q;en->next!=NULL;en=en->next){
-      if(en->act>0)printf("K %d %d %d\n",q,en->nR,en->nC);
+    en=ee+q;
+    for(;;){
+      if(en->act==0)break;
+      printf("K %d %d %d\n",q,en->nR,en->nC);
+      if(en->next==NULL)break;
+      en=en->next;
     }
   }
 
