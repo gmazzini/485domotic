@@ -100,6 +100,9 @@ int main(){
       printf("K %d\n",q);
       for(j=0;j<en->nR;j++)printf("-- R %d\n",en->R[j]);
       for(j=0;j<en->nC;j++)printf("-- C %d\n",en->C[j]);
+      peinrf("-- D");
+      for(j=0;j<24*60;j++)if(en->D[j>>6] & (1>>(j%64)))printf(" %d",j);
+      printf("\n");
       if(en->next==NULL)break;
       en=en->next;
     }
