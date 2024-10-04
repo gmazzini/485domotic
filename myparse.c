@@ -6,14 +6,21 @@ int main(){
   FILE *fp;
   char buf[100];
   char *token,*f;
-  uint16_t q,*lK,nlK,*lR,nlR,*lE,nlE,nlD,nlC,*lC,slC;
+  uint16_t q,*lK,nlK,*lR,nlR,*lE,nlE,nlD,nlC,*lC,slC,nK;
   uint32_t *lD;
+  struct ek{
+    uint16_t nR;
+    uint16_t *R;
+    uint16_t nC;
+    uint16_t *C;
+  };
 
   lK=(uint16_t *)malloc(100);
   lR=(uint16_t *)malloc(100);
   lE=(uint16_t *)malloc(100);
   lD=(uint32_t *)malloc(100);
-  
+
+  nK=0;
   fp=fopen("config","r");
   for(;;){
     fgets(buf,100,fp);
