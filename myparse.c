@@ -17,7 +17,7 @@ int main(){
     uint16_t *C;
     struct ek *next;
   };
-  struct ek *ee;
+  struct ek *ee,*en,*em;
 
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
   for(q=0;q<TOTEK;q++)ee[q].act=0;
@@ -62,16 +62,21 @@ int main(){
     
     for(q=0;q<nlK;q++){
       i=lK[q];
-      if(ee[i].act==0){
-        ee[i].act=1;
-        ee[i].nR=nlR;
-        ee[i].R=(uint16_t *)malloc(nlR*sizeof(uint16_t));
-        for(j=0;j<nlR;j++)ee[i].R[j]=lR[j];
-        ee[i].nC=nlC;
-        ee[i].C=(uint16_t *)malloc(nlC*sizeof(uint16_t));
-        for(j=0;j<nlC;j++)ee[i].C[j]=lC[j];
-        ee[i].next=NULL;
-      }
+      en=ee[i];      
+      if(ee[i].act>0){
+        for(;en.next==NULL;en=en.next);
+        em=(struct ek *)malloc(sizeof(struct ek));
+        en.next=em;
+        en=em;
+      } 
+      en.act=1;
+      en.nR=nlR;
+      en.R=(uint16_t *)malloc(nlR*sizeof(uint16_t));
+      for(j=0;j<nlR;j++)en.R[j]=lR[j];
+      en.nC=nlC;
+      en.C=(uint16_t *)malloc(nlC*sizeof(uint16_t));
+      for(j=0;j<nlC;j++)en.C[j]=lC[j];
+      en.next=NULL;
     }
     
   }
