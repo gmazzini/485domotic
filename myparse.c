@@ -34,7 +34,7 @@ int main(){
     fgets(buf,100,fp);
     if(feof(fp))break;
     nlK=nlR=nlE=nlC=0;
-    for(q=0;q<23;q++)lD[q]=18446744073709551615;
+    for(q=0;q<23;q++)lD[q]=18446744073709551615U;
     for(token=strtok(buf," \n\r\t");token;token=strtok(NULL," \n\r\t")){
       switch(token[0]){
         case 'K':
