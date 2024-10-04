@@ -20,7 +20,7 @@ int main(){
   struct ek *ee;
 
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
-  for(q=0;q<TOTEK;q++)ek[q].act=0;
+  for(q=0;q<TOTEK;q++)ee[q].act=0;
 
   lK=(uint16_t *)malloc(100);
   lR=(uint16_t *)malloc(100);
