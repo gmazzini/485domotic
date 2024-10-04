@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#define TOTEK 500
 
 int main(){
   FILE *fp;
@@ -9,6 +10,7 @@ int main(){
   uint16_t q,*lK,nlK,*lR,nlR,*lE,nlE,nlD,nlC,*lC,slC,nK;
   uint32_t *lD;
   struct ek{
+    uint8_t act;
     uint16_t nR;
     uint16_t *R;
     uint16_t nC;
@@ -17,7 +19,8 @@ int main(){
   };
   struct ek *ee;
 
-  ee=(struct ek *)malloc(500*sizeof(struct ek));
+  ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
+  for(q=0;q<TOTEK;q++)ek[q].act=0;
 
   lK=(uint16_t *)malloc(100);
   lR=(uint16_t *)malloc(100);
