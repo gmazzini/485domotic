@@ -25,6 +25,7 @@ int main(){
   lK=(uint16_t *)malloc(100*sizeof(uint16_t));
   lR=(uint16_t *)malloc(100*sizeof(uint16_t));
   lE=(uint16_t *)malloc(100*sizeof(uint16_t));
+  lC=(uint16_t *)malloc(100*sizeof(uint16_t));
   lD=(uint32_t *)malloc(100*sizeof(uint16_t));
 
   nK=0;
@@ -86,6 +87,7 @@ int main(){
   free(lR);
   free(lE);
   free(lC);
+  free(lD);
 
   for(q=0;q<TOTEK;q++){
     en=ee+q;
