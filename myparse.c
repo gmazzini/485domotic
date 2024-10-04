@@ -16,6 +16,7 @@ int main(){
     uint16_t *R;
     uint16_t nC;
     uint16_t *C;
+    uint64_t *D;
     struct ek *next;
   };
   struct ek *ee,*en,*em;
@@ -78,6 +79,8 @@ int main(){
       en->nC=nlC;
       en->C=(uint16_t *)malloc(nlC*sizeof(uint16_t));
       for(j=0;j<nlC;j++)en->C[j]=lC[j];
+      en->D=(uint64_t *)malloc(23*sizeof(uint64_t));
+      for(j=0;j<23;j++)en->D[j]=lD[j];
       en->next=NULL;
     }
     
