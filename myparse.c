@@ -7,8 +7,8 @@ int main(){
   FILE *fp;
   char buf[100];
   char *token,*f;
-  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlD,nlC,*lC,slC,nK;
-  uint32_t *lD;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,nK;
+  uint64_t *lD;
   struct ek{
     uint8_t act;
     uint16_t nR;
@@ -19,21 +19,21 @@ int main(){
   };
   struct ek *ee,*en,*em;
 
+  // prsing configuration file
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
   for(q=0;q<TOTEK;q++)ee[q].act=0;
-
   lK=(uint16_t *)malloc(100*sizeof(uint16_t));
   lR=(uint16_t *)malloc(100*sizeof(uint16_t));
   lE=(uint16_t *)malloc(100*sizeof(uint16_t));
   lC=(uint16_t *)malloc(100*sizeof(uint16_t));
-  lD=(uint32_t *)malloc(100*sizeof(uint16_t));
-
+  lD=(uint64_t *)malloc(23*sizeof(uint64_t));
   nK=0;
   fp=fopen("config","r");
   for(;;){
     fgets(buf,100,fp);
     if(feof(fp))break;
-    nlK=nlR=nlE=nlD=nlC=0;
+    nlK=nlR=nlE=nlC=0;
+    for(q=0;q<23;q++)lD[q]=18446744073709551615;
     for(token=strtok(buf," \n\r\t");token;token=strtok(NULL," \n\r\t")){
       switch(token[0]){
         case 'K':
@@ -49,7 +49,10 @@ int main(){
           break;
         case 'D':
           f=strchr(token,','); *f='\0';
-          lD[nlD++]=((*(token+1)-'0')*10+(*(token+2)-'0'))*60+(*(token+3)-'0')*10+(*(token+4)-'0')+10000*(((*(f+1)-'0')*10+(*(f+2)-'0'))*60+(*(f+3)-'0')*10+(*(f+4)-'0'));
+          i=(*(f+1)-'0')*10+(*(f+2)-'0'))*60+(*(f+3)-'0')*10+(*(f+4)-'0');
+          for(q=((*(token+1)-'0')*10+(*(token+2)-'0'))*60+(*(token+3)-'0')*10+(*(token+4)-'0');q<=i;q++){
+            printf("%d\n",q);
+          }
           break;
         case 'C':
           slC=0;
@@ -61,7 +64,6 @@ int main(){
           break;
       }
     }
-    
     for(q=0;q<nlK;q++){
       i=lK[q];
       en=ee+i;      
