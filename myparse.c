@@ -7,7 +7,7 @@ int main(){
   FILE *fp;
   char buf[100];
   char *token,*f;
-  uint16_t q,*lK,nlK,*lR,nlR,*lE,nlE,nlD,nlC,*lC,slC,nK;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlD,nlC,*lC,slC,nK;
   uint32_t *lD;
   struct ek{
     uint8_t act;
@@ -22,10 +22,10 @@ int main(){
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
   for(q=0;q<TOTEK;q++)ee[q].act=0;
 
-  lK=(uint16_t *)malloc(100);
-  lR=(uint16_t *)malloc(100);
-  lE=(uint16_t *)malloc(100);
-  lD=(uint32_t *)malloc(100);
+  lK=(uint16_t *)malloc(100*sizeof(uint16_t));
+  lR=(uint16_t *)malloc(100*sizeof(uint16_t));
+  lE=(uint16_t *)malloc(100*sizeof(uint16_t));
+  lD=(uint32_t *)malloc(100*sizeof(uint16_t));
 
   nK=0;
   fp=fopen("config","r");
@@ -59,10 +59,20 @@ int main(){
           break;
       }
     }
-
-  for(q=0;q<nlK;q++)printf("K %d %d\n",q,lK[q]);
-  for(q=0;q<nlR;q++)printf("R %d %d\n",q,lR[q]);
-  for(q=0;q<nlD;q++)printf("D %d %li\n",q,lD[q]);
+    
+    for(q=0;q<nlK;q++){
+      i=lK[q];
+      if(ee[i].act==0){
+        ee[i].act=1;
+        ee[i].nR=lnR;
+        ee[i].R=(uint16_t *)malloc(lnR*sizeof(uint16_t));
+        for(j=0;j<lnR;j++)ee[i].R[j]=lR[j];
+        ee[i].nC=lnC;
+        ee[i].C=(uint16_t *)malloc(lnC*sizeof(uint16_t));
+        for(j=0;j<lnC;j++)ee[i].C[j]=lC[j];
+        ee[i].next=NULL;
+      }
+    }
     
   }
   fclose(fp);
