@@ -64,7 +64,7 @@ int main(){
       i=lK[q];
       en=ee+i;      
       if(en->act>0){
-        for(;en->next==NULL;en=en.next);
+        for(;en->next==NULL;en=en->next);
         em=(struct ek *)malloc(sizeof(struct ek));
         en->next=em;
         en=em;
