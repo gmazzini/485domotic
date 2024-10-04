@@ -100,7 +100,7 @@ int main(){
       printf("K %d\n",q);
       for(j=0;j<en->nR;j++)printf("-- R %d\n",en->R[j]);
       for(j=0;j<en->nC;j++)printf("-- C %d\n",en->C[j]);
-     for(j=0;j<23;j++)printf("%xu ",en->D[j]);
+     for(j=0;j<23;j++)printf("%llx ",en->D[j]);
       printf("\n-- D");
       for(j=0;j<1440;j++)if(en->D[j>>6] & (1ULL>>(j%64)))printf(" %d",j);
       printf("\n");
