@@ -89,7 +89,11 @@ int main(){
   free(lE);
   free(lC);
 
-  for(q=0;q<TOTEK;q++)if(ee[q].act>0)printf("K %d\n",q);
+  for(q=0;q<TOTEK;q++){
+    for(en=ee+q;en->next!=NULL;en=en->next){
+      if(en->act>0)printf("K %d %d %d\n",q,en->nR,en->nC);
+    }
+  }
 
 
 }
