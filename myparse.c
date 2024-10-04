@@ -99,6 +99,7 @@ int main(){
       if(en->act==0)break;
       printf("K %d\n",q);
       for(j=0;j<en->nR;j++)printf("-- R %d\n",en->R[j]);
+      for(j=0;j<en->nC;j++)printf("-- C %d\n",en->C[j]);
       if(en->next==NULL)break;
       en=en->next;
     }
