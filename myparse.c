@@ -52,9 +52,9 @@ int main(){
           break;
         case 'C':
           slC=0;
-          if(strcmp(token+1,"onoff"))slC=1;
-          else if(strcmp(token+1,"on"))slC=2;
-          else if(strcmp(token+1,"off"))slC=3;
+          if(strcmp(token+1,"onoff")==0)slC=1;
+          else if(strcmp(token+1,"on")==0)slC=2;
+          else if(strcmp(token+1,"off")==0)slC=3;
           if(slC>0)lC[nlC++]=slC;
           break;
       }
