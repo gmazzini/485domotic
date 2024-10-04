@@ -20,7 +20,7 @@ int main(){
     printf("%s--\n",buf);
     if(feof(fp))break;
     nlK=nlR=nlE=nlD=nlC=0;
-    for(token=strtok(buf," ");token;token=strtok(NULL," ")){
+    for(token=strtok(buf," \n\r\t");token;token=strtok(NULL," \n\r\t")){
       printf("<%s>\n",token);
       switch(token[0]){
         case 'K':
