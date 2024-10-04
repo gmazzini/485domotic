@@ -49,7 +49,7 @@ int main(){
           break;
         case 'D':
           f=strchr(token,','); *f='\0';
-          i=(*(f+1)-'0')*10+(*(f+2)-'0'))*60+(*(f+3)-'0')*10+(*(f+4)-'0');
+          i=((*(f+1)-'0')*10+(*(f+2)-'0'))*60+(*(f+3)-'0')*10+(*(f+4)-'0');
           for(q=((*(token+1)-'0')*10+(*(token+2)-'0'))*60+(*(token+3)-'0')*10+(*(token+4)-'0');q<=i;q++){
             printf("%d\n",q);
           }
@@ -59,7 +59,6 @@ int main(){
           if(strcmp(token+1,"onoff")==0)slC=1;
           else if(strcmp(token+1,"on")==0)slC=2;
           else if(strcmp(token+1,"off")==0)slC=3;
-          printf("C %s %d\n",token+1,slC);
           if(slC>0)lC[nlC++]=slC;
           break;
       }
