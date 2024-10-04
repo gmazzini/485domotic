@@ -48,4 +48,7 @@ int main(){
   }
   fclose(fp);
 
+  for(q=0;q<nlK;q++)printf("K %d %d\n",q,lK[q]);
+
+
 }
