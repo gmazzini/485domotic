@@ -64,12 +64,12 @@ int main(){
       i=lK[q];
       if(ee[i].act==0){
         ee[i].act=1;
-        ee[i].nR=lnR;
-        ee[i].R=(uint16_t *)malloc(lnR*sizeof(uint16_t));
-        for(j=0;j<lnR;j++)ee[i].R[j]=lR[j];
-        ee[i].nC=lnC;
-        ee[i].C=(uint16_t *)malloc(lnC*sizeof(uint16_t));
-        for(j=0;j<lnC;j++)ee[i].C[j]=lC[j];
+        ee[i].nR=nlR;
+        ee[i].R=(uint16_t *)malloc(nlR*sizeof(uint16_t));
+        for(j=0;j<nlR;j++)ee[i].R[j]=lR[j];
+        ee[i].nC=nlC;
+        ee[i].C=(uint16_t *)malloc(nlC*sizeof(uint16_t));
+        for(j=0;j<nlC;j++)ee[i].C[j]=lC[j];
         ee[i].next=NULL;
       }
     }
