@@ -81,6 +81,12 @@ int main(){
     
   }
   fclose(fp);
+  free(lK);
+  free(lR);
+  free(lE);
+  free(lC);
+
+  for(q=0;q<TOT;q++)if(ee[q]>0)printf("K %d\n",q);
 
 
 }
