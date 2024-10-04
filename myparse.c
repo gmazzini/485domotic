@@ -13,7 +13,7 @@ int main(){
     uint16_t *R;
     uint16_t nC;
     uint16_t *C;
-  };
+  } ee[500];
 
   lK=(uint16_t *)malloc(100);
   lR=(uint16_t *)malloc(100);
