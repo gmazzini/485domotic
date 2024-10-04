@@ -5,7 +5,7 @@ int main(){
   FILE *fp;
   char buf[100];
   char *token,*f;
-  uint16_t q,*lK,nlK,*lR,nlR,*lE,nlE,nLD,nlC,*lC,slC;
+  uint16_t q,*lK,nlK,*lR,nlR,*lE,nlE,nlD,nlC,*lC,slC;
   uint32_t *lD;
 
   lK=(uint16_t *)malloc(100);
@@ -17,7 +17,7 @@ int main(){
   for(;;){
     fgets(buf,100,fp);
     if(feof(fp))break;
-    nlK=nlR=nlE=nlD=0;
+    nlK=nlR=nlE=nlD=nlC=0;
     for(token=strtok(buf," ");token;token=strtok(NULL," ")){
       switch(token[0]){
         case 'K':
