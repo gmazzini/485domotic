@@ -92,11 +92,13 @@ int main(){
   free(lC);
   free(lD);
 
+  // checking
   for(q=0;q<TOTEK;q++){
     en=ee+q;
     for(;;){
       if(en->act==0)break;
-      printf("K %d %d %d\n",q,en->nR,en->nC);
+      printf("K %d\n",q);
+      for(j=0;j<en->nR;j++)printf("-- R %d\n",en->R[j]);
       if(en->next==NULL)break;
       en=en->next;
     }
