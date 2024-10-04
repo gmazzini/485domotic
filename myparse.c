@@ -17,9 +17,11 @@ int main(){
   fp=fopen("config","r");
   for(;;){
     fgets(buf,100,fp);
+    printf("%s--\n",buf);
     if(feof(fp))break;
     nlK=nlR=nlE=nlD=nlC=0;
     for(token=strtok(buf," ");token;token=strtok(NULL," ")){
+      printf("<%s>\n",token);
       switch(token[0]){
         case 'K':
           f=strchr(token,','); *f='\0';
