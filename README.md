@@ -10,10 +10,10 @@ w:
   2 Sunrise
   3 Every hour
   4 Every minute
-  5 Every day at 0600
-  6 Every day at 1200
-  7 Every day at 1800
-  8 Every day at 0000
+  5 Every day at 0000
+  6 Every day at 0600
+  7 Every day at 1200
+  8 Every day at 1800
 
 onoff {Ki,j} {Ri,j} {Ew} {Di,j}
 off {Ki,j} {Ri,j} {Ew} {Di,j}
