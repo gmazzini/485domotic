@@ -2,6 +2,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "stdint.h"
+#include "time.h"
 #define TOTEK 500
 #define TOTEX 20
 
@@ -9,6 +10,8 @@ int main(){
   FILE *fp;
   char buf[100];
   char *token,*f;
+  time_t myt;
+  struct tm *info;
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC;
   uint64_t *lD;
   struct ek{
@@ -114,7 +117,7 @@ int main(){
   free(lC);
   free(lD);
 
-  // checking
+  // receiving events
   for(;;){
     printf("input");
     scanf("%s",buf);
@@ -131,13 +134,16 @@ int main(){
     }
     else continue;
 
+    // processing
     for(;;){
       if(en->act==0)break;
-      for(j=0;j<en->nR;j++)printf("-- R %d\n",en->R[j]);
-      for(j=0;j<en->nC;j++)printf("-- C %d\n",en->C[j]);
-      printf("-- D");
-      for(j=0;j<1440;j++)if(en->D[j>>6] & (1ULL<<(j%64)))printf(" %d",j);
-      printf("\n");
+      time(&myt);
+      info=localtime(&myt);
+      j=info->tm_hour*60+info->tm_min;
+      if(en->D[j>>6] & (1ULL<<(j%64))==0){
+        for(j=0;j<en->nR;j++)printf("-- R %d\n",en->R[j]);
+        for(j=0;j<en->nC;j++)printf("-- C %d\n",en->C[j]);
+      }
       if(en->next==NULL)break;
       en=en->next;
     }
