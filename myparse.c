@@ -165,8 +165,7 @@ int main(){
         for(j=0;j<en->nC;j++){
           switch(en->C[j]){
             case 1:
-              q=0;
-              for(j=0;j<en->nR;j++)q+=relais[en->R[j]];
+              for(q=0,j=0;j<en->nR;j++)q+=relais[en->R[j]];
               if(q>(en->nR/2))for(j=0;j<en->nR;j++)mod[en->R[j]]=0;
               else for(j=0;j<en->nR;j++)mod[en->R[j]]=1;
               break;
@@ -175,6 +174,10 @@ int main(){
               break;
             case 3:
               for(j=0;j<en->nR;j++)mod[en->R[j]]=0;
+              break;
+            case 4:
+              for(q=1,j=0;j<en->nT;j++)q&=(relais[en->T[j]%1000]==(en->T[j]/1000));
+              if(q)for(j=0;j<en->nR;j++)mod[en->R[j]]=1;
               break;
           }
         }
