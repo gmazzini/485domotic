@@ -3,6 +3,9 @@
 #include "string.h"
 #include "stdint.h"
 #include "time.h"
+#include "fcntl.h"
+#include "arpa/inet.h"
+#define PORT 12345
 #define TOTEK 500
 #define TOTEX 20
 #define TOTRELAIS 120
@@ -27,6 +30,9 @@ int main(){
     struct ek *next;
   };
   struct ek *ee,*ex,*en,*em;
+  int sock;
+  struct sockaddr_in servaddr,cliaddr;
+  socklen_t len=sizeof(cliaddr);
 
   // parsing configuration file
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
@@ -136,9 +142,20 @@ int main(){
 
   // initilize 
   for(q=0;q<TOTRELAIS;q++)relais[q]=0;
+  sock=socket(AF_INET,SOCK_DGRAM,0);
+  fcntl(sock,F_SETFL,O_NONBLOCK);
+  memset(&servaddr,0,sizeof(servaddr));
+  servaddr.sin_family=AF_INET;
+  servaddr.sin_addr.s_addr=INADDR_ANY;
+  servaddr.sin_port=htons(PORT);
+  bind(sock,(struct sockaddr *)&servaddr,sizeof(servaddr);
   
   // receiving events
   for(;;){
+    i=recvfrom(sock,buf,100,0,(struct sockaddr *)&cliaddr,&len);
+    if(i==0){sleep(1); printf(":"); continue;
+    }
+
     printf("input: ");
     scanf("%s",buf);
     if(buf[0]=='K'){
