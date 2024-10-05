@@ -262,7 +262,7 @@ int main(){
 
 #define PI 3.1415926
 #define ZENITH -.83
-float sun(int year,int month,int day,float lat,float lng){
+void sun(int year,int month,int day,float lat,float lng){
   float N1,N2,N3,N,lngHour,tr,ts,Mr,Ms,Lr,Ls;
   float RAr,RAs,Lquadrantr,Lquadrants,RAquadrantr,RAquadrants;
   float sinDecr,sinDecs,cosDecr,cosDecs,cosHr,cosHs,Hr,Hs,Tr,Ts,UTr,UTs;
@@ -303,5 +303,4 @@ float sun(int year,int month,int day,float lat,float lng){
   UTr=fmod(Tr-lngHour,24.0);
   UTs=fmod(Tr-lngHour,24.0);
   printf("SUN %f %f\n",UTr,UTs);
-  return 0.0;
 }
