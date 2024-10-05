@@ -162,6 +162,7 @@ int main(){
     if(rr<1 && info->tm_min!=last_min){
       last_min=info->tm_min;
       printf(".\n");
+      continue;
     }
     else if(rr<1){
       usleep(10000);
