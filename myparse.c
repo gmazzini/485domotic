@@ -34,8 +34,9 @@ int main(){
   struct ek *ee,*ex,*en,*em;
   int sock,rr;
   unsigned int fromlen;
-  struct sockaddr from; 
-
+  struct sockaddr from;
+  struct sockaddr_in server_addr;
+  
   // parsing configuration file
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
   ex=(struct ek *)malloc(TOTEX*sizeof(struct ek));
@@ -147,7 +148,6 @@ int main(){
   sock=socket(AF_INET,SOCK_DGRAM,0);
   fromlen=sizeof(from);
 //  fcntl(sock,F_SETFL,O_NONBLOCK);
-  struct sockaddr_in server_addr;
   server_addr.sin_family=AF_INET;
   server_addr.sin_port=htons(PORT);
   server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
@@ -156,8 +156,7 @@ int main(){
   // receiving events
   for(;;){
     rr=recvfrom(sock,buf,100,0,&from,&fromlen);
-    printf("%d %s input: ",rr,buf);
-    scanf("%s",buf);
+    printf("input: %s\n",buf);
     if(buf[0]=='K'){
       f=strchr(buf,','); *f='\0';
       q=10*atoi(buf+1)+atoi(f+1);
