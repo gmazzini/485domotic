@@ -156,6 +156,7 @@ int main(){
   // receiving events
   for(;;){
     rr=recvfrom(sock,buf,100,0,&from,&fromlen);
+    printf(".");
     if(rr<1)continue;
     *(buf+rr)='\0';
     printf("input: %s\n",buf);
