@@ -4,12 +4,15 @@ K=Key i=keybord,j=key
 R=Relais i=device,j=relais
 E=Event w=event
 D=deactive i=HHMM start,j=HHMM stop
-w=1 SunSet,2 Sunrise
+T=test i=device,j=relais,s=status(0|1)
+w=1 SunSet,2 Sunrise,3 Every hour,4 Every minute
 
-onoff {Ki,j} {Ri,j} {Ew} D{i,j}
-off {Ki,j} {Ri,j} {Ew} D{i,j}
-on {Ki,j} {Ri,j} {Ew} D{i,j}
-push {Ki,j} {Ri,j} D{i,j}
+onoff {Ki,j} {Ri,j} {Ew} {Di,j}
+off {Ki,j} {Ri,j} {Ew} {Di,j}
+on {Ki,j} {Ri,j} {Ew} {Di,j}
+condon {Ki,j} {Ri,j} {Di,j} {Ti,j,s}
+condoff {Ki,j} {Ri,j} {Di,j} {Ti,j,s}
+  
   
 <b>Hardware notes:</b>
 1. In the 8relais cut the 1KOhm resistance of RX led to avoid multiple impedence parallel
