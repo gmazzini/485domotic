@@ -144,6 +144,8 @@ int main(){
   free(lD);
   free(lT);
 
+  sun(2024,10,5,44.5,11.3);
+
   // initilize 
   for(q=0;q<TOTRELAIS;q++)relais[q]=0;
   sock=socket(AF_INET,SOCK_DGRAM,0);
@@ -300,5 +302,6 @@ float sun(int year,int month,int day,float lat,float lng){
   Ts=Hs+RAs-(0.06571*ts)-6.622;
   UTr=fmod(Tr-lngHour,24.0);
   UTs=fmod(Tr-lngHour,24.0);
-  printf("%f %f\n",UTr,UTs);
+  printf("SUN %f %f\n",UTr,UTs);
+  return 0.0;
 }
