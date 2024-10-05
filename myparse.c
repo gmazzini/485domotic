@@ -148,7 +148,7 @@ int main(){
   
   // receiving events
   for(;;){
-    rr=recvfrom(sock,buf,100,0,&from,&fromlen));
+    rr=recvfrom(sock,buf,100,0,&from,&fromlen);
     printf("%d %s input: ",rr,buf);
     scanf("%s",buf);
     if(buf[0]=='K'){
