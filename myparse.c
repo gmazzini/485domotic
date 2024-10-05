@@ -9,8 +9,8 @@
 
 int main(){
   FILE *fp;
-  unsigned char buf[100],relais[TOTRELAIS],mod[TOTRELAIS];
-  unsigned char *token,*f;
+  char buf[100],relais[TOTRELAIS],mod[TOTRELAIS];
+  char *token,*f;
   time_t myt;
   struct tm *info;
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC;
