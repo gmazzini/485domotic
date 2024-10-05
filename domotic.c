@@ -146,7 +146,7 @@ int main(){
   free(lD);
   free(lT);
 
-  sun(2024,10,5,44.5,11.3);
+  sun(2024,10,6,44.5,11.3);
 
   // initilize 
   for(q=0;q<TOTRELAIS;q++)relais[q]=0;
