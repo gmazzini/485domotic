@@ -18,7 +18,7 @@ int main(){
   char *token,*f,*g;
   time_t myt;
   struct tm *info;
-  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,fromlen;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT;
   uint64_t *lD;
   struct ek{
     uint8_t act;
@@ -33,6 +33,7 @@ int main(){
   };
   struct ek *ee,*ex,*en,*em;
   int sock,rr;
+  unsigned int fromlen;
   struct sockaddr_in from; 
 
   // parsing configuration file
