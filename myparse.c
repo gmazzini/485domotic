@@ -119,7 +119,7 @@ int main(){
     printf("K=");
     scanf("%s",buf);
     f=strchr(buf,','); *f='\0';
-    q=10*atoi(token+1)+atoi(f+1);
+    q=10*atoi(buf)+atoi(f+1);
     
     en=ee+q;
     for(;;){
