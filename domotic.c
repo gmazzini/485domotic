@@ -13,6 +13,8 @@
 #define TOTEX 20
 #define TOTRELAIS 120
 
+void sun(int,int,int,float,float);
+
 int main(){
   FILE *fp;
   char buf[100],relais[TOTRELAIS],mod[TOTRELAIS];
