@@ -18,7 +18,7 @@ int main(){
   char *token,*f,*g;
   time_t myt;
   struct tm *info;
-  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour;
   uint64_t *lD;
   struct ek{
     uint8_t act;
@@ -152,7 +152,10 @@ int main(){
   server_addr.sin_port=htons(PORT);
   server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
   bind(sock,(struct sockaddr *)&server_addr,sizeof(server_addr));
-  last_min=100;
+  time(&myt);
+  info=localtime(&myt);
+  last_min=info->tm_min;
+  last_hour=info->tm_hour;
   
   // receiving events
   for(;;){
@@ -163,6 +166,10 @@ int main(){
       last_min=info->tm_min;
       strcpy(buf,"E4");
     }
+    else if(rr<1 && info->tm_hour!=last_hour){
+      last_hour=info->tm_hour;
+      strcpy(buf,"E3");
+    } 
     else if(rr<1){
       usleep(10000);
       continue;
