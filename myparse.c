@@ -3,12 +3,13 @@
 #include "string.h"
 #include "stdint.h"
 #define TOTEK 500
+#define TOTEX 20
 
 int main(){
   FILE *fp;
   char buf[100];
   char *token,*f;
-  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,nK;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC;
   uint64_t *lD;
   struct ek{
     uint8_t act;
@@ -19,17 +20,18 @@ int main(){
     uint64_t *D;
     struct ek *next;
   };
-  struct ek *ee,*en,*em;
+  struct ek *ee,*ex,*en,*em;
 
   // parsing configuration file
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
+  ex=(struct ek *)malloc(TOTEX*sizeof(struct ek));
   for(q=0;q<TOTEK;q++)ee[q].act=0;
+  for(q=0;q<TOTEX;q++)ex[q].act=0;
   lK=(uint16_t *)malloc(100*sizeof(uint16_t));
   lR=(uint16_t *)malloc(100*sizeof(uint16_t));
   lE=(uint16_t *)malloc(100*sizeof(uint16_t));
   lC=(uint16_t *)malloc(100*sizeof(uint16_t));
   lD=(uint64_t *)malloc(23*sizeof(uint64_t));
-  nK=0;
   fp=fopen("config","r");
   for(;;){
     fgets(buf,100,fp);
@@ -66,6 +68,26 @@ int main(){
     for(q=0;q<nlK;q++){
       i=lK[q];
       en=ee+i;      
+      if(en->act>0){
+        for(;en->next!=NULL;en=en->next);
+        em=(struct ek *)malloc(sizeof(struct ek));
+        en->next=em;
+        en=em;
+      } 
+      en->act=1;
+      en->nR=nlR;
+      en->R=(uint16_t *)malloc(nlR*sizeof(uint16_t));
+      for(j=0;j<nlR;j++)en->R[j]=lR[j];
+      en->nC=nlC;
+      en->C=(uint16_t *)malloc(nlC*sizeof(uint16_t));
+      for(j=0;j<nlC;j++)en->C[j]=lC[j];
+      en->D=(uint64_t *)malloc(23*sizeof(uint64_t));
+      for(j=0;j<23;j++)en->D[j]=lD[j];
+      en->next=NULL;
+    }
+    for(q=0;q<nlE;q++){
+      i=lE[q];
+      en=ex+i;      
       if(en->act>0){
         for(;en->next!=NULL;en=en->next);
         em=(struct ek *)malloc(sizeof(struct ek));
