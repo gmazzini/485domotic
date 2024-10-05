@@ -7,7 +7,7 @@
 #include "arpa/inet.h"
 #include "sys/socket.h"
 #include "unistd.h"
-#define PORT 12345
+#define PORT 55555
 #define TOTEK 500
 #define TOTEX 20
 #define TOTRELAIS 120
