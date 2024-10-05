@@ -148,7 +148,7 @@ int main(){
   servaddr.sin_family=AF_INET;
   servaddr.sin_addr.s_addr=INADDR_ANY;
   servaddr.sin_port=htons(PORT);
-  bind(sock,(struct sockaddr *)&servaddr,sizeof(servaddr);
+  bind(sock,(struct sockaddr *)&servaddr,sizeof(servaddr));
   
   // receiving events
   for(;;){
