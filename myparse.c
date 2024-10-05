@@ -157,7 +157,7 @@ int main(){
     if(i==0){sleep(1); printf(":"); continue;
     }
 
-    printf("input: ");
+    printf("%d input: ",i);
     scanf("%s",buf);
     if(buf[0]=='K'){
       f=strchr(buf,','); *f='\0';
