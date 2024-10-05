@@ -116,12 +116,15 @@ int main(){
 
   // checking
   for(;;){
-    printf("K=");
+    printf("input");
     scanf("%s",buf);
     f=strchr(buf,','); *f='\0';
-    q=10*atoi(buf)+atoi(f+1);
-    
-    en=ee+q;
+    q=10*atoi(buf+1)+atoi(f+1);
+    if(q==0)break;
+    if(buf[0]=='K')en=ee+q;
+    else if(buf[0]=='E')en=ex+q;
+    else continue;
+
     for(;;){
       if(en->act==0)break;
       printf("K %d\n",q);
