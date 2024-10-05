@@ -5,7 +5,7 @@ R=Relais i=device,j=relais
 E=Event w=event
 D=deactive i=HHMM start,j=HHMM stop
 T=test i=device,j=relais,s=status(0|1)
-w=1 SunSet,2 Sunrise,3 Every hour,4 Every minute
+w=1 SunSet,2 Sunrise,3 Every hour,4 Every minute,5 Every day at 0600,6 Every day at 1200,7 Every day at 1800,8 Every day at 0000
 
 onoff {Ki,j} {Ri,j} {Ew} {Di,j}
 off {Ki,j} {Ri,j} {Ew} {Di,j}
