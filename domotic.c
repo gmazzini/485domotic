@@ -165,16 +165,17 @@ int main(){
     if(rr>=0)*(buf+rr)='\0';
     else {
       if(info->tm_min!=last_min){
-      last_min=info->tm_min;
-      strcpy(buf,"E4");
-    }
-    else if(info->tm_hour!=last_hour){
-      last_hour=info->tm_hour;
-      strcpy(buf,"E3");
-    } 
-    else {
-      usleep(10000);
-      continue;
+        last_min=info->tm_min;
+        strcpy(buf,"E4");
+      }
+      else if(info->tm_hour!=last_hour){
+        last_hour=info->tm_hour;
+        strcpy(buf,"E3");
+      } 
+      else {
+        usleep(10000);
+        continue;
+      }
     }
     printf("input: %s\n",buf);
     if(buf[0]=='K'){
