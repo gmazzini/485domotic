@@ -49,7 +49,7 @@ void sun(int year,int month,int day,float lat,float lng){
   Hs=Hs/15;
   Tr=Hr+RAr-(0.06571*tr)-6.622;
   Ts=Hs+RAs-(0.06571*ts)-6.622;
-  UTr=fmod(Tr-lngHour,24.0);
-  UTs=fmod(Ts-lngHour,24.0);
+  UTr=fmod(24.0+Tr-lngHour,24.0);
+  UTs=fmod(24.0+Ts-lngHour,24.0);
   printf("SUN %f %f\n",UTr,UTs);
 }
