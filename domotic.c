@@ -162,19 +162,20 @@ int main(){
     rr=recvfrom(sock,buf,100,0,&from,&fromlen);
     time(&myt);
     info=localtime(&myt);
-    if(rr<1 && info->tm_min!=last_min){
+    if(rr>=0)*(buf+rr)='\0';
+    else {
+      if(info->tm_min!=last_min){
       last_min=info->tm_min;
       strcpy(buf,"E4");
     }
-    else if(rr<1 && info->tm_hour!=last_hour){
+    else if(info->tm_hour!=last_hour){
       last_hour=info->tm_hour;
       strcpy(buf,"E3");
     } 
-    else if(rr<1){
+    else {
       usleep(10000);
       continue;
     }
-    else *(buf+rr)='\0';
     printf("input: %s\n",buf);
     if(buf[0]=='K'){
       f=strchr(buf,','); *f='\0';
