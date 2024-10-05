@@ -34,7 +34,7 @@ int main(){
   struct ek *ee,*ex,*en,*em;
   int sock,rr;
   unsigned int fromlen;
-  struct sockaddr_in from; 
+  struct sockaddr from; 
 
   // parsing configuration file
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
