@@ -10,10 +10,10 @@
 int main(){
   FILE *fp;
   char buf[100],relais[TOTRELAIS],mod[TOTRELAIS];
-  char *token,*f;
+  char *token,*f,*g;
   time_t myt;
   struct tm *info;
-  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT;
   uint64_t *lD;
   struct ek{
     uint8_t act;
@@ -22,6 +22,8 @@ int main(){
     uint16_t nC;
     uint16_t *C;
     uint64_t *D;
+    uint16_t nT;
+    uint16_t *T;
     struct ek *next;
   };
   struct ek *ee,*ex,*en,*em;
@@ -36,6 +38,7 @@ int main(){
   lE=(uint16_t *)malloc(100*sizeof(uint16_t));
   lC=(uint16_t *)malloc(100*sizeof(uint16_t));
   lD=(uint64_t *)malloc(23*sizeof(uint64_t));
+  lT=(uint16_t *)malloc(100*sizeof(uint16_t));
   fp=fopen("config","r");
   for(;;){
     fgets(buf,100,fp);
@@ -65,7 +68,13 @@ int main(){
           if(strcmp(token+1,"onoff")==0)slC=1;
           else if(strcmp(token+1,"on")==0)slC=2;
           else if(strcmp(token+1,"off")==0)slC=3;
+          else if(strcmp(token+1,"condon")==0)slC=4;
+          else if(strcmp(token+1,"condoff")==0)slC=5;
           if(slC>0)lC[nlC++]=slC;
+          break;
+        case 'T':
+          f=strchr(token,','); *f='\0'; g=strchr(f+1,','); *g='\0';
+          lT[nlT++]=10*atoi(token+1)+atoi(f+1)+1000*atoi(g+1);
           break;
       }
     }
@@ -87,6 +96,9 @@ int main(){
       for(j=0;j<nlC;j++)en->C[j]=lC[j];
       en->D=(uint64_t *)malloc(23*sizeof(uint64_t));
       for(j=0;j<23;j++)en->D[j]=lD[j];
+      en->nT=nlT;
+      en->T=(uint16_t *)malloc(nlT*sizeof(uint16_t));
+      for(j=0;j<nlT;j++)en->T[j]=lT[j];
       en->next=NULL;
     }
     for(q=0;q<nlE;q++){
@@ -107,6 +119,9 @@ int main(){
       for(j=0;j<nlC;j++)en->C[j]=lC[j];
       en->D=(uint64_t *)malloc(23*sizeof(uint64_t));
       for(j=0;j<23;j++)en->D[j]=lD[j];
+      en->nT=nlT;
+      en->T=(uint16_t *)malloc(nlT*sizeof(uint16_t));
+      for(j=0;j<nlT;j++)en->T[j]=lT[j];
       en->next=NULL;
     }
     
@@ -117,6 +132,7 @@ int main(){
   free(lE);
   free(lC);
   free(lD);
+  free(lT);
 
   // initilize 
   for(q=0;q<TOTRELAIS;q++)relais[q]=0;
