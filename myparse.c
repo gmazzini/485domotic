@@ -161,14 +161,13 @@ int main(){
     info=localtime(&myt);
     if(rr<1 && info->tm_min!=last_min){
       last_min=info->tm_min;
-      printf(".\n");
-      continue;
+      strcpy(buf,"E4");
     }
     else if(rr<1){
       usleep(10000);
       continue;
     }
-    *(buf+rr)='\0';
+    else *(buf+rr)='\0';
     printf("input: %s\n",buf);
     if(buf[0]=='K'){
       f=strchr(buf,','); *f='\0';
