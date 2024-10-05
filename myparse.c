@@ -118,16 +118,21 @@ int main(){
   for(;;){
     printf("input");
     scanf("%s",buf);
-    f=strchr(buf,','); *f='\0';
-    q=10*atoi(buf+1)+atoi(f+1);
-    if(q==0)break;
-    if(buf[0]=='K')en=ee+q;
-    else if(buf[0]=='E')en=ex+q;
+    if(buf[0]=='K'){
+      f=strchr(buf,','); *f='\0';
+      q=10*atoi(buf+1)+atoi(f+1);
+      if(q==0)break;
+      en=ee+q;
+    }
+    else if(buf[0]=='E'){
+      q=atoi(buf+1);
+      if(q==0)break;
+      en=ex+q;
+    }
     else continue;
 
     for(;;){
       if(en->act==0)break;
-      printf("K %d\n",q);
       for(j=0;j<en->nR;j++)printf("-- R %d\n",en->R[j]);
       for(j=0;j<en->nC;j++)printf("-- C %d\n",en->C[j]);
       printf("-- D");
