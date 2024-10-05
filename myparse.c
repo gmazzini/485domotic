@@ -148,6 +148,12 @@ int main(){
       if((en->D[j>>6] & (1ULL<<(j%64)))==0){
         for(j=0;j<en->nC;j++){
           switch(en->C[j]){
+            case 1:
+              q=0;
+              for(j=0;j<en->nR;j++)q+=relais[en->R[j]];
+              if(q>(en->nR/2))for(j=0;j<en->nR;j++)mod[en->R[j]]=1;
+              else for(j=0;j<en->nR;j++)mod[en->R[j]]=0;
+              break;
             case 2:
               for(j=0;j<en->nR;j++)mod[en->R[j]]=1;
               break;
