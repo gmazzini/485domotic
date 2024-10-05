@@ -5,11 +5,12 @@
 #include "time.h"
 #define TOTEK 500
 #define TOTEX 20
+#define TOTRELAIS 120
 
 int main(){
   FILE *fp;
-  char buf[100];
-  char *token,*f;
+  unsigned char buf[100],relais[TOTRELAIS],mod[TOTRELAIS];
+  unsigned char *token,*f;
   time_t myt;
   struct tm *info;
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC;
@@ -117,6 +118,9 @@ int main(){
   free(lC);
   free(lD);
 
+  // initilize 
+  for(q=0;q<TOTRELAIS;q++)relais[q]=0;
+  
   // receiving events
   for(;;){
     printf("input");
@@ -135,18 +139,28 @@ int main(){
     else continue;
 
     // processing
+    for(q=0;q<TOTRELAIS;q++)mod[q]=relais[q];
     for(;;){
       if(en->act==0)break;
       time(&myt);
       info=localtime(&myt);
       j=info->tm_hour*60+info->tm_min;
       if((en->D[j>>6] & (1ULL<<(j%64)))==0){
-        for(j=0;j<en->nR;j++)printf("-- R %d\n",en->R[j]);
-        for(j=0;j<en->nC;j++)printf("-- C %d\n",en->C[j]);
+        for(j=0;j<en->nC;j++){
+          switch(en->C[j]){
+            case 2:
+              for(j=0;j<en->nR;j++)mod[en->R[j]]=1;
+              break;
+            case 3:
+              for(j=0;j<en->nR;j++)mod[en->R[j]]=0;
+              break;
+          }
+        }
       }
       if(en->next==NULL)break;
       en=en->next;
     }
+    for(q=0;q<TOTRELAIS;q++)if(mod[q]!=relais[q])printf("%d %d %d\n",relais[q],mod[q]);
   }
 
 
