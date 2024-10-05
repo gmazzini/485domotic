@@ -35,7 +35,7 @@ int main(){
     fgets(buf,100,fp);
     if(feof(fp))break;
     nlK=nlR=nlE=nlC=0;
-    for(q=0;q<23;q++)lD[q]=18446744073709551615ULL;
+    for(q=0;q<23;q++)lD[q]=0;
     for(token=strtok(buf," \n\r\t");token;token=strtok(NULL," \n\r\t")){
       switch(token[0]){
         case 'K':
@@ -52,7 +52,7 @@ int main(){
         case 'D':
           f=strchr(token,','); *f='\0';
           i=((*(f+1)-'0')*10+(*(f+2)-'0'))*60+(*(f+3)-'0')*10+(*(f+4)-'0');
-          for(q=((*(token+1)-'0')*10+(*(token+2)-'0'))*60+(*(token+3)-'0')*10+(*(token+4)-'0');q<=i;q++)lD[q>>6]&=(18446744073709551615ULL^(1ULL<<(q%64)));
+          for(q=((*(token+1)-'0')*10+(*(token+2)-'0'))*60+(*(token+3)-'0')*10+(*(token+4)-'0');q<=i;q++)lD[q>>6]|=(1ULL<<(q%64));
           break;
         case 'C':
           slC=0;
@@ -103,7 +103,7 @@ int main(){
      for(j=0;j<23;j++)printf("%llx ",en->D[j]);
    //   for(j=0;j<200;j++)printf("\n%d %llx ",j,(1ULL<<(j%64)));
       printf("\n-- D");
-      for(j=0;j<1440;j++)if(en->D[j>>6] & (1ULL<<(j%64))==0)printf(" %d",j);
+      for(j=0;j<1440;j++)if(en->D[j>>6] & (1ULL<<(j%64)))printf(" %d",j);
       printf("\n");
       if(en->next==NULL)break;
       en=en->next;
