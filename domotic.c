@@ -263,7 +263,7 @@ int main(){
 float sun(int year,int month,int day,float lat,float lng){
   float N1,N2,N3,N,lngHour,tr,ts,Mr,Ms,Lr,Ls;
   float RAr,RAs,Lquadrantr,Lquadrants,RAquadrantr,RAquadrants;
-  float sinDecr,sinDecs,cosHr,cosHs,Hr,Hs,Tr,Ts,UTr,UTs;
+  float sinDecr,sinDecs,cosDecr,cosDecs,cosHr,cosHs,Hr,Hs,Tr,Ts,UTr,UTs;
   
   N1=floor(275*month/9);
   N2=floor((month+9)/12);
