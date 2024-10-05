@@ -18,7 +18,7 @@ int main(){
   char *token,*f,*g;
   time_t myt;
   struct tm *info;
-  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min;
   uint64_t *lD;
   struct ek{
     uint8_t act;
@@ -152,11 +152,18 @@ int main(){
   server_addr.sin_port=htons(PORT);
   server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
   bind(sock,(struct sockaddr *)&server_addr,sizeof(server_addr));
+  last_min=100;
   
   // receiving events
   for(;;){
     rr=recvfrom(sock,buf,100,0,&from,&fromlen);
-    if(rr<1){
+    time(&myt);
+    info=localtime(&myt);
+    if(rr<1 && info->tm_min!=last_min){
+      last_min=info->tm_min;
+      printf(".\n");
+    }
+    else if(rr<1){
       usleep(10000);
       continue;
     }
@@ -179,8 +186,6 @@ int main(){
     for(q=0;q<TOTRELAIS;q++)mod[q]=relais[q];
     for(;;){
       if(en->act==0)break;
-      time(&myt);
-      info=localtime(&myt);
       j=info->tm_hour*60+info->tm_min;
       if((en->D[j>>6] & (1ULL<<(j%64)))==0){
         for(j=0;j<en->nC;j++){
