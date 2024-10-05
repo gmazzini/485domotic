@@ -151,8 +151,8 @@ int main(){
             case 1:
               q=0;
               for(j=0;j<en->nR;j++)q+=relais[en->R[j]];
-              if(q>(en->nR/2))for(j=0;j<en->nR;j++)mod[en->R[j]]=1;
-              else for(j=0;j<en->nR;j++)mod[en->R[j]]=0;
+              if(q>(en->nR/2))for(j=0;j<en->nR;j++)mod[en->R[j]]=0;
+              else for(j=0;j<en->nR;j++)mod[en->R[j]]=1;
               break;
             case 2:
               for(j=0;j<en->nR;j++)mod[en->R[j]]=1;
