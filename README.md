@@ -6,10 +6,10 @@ E=Event w=event
 D=deactive i=HHMM start,j=HHMM stop
 T=test i=device,j=relais,s=status(0|1)
 w:
-  1 SunSet
-  2 Sunrise
-  3 Every hour
-  4 Every minute
+  1 Every minute
+  2 Every 10 minutes
+  3 Every 30 minutes
+  4 Every hour
   5 Every day at 0000
   6 Every day at 0600
   7 Every day at 1200
