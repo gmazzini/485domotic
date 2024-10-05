@@ -1,5 +1,16 @@
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
+#include "stdint.h"
+#include "time.h"
+#include "fcntl.h"
+#include "math.h"
+#include "arpa/inet.h"
+#include "sys/socket.h"
+#include "unistd.h"
 #define PI 3.1415926
 #define ZENITH -.83
+
 void sun(int year,int month,int day,float lat,float lng){
   float N1,N2,N3,N,lngHour,tr,ts,Mr,Ms,Lr,Ls;
   float RAr,RAs,Lquadrantr,Lquadrants,RAquadrantr,RAquadrants;
