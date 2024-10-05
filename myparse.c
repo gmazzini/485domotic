@@ -187,7 +187,7 @@ int main(){
       en=en->next;
     }
     for(q=0;q<TOTRELAIS;q++)if(mod[q]!=relais[q]){
-      printf("%d %d %d\n",q,relais[q],mod[q]);
+      printf("R %d %d %d\n",q,relais[q],mod[q]);
       relais[q]=mod[q];
     }
   }
