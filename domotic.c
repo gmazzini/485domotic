@@ -18,7 +18,7 @@ int main(){
   char *token,*f,*g;
   time_t myt;
   struct tm *info;
-  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched;
   uint64_t *lD;
   struct ek{
     uint8_t act;
@@ -156,6 +156,7 @@ int main(){
   info=localtime(&myt);
   last_min=info->tm_min;
   last_hour=info->tm_hour;
+  sched=0;
   
   // receiving events
   for(;;){
@@ -171,7 +172,23 @@ int main(){
       else if(info->tm_hour!=last_hour){
         last_hour=info->tm_hour;
         strcpy(buf,"E3");
-      } 
+      }
+      else if(sched!=5 && info->tm_hour=0 && info->tm_min=0){
+        sched=5;
+        strcpy(buf,"E5");
+      }
+      else if(sched!=6 && info->tm_hour=6 && info->tm_min=0){
+        sched=6;
+        strcpy(buf,"E6");
+      }
+      else if(sched!=7 && info->tm_hour=12 && info->tm_min=0){
+        sched=7;
+        strcpy(buf,"E7");
+      }
+      else if(sched!=8 && info->tm_hour=18 && info->tm_min=0){
+        sched=8;
+        strcpy(buf,"E8");
+      }
       else {
         usleep(10000);
         continue;
