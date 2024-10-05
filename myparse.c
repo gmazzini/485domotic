@@ -156,7 +156,7 @@ int main(){
   // receiving events
   for(;;){
     rr=recvfrom(sock,buf,100,0,&from,&fromlen);
-    *(buf+fromlen)='\0';
+    *(buf+rr)='\0';
     printf("input: %s\n",buf);
     if(buf[0]=='K'){
       f=strchr(buf,','); *f='\0';
