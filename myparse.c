@@ -140,7 +140,7 @@ int main(){
       time(&myt);
       info=localtime(&myt);
       j=info->tm_hour*60+info->tm_min;
-      if(en->D[j>>6] & (1ULL<<(j%64))==0){
+      if((en->D[j>>6] & (1ULL<<(j%64)))==0){
         for(j=0;j<en->nR;j++)printf("-- R %d\n",en->R[j]);
         for(j=0;j<en->nC;j++)printf("-- C %d\n",en->C[j]);
       }
