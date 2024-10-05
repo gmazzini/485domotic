@@ -157,7 +157,10 @@ int main(){
   for(;;){
     rr=recvfrom(sock,buf,100,0,&from,&fromlen);
     printf(".");
-    if(rr<1)continue;
+    if(rr<1){
+      usleep(10000);
+      continue;
+    }
     *(buf+rr)='\0';
     printf("input: %s\n",buf);
     if(buf[0]=='K'){
