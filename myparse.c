@@ -123,7 +123,7 @@ int main(){
   
   // receiving events
   for(;;){
-    printf("input");
+    printf("input: ");
     scanf("%s",buf);
     if(buf[0]=='K'){
       f=strchr(buf,','); *f='\0';
@@ -160,7 +160,7 @@ int main(){
       if(en->next==NULL)break;
       en=en->next;
     }
-    for(q=0;q<TOTRELAIS;q++)if(mod[q]!=relais[q])printf("%d %d %d\n",relais[q],mod[q]);
+    for(q=0;q<TOTRELAIS;q++)if(mod[q]!=relais[q])printf("%d %d %d\n",q,relais[q],mod[q]);
   }
 
 
