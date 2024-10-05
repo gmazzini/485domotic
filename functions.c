@@ -44,7 +44,7 @@ void sun(int year,int month,int day,float lat,float lng){
   cosHr=(sin((PI/180)*ZENITH)-(sinDecr*sin((PI/180)*lat)))/(cosDecr*cos((PI/180)*lat));
   cosHs=(sin((PI/180)*ZENITH)-(sinDecs*sin((PI/180)*lat)))/(cosDecs*cos((PI/180)*lat));
   Hr=360-(180/PI)*acos(cosHr);
-  Hs=acos(cosHs);
+  Hs=(180/PI)*acos(cosHs);
   Hr=Hr/15;
   Hs=Hs/15;
   Tr=Hr+RAr-(0.06571*tr)-6.622;
