@@ -18,7 +18,7 @@ int main(){
   char *token,*f,*g;
   time_t myt;
   struct tm *info;
-  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30;
   uint64_t *lD;
   struct ek{
     uint8_t act;
@@ -157,6 +157,7 @@ int main(){
   last_min=info->tm_min;
   last_hour=info->tm_hour;
   sched=0;
+  every10=every30=100;
   
   // receiving events
   for(;;){
@@ -167,25 +168,33 @@ int main(){
     else {
       if(info->tm_min!=last_min){
         last_min=info->tm_min;
-        strcpy(buf,"E4");
+        strcpy(buf,"E1");
       }
       else if(info->tm_hour!=last_hour){
         last_hour=info->tm_hour;
+        strcpy(buf,"E2");
+      }
+      else if(every10!=info->tm_min && info->tm_min%10==0){
+        every10=info->tm_min;
         strcpy(buf,"E3");
       }
-      else if(sched!=5 && info->tm_hour=0 && info->tm_min=0){
+      else if(every30!=info->tm_min && info->tm_min%30==0){
+        every30=info->tm_min;
+        strcpy(buf,"E4");
+      }
+      else if(sched!=5 && info->tm_hour==0 && info->tm_min==0){
         sched=5;
         strcpy(buf,"E5");
       }
-      else if(sched!=6 && info->tm_hour=6 && info->tm_min=0){
+      else if(sched!=6 && info->tm_hour==6 && info->tm_min==0){
         sched=6;
         strcpy(buf,"E6");
       }
-      else if(sched!=7 && info->tm_hour=12 && info->tm_min=0){
+      else if(sched!=7 && info->tm_hour==12 && info->tm_min==0){
         sched=7;
         strcpy(buf,"E7");
       }
-      else if(sched!=8 && info->tm_hour=18 && info->tm_min=0){
+      else if(sched!=8 && info->tm_hour==18 && info->tm_min==0){
         sched=8;
         strcpy(buf,"E8");
       }
