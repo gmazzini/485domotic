@@ -147,7 +147,7 @@ int main(){
   for(q=0;q<TOTRELAIS;q++)relais[q]=0;
   sock=socket(AF_INET,SOCK_DGRAM,0);
   fromlen=sizeof(from);
-//  fcntl(sock,F_SETFL,O_NONBLOCK);
+  fcntl(sock,F_SETFL,O_NONBLOCK);
   server_addr.sin_family=AF_INET;
   server_addr.sin_port=htons(PORT);
   server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
@@ -156,6 +156,7 @@ int main(){
   // receiving events
   for(;;){
     rr=recvfrom(sock,buf,100,0,&from,&fromlen);
+    if(rr<1)continue;
     *(buf+rr)='\0';
     printf("input: %s\n",buf);
     if(buf[0]=='K'){
