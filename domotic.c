@@ -14,6 +14,8 @@
 #define TOTRELAIS 120
 #define LAT 44.5
 #define LNG 11.3
+#define CONFIG "config"
+#define SAVESTATUS "status"
 
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS];
 #include "functions.c"
@@ -55,7 +57,7 @@ int main(){
   lC=(uint16_t *)malloc(100*sizeof(uint16_t));
   lD=(uint64_t *)malloc(23*sizeof(uint64_t));
   lT=(uint16_t *)malloc(100*sizeof(uint16_t));
-  fp=fopen("config","r");
+  fp=fopen(CONFIG,"r");
   for(;;){
     fgets(buf,100,fp);
     if(feof(fp))break;
