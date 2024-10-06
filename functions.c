@@ -10,6 +10,8 @@ char * managewww(int sock){
   int rr,quit;
   uint8_t q;
   FILE *fp;
+  time_t myt;
+  struct tm *info;
 
   *ret='\0';
   quit=0;
@@ -18,14 +20,16 @@ char * managewww(int sock){
   *(buf+rr)='\0';
   t1=strtok(buf," \n\r\t");
   t2=strtok(NULL," \n\r\t");
-  if(strcmp(t1,"sunrise")==0){
-    sprintf(out,"sunrise: %02d%02d\n",HHr,MMr);
+  if(strcmp(t1,"time")==0){
+    time(&myt); info=localtime(&myt); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
+    sprintf(out,"now: %s\n",info);
+    info=localtime(&start); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
+    sprintf(out+strlen(out),"start: %s\n",info);
+    sprintf(out+strlen(out),"sunrise: %02d%02d\n",HHr,MMr);
+    sprintf(out+strlen(out),"sunset: %02d%02d\n",HHs,MMs);
   }
-  else if(strcmp(t1,"sunset")==0){
-    sprintf(out,"sunset: %02d%02d\n",HHs,MMs);
-  }
-  else if(strcmp(t1,"on")==0){
-    sprintf(out,"on:");
+  else if(strcmp(t1,"showon")==0){
+    sprintf(out,"relains on:");
     for(q=0;q<TOTRELAIS;q++)if(relais[q]==1)sprintf(out+strlen(out)," R%d,%d",q/10,q%10);
     sprintf(out+strlen(out),"\n");
   }
@@ -38,7 +42,11 @@ char * managewww(int sock){
     quit=1;
   }
   else if(strcmp(t1,"help")==0){
-    sprintf(out,"sunset\nsunrise\non\ninject xx\nquit\nhelp\n");
+    printf(out,"time, show actual time informations\n");
+    printf(out+strlen(out),"showon, show relais in on state\n");
+    printf(out+strlen(out),"inject xxx, inject the xxx event (like Ki,j or Ew) in the system\n");
+    printf(out+strlen(out),"quit, shutdown the system\n");
+    printf(out+strlen(out),"help, this help\n");
   }
   else sprintf(out,"command not find\n");
   sendto(sock,out,strlen(out),0,&from,fromlen);
