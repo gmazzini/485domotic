@@ -13,7 +13,7 @@
 #define TOTEX 20
 #define TOTRELAIS 120
 #define LAT 44.5
-#define LOG 11.3
+#define LNG 11.3
 
 void sun(int,int,int,float,float,char *,char *);
 
@@ -163,8 +163,8 @@ int main(){
   last_hour=info->tm_hour;
   sched=0;
   every10=every30=100;
-  sun(1900+info->tm_year,info->tm_mon,info->tm_mday,LAT,LOG,HHMMr,HHMMs);
-  printf("Suntise:%s Sunset:%s\n",HHMMr,HHMMs);
+  sun(1900+info->tm_year,info->tm_mon,info->tm_mday,LAT,LNG,HHMMr,HHMMs);
+  printf("Suntise:%s Sunset:%s %d %d %d\n",HHMMr,HHMMs,1900+info->tm_year,info->tm_mon,info->tm_mday);
   
   // receiving events
   for(;;){
