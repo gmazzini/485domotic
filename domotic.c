@@ -19,7 +19,7 @@
 #define SAVESTATUS "status"
 
 struct ek{
-  uint16_t rule;
+  uint16_t event;
   uint16_t nR;
   uint16_t *R;
   uint16_t nC;
@@ -37,7 +37,7 @@ struct log{
 struct ek *ee,*ex;
 struct log *mylog;
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS];
-iunt16_t nrule;
+iunt16_t nevent;
 time_t start;
 #include "functions.c"
 
@@ -59,8 +59,8 @@ int main(){
   // parsing configuration file
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
   ex=(struct ek *)malloc(TOTEX*sizeof(struct ek));
-  for(q=0;q<TOTEK;q++)ee[q].rule=0;
-  for(q=0;q<TOTEX;q++)ex[q].rule=0;
+  for(q=0;q<TOTEK;q++)ee[q].event=0;
+  for(q=0;q<TOTEX;q++)ex[q].event=0;
   lK=(uint16_t *)malloc(100*sizeof(uint16_t));
   lR=(uint16_t *)malloc(100*sizeof(uint16_t));
   lE=(uint16_t *)malloc(100*sizeof(uint16_t));
@@ -72,7 +72,7 @@ int main(){
     fgets(buf,100,fp);
     if(feof(fp))break;
     nlK=nlR=nlE=nlC=nlT=0;
-    nrule=1;
+    nevent=1;
     for(q=0;q<23;q++)lD[q]=0;
     for(token=strtok(buf," \n\r\t");token;token=strtok(NULL," \n\r\t")){
       switch(token[0]){
@@ -110,13 +110,13 @@ int main(){
     for(q=0;q<nlK;q++){
       i=lK[q];
       en=ee+i;      
-      if(en->rule>0){
+      if(en->event>0){
         for(;en->next!=NULL;en=en->next);
         em=(struct ek *)malloc(sizeof(struct ek));
         en->next=em;
         en=em;
       } 
-      en->rule=nrule++;
+      en->event=nevent++;
       en->nR=nlR;
       en->R=(uint16_t *)malloc(nlR*sizeof(uint16_t));
       for(j=0;j<nlR;j++)en->R[j]=lR[j];
@@ -133,13 +133,13 @@ int main(){
     for(q=0;q<nlE;q++){
       i=lE[q];
       en=ex+i;      
-      if(en->rule>0){
+      if(en->event>0){
         for(;en->next!=NULL;en=en->next);
         em=(struct ek *)malloc(sizeof(struct ek));
         en->next=em;
         en=em;
       } 
-      en->rule=nrule++;
+      en->event=nevent++;
       en->nR=nlR;
       en->R=(uint16_t *)malloc(nlR*sizeof(uint16_t));
       for(j=0;j<nlR;j++)en->R[j]=lR[j];
@@ -183,7 +183,7 @@ int main(){
   fp=fopen(SAVESTATUS,"rb");
   fread(relais,sizeof(uint8_t),TOTRELAIS,fp);
   fclose(fp);
-  en=ex; en->rule=nrule; 
+  en=ex; en->event=nevent; 
   en->nR=1; en->R=(uint16_t *)malloc(sizeof(uint16_t)); en->R[0]=0;
   en->nC=1; en->C=(uint16_t *)malloc(sizeof(uint16_t)); en->C[0]=0;
   en->D=(uint64_t *)malloc(23*sizeof(uint64_t)); for(q=0;q<23;q++)en->D[q]=0;
@@ -259,7 +259,7 @@ int main(){
     // processing
     for(q=0;q<TOTRELAIS;q++)mod[q]=relais[q];
     for(;;){
-      if(en->rule==0)break;
+      if(en->event==0)break;
       j=info->tm_hour*60+info->tm_min;
       if((en->D[j>>6] & (1ULL<<(j%64)))==0){
         for(j=0;j<en->nC;j++){
