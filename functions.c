@@ -7,18 +7,24 @@ void managewww(int sock){
   fromlen=sizeof(from);
   char buf[100],out[1000];
   int rr;
+  uint8_t q;
  
   rr=recvfrom(sock,buf,100,0,&from,&fromlen);
   if(rr<1)return;
   *(buf+rr)='\0';
-  if(strcmp(buf,"show sunrise")==0){
+  if(strcmp(buf,"sunrise")==0){
     sprintf(out,"sunrise: %02d%02d\n",HHr,MMr);
   }
-  else if(strcmp(buf,"show sunset")==0){
+  else if(strcmp(buf,"sunset")==0){
     sprintf(out,"sunset: %02d%02d\n",HHs,MMs);
   }
+  else if(strcmp(buf,"on")==0){
+    sprintf(out,"on: ");
+    for(q=0;q<TOTRELAIS;q++)if(relais[q]==1)sprintf(out+strlen(out)," %d",q);
+    sprintf(out+strlen(out),"\n");
+  }
   else if(strcmp(buf,"help")==0){
-    sprintf(out,"show sunset\nshow sunrise\nhelp\n");
+    sprintf(out,"sunset\nsunrise\non\nhelp\n");
   }
   else sprintf(out,"command not find\n");
   sendto(sock,out,strlen(out),0,&from,fromlen);
