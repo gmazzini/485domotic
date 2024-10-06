@@ -26,8 +26,8 @@ char * managewww(int sock){
     sprintf(out,"now: %s\n",buf);
     info=localtime(&start); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
     sprintf(out+strlen(out),"start: %s\n",buf);
-    sprintf(out+strlen(out),"sunrise: %02d%02d\n",HHr,MMr);
-    sprintf(out+strlen(out),"sunset: %02d%02d\n",HHs,MMs);
+    sprintf(out+strlen(out),"sunrise: %02d:%02d\n",HHr,MMr);
+    sprintf(out+strlen(out),"sunset: %02d:%02d\n",HHs,MMs);
   }
   else if(strcmp(t1,"seton")==0){
     sprintf(out,"set relais to on: %s\n",t2);
