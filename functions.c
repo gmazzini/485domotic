@@ -7,12 +7,15 @@ unsigned int fromlen=sizeof(from);;
 
 void myout(int sock,int end,char *format, ...){
   static char out[1000];
+  if(end==0)*out='\0';
   unsigned int fromlen=sizeof(from);
   va_list argptr;
   va_start(argptr,format);
   vsprintf(out+strlen(out),format,argptr);
   va_end(argptr);
-  if(strlen(out)>500 || end==1){
+  if(strlen(out)>500 || end==2){
+    if(end==1)sprintf(out+strlen(out),"<next>\n");
+    else sprintf(out+strlen(out),"<end>\n");
     sendto(sock,out,strlen(out),0,&from,fromlen);
   }
 }
@@ -33,8 +36,8 @@ char * managewww(int sock){
   rr=recvfrom(sock,buf,100,0,&from,&fromlen);
   if(rr<1)return ret;
   *(buf+rr)='\0';
-  sprintf(out,"domotic by GM @2024\n");
-  sprintf(out+strlen(out),">> %s\n",buf);
+  myout(sock,0,"domotic by GM @2024\n");
+  myout(sock,1,">> %s\n",buf);
   t1=strtok(buf," \n\r\t");
   t2=strtok(NULL," \n\r\t");
   if(strcmp(t1,"status")==0){
@@ -100,14 +103,14 @@ char * managewww(int sock){
     quit=1;
   }
   else if(strcmp(t1,"help")==0){
-    myout(sock,0,"status, show actual status informations\n");
-    myout(sock,0,"seton Ri,j, set the relais Ri,j to on\n");
-    myout(sock,0,"setoff Ri,j, set the relais Ri,j to off\n");
-    myout(sock,0,"showon, show relais in on state\n");
-    myout(sock,0,"showevents, show all the events\n");
-    myout(sock,0,"inject xxx, inject the xxx event (like Ki,j or Ew) in the system\n");
-    myout(sock,0,"quit, shutdown the system\n");
-    myout(sock,1,"help, this help\n");
+    myout(sock,1,"status, show actual status informations\n");
+    myout(sock,1,"seton Ri,j, set the relais Ri,j to on\n");
+    myout(sock,1,"setoff Ri,j, set the relais Ri,j to off\n");
+    myout(sock,1,"showon, show relais in on state\n");
+    myout(sock,1,"showevents, show all the events\n");
+    myout(sock,1,"inject xxx, inject the xxx event (like Ki,j or Ew) in the system\n");
+    myout(sock,1,"quit, shutdown the system\n");
+    myout(sock,2,"help, this help\n");
   }
   else sprintf(out+strlen(out),"command not find\n");
   sendto(sock,out,strlen(out),0,&from,fromlen);
