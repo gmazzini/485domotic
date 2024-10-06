@@ -52,8 +52,6 @@ int main(){
   uint64_t *lD;
   struct ek *en,*em;
   int sockwww;
-  unsigned int fromlen;
-  struct sockaddr from;
   struct sockaddr_in server_addr;
 
   // parsing configuration file
@@ -165,7 +163,6 @@ int main(){
 
   // initilize
   time(&start);
-  fromlen=sizeof(from);
   sockwww=socket(AF_INET,SOCK_DGRAM,0);
   fcntl(sockwww,F_SETFL,O_NONBLOCK);
   server_addr.sin_family=AF_INET;
