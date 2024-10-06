@@ -18,7 +18,7 @@ void managewww(int sock){
   char buf[100];
   int rr;
  
-  rr=recvfrom(sockwww,buf,100,0,&from,&fromlen);
+  rr=recvfrom(sock,buf,100,0,&from,&fromlen);
   if(rr<1)retrun;
   *(buf+rr)='\0';
   printf("%s\n",buf);
