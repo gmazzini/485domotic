@@ -27,7 +27,7 @@ char * managewww(int sock){
   }
   else if(strcmp(buf,"inject E1")==0){
     sprintf(out,"innnn\n");
-    strcpy(ret,"inject E1");
+    strcpy(ret,"E1");
   }
   else if(strcmp(buf,"help")==0){
     sprintf(out,"sunset\nsunrise\non\ninject xx\nhelp\n");
