@@ -21,7 +21,10 @@ void managewww(int sock){
   rr=recvfrom(sock,buf,100,0,&from,&fromlen);
   if(rr<1)return;
   *(buf+rr)='\0';
-  sprintf(out,"ciao %s ciao\n",buf);
+  if(strcmp(buf,"show sunrise")==0){
+    sprintf(out,"sunrise: %d%d\n",HHr,MMr);
+  }
+  else sprintf(out,"command not find\n");
   sendto(sock,out,strlen(out),0,&from,fromlen);
 }
 
