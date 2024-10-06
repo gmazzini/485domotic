@@ -68,11 +68,11 @@ int main(){
   lD=(uint64_t *)malloc(23*sizeof(uint64_t));
   lT=(uint16_t *)malloc(100*sizeof(uint16_t));
   fp=fopen(CONFIG,"r");
+  nevent=1;
   for(;;){
     fgets(buf,100,fp);
     if(feof(fp))break;
     nlK=nlR=nlE=nlC=nlT=0;
-    nevent=1;
     for(q=0;q<23;q++)lD[q]=0;
     for(token=strtok(buf," \n\r\t");token;token=strtok(NULL," \n\r\t")){
       switch(token[0]){
