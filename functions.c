@@ -24,7 +24,7 @@ void myout(int sock,int end,char *format, ...){
 
 char * managewww(int sock){
   static char ret[50];
-  char buf[100],*out,*t1,*t2,*f;
+  char buf[100],*t1,*t2,*f;
   int rr,quit;
   uint16_t q,j;
   FILE *fp;
@@ -32,7 +32,6 @@ char * managewww(int sock){
   struct tm *info;
   struct ek *en;
   
-  out=malloc(5000);
   *ret='\0';
   quit=0;
   rr=recvfrom(sock,buf,100,0,&from,&fromlen);
@@ -44,29 +43,29 @@ char * managewww(int sock){
   t2=strtok(NULL," \n\r\t");
   if(strcmp(t1,"status")==0){
     for(j=0,q=0;q<TOTRELAIS;q++)if(relais[q]==1)j++;
-    sprintf(out+strlen(out),"relais on: %d\n",j);
-    sprintf(out+strlen(out),"events: %d\n",nevent);
+    myout(sock,1,"relais on: %d\n",j);
+    myout(sock,1,"events: %d\n",nevent);
     time(&myt); info=localtime(&myt); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
-    sprintf(out+strlen(out),"time now: %s\n",buf);
+    myout(sock,1,"time now: %s\n",buf);
     info=localtime(&start); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
-    sprintf(out+strlen(out),"time start: %s\n",buf);
-    sprintf(out+strlen(out),"time sunrise: %02d:%02d\n",HHr,MMr);
-    sprintf(out+strlen(out),"time sunset: %02d:%02d\n",HHs,MMs);
+    myout(sock,1,"time start: %s\n",buf);
+    myout(sock,1,"time sunrise: %02d:%02d\n",HHr,MMr);
+    myout(sock,2,"time sunset: %02d:%02d\n",HHs,MMs);
   }
   else if(strcmp(t1,"seton")==0){
-    sprintf(out+strlen(out),"set relais to on: %s\n",t2);
+    myout(sock,2,"set relais to on: %s\n",t2);
     f=strchr(t2,','); *f='\0';
     en=ex; en->R[0]=10*atoi(t2+1)+atoi(f+1); en->nC=1; en->C[0]=2;
     strcpy(ret,"E0");
   }
   else if(strcmp(t1,"setoff")==0){
-    sprintf(out+strlen(out),"set relais to off: %s\n",t2);
+    smyout(sock,2,"set relais to off: %s\n",t2);
     f=strchr(t2,','); *f='\0';
     en=ex; en->R[0]=10*atoi(t2+1)+atoi(f+1); en->nC=1; en->C[0]=3;
     strcpy(ret,"E0");
   }
   else if(strcmp(t1,"showon")==0){
-    sprintf(out+strlen(out),"show relais on:");
+    myout(sock,2,"show relais on:");
     for(q=0;q<TOTRELAIS;q++)if(relais[q]==1)sprintf(out+strlen(out)," R%d,%d",q/10,q%10);
     sprintf(out+strlen(out),"\n");
   }
@@ -75,33 +74,34 @@ char * managewww(int sock){
       en=ee+q;
       for(;;){
         if(en->event==0)break;
-        sprintf(out+strlen(out),"-- EE %d\n",en->event);
+        myout(sock,1,"-- EE %d\n",en->event);
         if(en->nR>0){
-          sprintf(out+strlen(out),"R");
-          for(j=0;j<en->nR;j++)sprintf(out+strlen(out)," %d,%d",en->R[j]/10,en->R[j]%10);
-          sprintf(out+strlen(out),"\n");
+          myout(sock,1,"R");
+          for(j=0;j<en->nR;j++)myout(sock,1," %d,%d",en->R[j]/10,en->R[j]%10);
+          myout(sock,1,"\n");
         }
         if(en->nC>0){
-          sprintf(out+strlen(out),"C");
-          for(j=0;j<en->nC;j++)sprintf(out+strlen(out)," %d",en->C[j]);
-          sprintf(out+strlen(out),"\n");
+          myout(sock,1,"C");
+          for(j=0;j<en->nC;j++)myout(sock,1," %d",en->C[j]);
+          myout(sock,1,"\n");
         }
         if(en->nT>0){
-          sprintf(out+strlen(out),"T");
-          for(j=0;j<en->nT;j++)sprintf(out+strlen(out)," %d,%d,%d",(en->T[j]%1000)/10,en->T[j]%10,en->T[j]/1000);
-          sprintf(out+strlen(out),"\n");
+          myout(sock,1,"T");
+          for(j=0;j<en->nT;j++)myout(sock,1," %d,%d,%d",(en->T[j]%1000)/10,en->T[j]%10,en->T[j]/1000);
+          myout(sock,1,"\n");
         }
         if(en->next==NULL)break;
         en=en->next;
       }
     }
+    myout(sock,2,"");
   }
   else if(strcmp(t1,"inject")==0){
-    sprintf(out+strlen(out),"inject: %s\n",t2);
+    myout(sock,2,"inject: %s\n",t2);
     strcpy(ret,t2);
   }
   else if(strcmp(t1,"quit")==0){
-    sprintf(out+strlen(out),"quitting\n");
+    myout(sock,2,"quitting\n");
     quit=1;
   }
   else if(strcmp(t1,"help")==0){
@@ -114,8 +114,7 @@ char * managewww(int sock){
     myout(sock,1,"quit, shutdown the system\n");
     myout(sock,2,"help, this help\n");
   }
-  else sprintf(out+strlen(out),"command not find\n");
-  sendto(sock,out,strlen(out),0,&from,fromlen);
+  else myout(sock,2,"command not find\n");
   if(quit==1){
     fp=fopen(SAVESTATUS,"wb");
     fwrite(relais,sizeof(uint8_t),TOTRELAIS,fp);
@@ -123,7 +122,6 @@ char * managewww(int sock){
     usleep(2000000);
     exit(0);
   }
-  free(out);
   return ret;
 }
 
