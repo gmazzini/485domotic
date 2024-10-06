@@ -42,11 +42,11 @@ char * managewww(int sock){
     quit=1;
   }
   else if(strcmp(t1,"help")==0){
-    printf(out,"time, show actual time informations\n");
-    printf(out+strlen(out),"showon, show relais in on state\n");
-    printf(out+strlen(out),"inject xxx, inject the xxx event (like Ki,j or Ew) in the system\n");
-    printf(out+strlen(out),"quit, shutdown the system\n");
-    printf(out+strlen(out),"help, this help\n");
+    sprintf(out,"time, show actual time informations\n");
+    sprintf(out+strlen(out),"showon, show relais in on state\n");
+    sprintf(out+strlen(out),"inject xxx, inject the xxx event (like Ki,j or Ew) in the system\n");
+    sprintf(out+strlen(out),"quit, shutdown the system\n");
+    sprintf(out+strlen(out),"help, this help\n");
   }
   else sprintf(out,"command not find\n");
   sendto(sock,out,strlen(out),0,&from,fromlen);
