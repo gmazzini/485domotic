@@ -1,5 +1,6 @@
 #define PI 3.1415926
 #define ZENITH 1
+#include <stdarg.h>
 
 void myout(int sock,struct sockaddr *from,int end,char *format, ...){
   static char out[1000];
