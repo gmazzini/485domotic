@@ -181,7 +181,7 @@ int main(){
     time(&myt);
     info=localtime(&myt);
   //  if(rr>=0)*(buf+rr)='\0';
-    if(strlen(mye)>0)strcpu(buf,mye);
+    if(strlen(mye)>0)strcpy(buf,mye);
     else {
       if(info->tm_min!=last_min){
         last_min=info->tm_min;
