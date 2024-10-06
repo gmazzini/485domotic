@@ -12,6 +12,7 @@
 #define TOTEK 500
 #define TOTEX 20
 #define TOTRELAIS 120
+#define LOGLEN 1000
 #define LAT 44.5
 #define LNG 11.3
 #define CONFIG "config"
@@ -28,7 +29,13 @@ struct ek{
     uint16_t *T;
     struct ek *next;
 };
+strict log{
+  time_t time;
+  uint8_t action;
+  char desc[10];
+};
 struct ek *ee,*ex;
+struct log *log;
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS];
 time_t start;
 #include "functions.c"
@@ -181,6 +188,7 @@ int main(){
   en->D=(uint64_t *)malloc(23*sizeof(uint64_t)); for(q=0;q<23;q++)en->D[q]=0;
   en->nT=0; en->T=NULL;
   en->next=NULL;
+  log=(struct log *)malloc(LOGLEN*sizeof(struct log));
   
   // receiving events
   for(;;){
