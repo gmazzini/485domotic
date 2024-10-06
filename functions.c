@@ -57,9 +57,9 @@ char * managewww(int sock){
       for(;;){
         if(en->event==0)break;
         sprintf(out+strlen(out),"EE %d\n",en->event);
-        sprintf(out+strlen(out),"R"); for(j=0;j<en->nR;j++)printf(out+strlen(out)," %d",en->R[j]); printf(out+strlen(out),"\n");
-        sprintf(out+strlen(out),"C"); for(j=0;j<en->nC;j++)printf(out+strlen(out)," %d",en->C[j]); printf(out+strlen(out),"\n");
-        sprintf(out+strlen(out),"T"); for(j=0;j<en->nT;j++)printf(out+strlen(out)," %d",en->T[j]); printf(out+strlen(out),"\n");
+        sprintf(out+strlen(out),"R"); for(j=0;j<en->nR;j++)sprintf(out+strlen(out)," %d",en->R[j]); sprintf(out+strlen(out),"\n");
+        sprintf(out+strlen(out),"C"); for(j=0;j<en->nC;j++)sprintf(out+strlen(out)," %d",en->C[j]); sprintf(out+strlen(out),"\n");
+        sprintf(out+strlen(out),"T"); for(j=0;j<en->nT;j++)sprintf(out+strlen(out)," %d",en->T[j]); sprintf(out+strlen(out),"\n");
         if(en->next==NULL)break;
         en=en->next;
       }
