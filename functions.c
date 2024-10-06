@@ -76,7 +76,8 @@ char * managewww(int sock){
       else en=ex+q-TOTEK;
       for(;;){
         if(en->event==0)break;
-        myout(sock,1,"---- EK K%d,%d %d ----\n",q/10,q%10,en->event);
+        if(q<TOTEK)myout(sock,1,"---- EK K%d,%d %d ----\n",q/10,q%10,en->event);
+        else myout(sock,1,"---- EX E%d %d ----\n",q-TOTEK,en->event);
         if(en->nR>0){
           for(j=0;j<en->nR;j++)myout(sock,1,"R%d,%d ",en->R[j]/10,en->R[j]%10);
           myout(sock,1,"\n");
