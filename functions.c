@@ -100,14 +100,14 @@ char * managewww(int sock){
     quit=1;
   }
   else if(strcmp(t1,"help")==0){
-    sprintf(out+strlen(out),"status, show actual status informations\n");
-    sprintf(out+strlen(out),"seton Ri,j, set the relais Ri,j to on\n");
-    sprintf(out+strlen(out),"setoff Ri,j, set the relais Ri,j to off\n");
-    sprintf(out+strlen(out),"showon, show relais in on state\n");
-    sprintf(out+strlen(out),"showevents, show all the events\n");
-    sprintf(out+strlen(out),"inject xxx, inject the xxx event (like Ki,j or Ew) in the system\n");
-    sprintf(out+strlen(out),"quit, shutdown the system\n");
-    sprintf(out+strlen(out),"help, this help\n");
+    myout(sock,0,"status, show actual status informations\n");
+    myout(sock,0,"seton Ri,j, set the relais Ri,j to on\n");
+    myout(sock,0,"setoff Ri,j, set the relais Ri,j to off\n");
+    myout(sock,0,"showon, show relais in on state\n");
+    myout(sock,0,"showevents, show all the events\n");
+    myout(sock,0,"inject xxx, inject the xxx event (like Ki,j or Ew) in the system\n");
+    myout(sock,0,"quit, shutdown the system\n");
+    myout(sock,1,"help, this help\n");
   }
   else sprintf(out+strlen(out),"command not find\n");
   sendto(sock,out,strlen(out),0,&from,fromlen);
