@@ -81,8 +81,7 @@ char * managewww(int sock){
           myout(sock,1,"\n");
         }
         if(en->nC>0){
-          myout(sock,1,"C");
-          for(j=0;j<en->nC;j++)myout(sock,1," %d",en->C[j]);
+          for(j=0;j<en->nC;j++)myout(sock,1,"C%s ",cmd[en->C[j]]);
           myout(sock,1,"\n");
         }
         if(en->nT>0){
