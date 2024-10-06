@@ -15,7 +15,7 @@ char * managewww(int sock){
   if(rr<1)return ret;
   *(buf+rr)='\0';
   t1=strtok(buf," \n\r\t");
-  t2=strtok(NULL," \n\r\t")
+  t2=strtok(NULL," \n\r\t");
   if(strcmp(t1,"sunrise")==0){
     sprintf(out,"sunrise: %02d%02d\n",HHr,MMr);
   }
