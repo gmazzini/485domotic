@@ -53,8 +53,8 @@ void sun(int year,int month,int day,float lat,float lng){
   Tr=Hr+RAr-(0.06571*tr)-6.622;
   Ts=Hs+RAs-(0.06571*ts)-6.622;
   time(&myt);
-  loctime=loctime(&myt);
-  gmttime=gmttime(&myt);
+  loctime=localtime(&myt);
+  gmttime=gmtime(&myt);
   delta=loctime->tm_hour-gmttime->tm_hour;
   UTr=fmod(24.0+Tr-lngHour+delta,24.0);
   UTs=fmod(24.0+Ts-lngHour+delta,24.0);
