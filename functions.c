@@ -24,8 +24,8 @@ char * managewww(int sock){
   t1=strtok(buf," \n\r\t");
   t2=strtok(NULL," \n\r\t");
   if(strcmp(t1,"status")==0){
-    for(y=0,q=0;q<TOTRELAIS;q++)if(relais[q]==1)y++;
-    sprintf(out+strlen(out),"relais on: %d\n",y);
+    for(j=0,q=0;q<TOTRELAIS;q++)if(relais[q]==1)j++;
+    sprintf(out+strlen(out),"relais on: %d\n",j);
     sprintf(out+strlen(out),"events: %d\n",nevent);
     time(&myt); info=localtime(&myt); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
     sprintf(out+strlen(out),"time now: %s\n",buf);
