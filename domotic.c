@@ -87,8 +87,9 @@ int main(){
           break;
         case 'D':
           f=strchr(token,','); *f='\0';
-          i=((*(f+1)-'0')*10+(*(f+2)-'0'))*60+(*(f+3)-'0')*10+(*(f+4)-'0');
-          for(q=((*(token+1)-'0')*10+(*(token+2)-'0'))*60+(*(token+3)-'0')*10+(*(token+4)-'0');q<=i;q++)lD[q>>6]|=(1ULL<<(q%64));
+          i=atoi(token+3); *(token+3)='\0'; i+=atoi(token+1)*60;
+          j=atoi(f+3); *(f+3)='\0'; j+=atoi(f+1)*60;
+          for(q=i;q<=j;q++)lD[q/64]|=(1ULL<<(q%64));
           break;
         case 'C':
           slC=0;
@@ -230,7 +231,7 @@ int main(){
     for(;;){
       if(en->event==0)break;
       j=info->tm_hour*60+info->tm_min;
-      if((en->D[j>>6] & (1ULL<<(j%64)))==0){
+      if((en->D[j/64] & (1ULL<<(j%64)))==0){
         for(j=0;j<en->nC;j++){
           switch(en->C[j]){
             case 1:
