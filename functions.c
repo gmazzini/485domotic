@@ -35,6 +35,12 @@ char * managewww(int sock){
     en=ex; en->R[0]=10*atoi(t2+1)+atoi(f+1); en->nC=1; en->C[0]=2;
     strcpy(ret,"E0");
   }
+  else if(strcmp(t1,"setoff")==0){
+    sprintf(out,"set relais to off: %s\n",t2);
+    f=strchr(t2,','); *f='\0';
+    en=ex; en->R[0]=10*atoi(t2+1)+atoi(f+1); en->nC=1; en->C[0]=3;
+    strcpy(ret,"E0");
+  }
   else if(strcmp(t1,"showon")==0){
     sprintf(out,"show relais on:");
     for(q=0;q<TOTRELAIS;q++)if(relais[q]==1)sprintf(out+strlen(out)," R%d,%d",q/10,q%10);
