@@ -15,15 +15,16 @@
 #define LAT 44.5
 #define LNG 11.3
 
-void sun(int,int,int,float,float,char *,char *);
+void sun(int,int,int,float,float,uint8_t *,uint8_t *,uint8_t *,uint8_t *);
 
 int main(){
   FILE *fp;
-  char buf[100],relais[TOTRELAIS],mod[TOTRELAIS],HHMMr[5],HHMMs[5];
+  char buf[100],relais[TOTRELAIS],mod[TOTRELAIS];
   char *token,*f,*g;
   time_t myt;
   struct tm *info;
-  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30;
+  uint8_t HHr,MMr,HHs,MMs;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30,esun;
   uint64_t *lD;
   struct ek{
     uint8_t act;
@@ -163,8 +164,8 @@ int main(){
   last_hour=info->tm_hour;
   sched=0;
   every10=every30=100;
-  sun(1900+info->tm_year,1+info->tm_mon,info->tm_mday,LAT,LNG,HHMMr,HHMMs);
-  printf("Suntise:%s Sunset:%s %d %d %d\n",HHMMr,HHMMs,1900+info->tm_year,1+info->tm_mon,info->tm_mday);
+  sun(1900+info->tm_year,1+info->tm_mon,info->tm_mday,LAT,LNG,&HHr,&MMr,&HHs,&MMs);
+  esun=0;
   
   // receiving events
   for(;;){
@@ -191,6 +192,7 @@ int main(){
       }
       else if(sched!=5 && info->tm_hour==0 && info->tm_min==0){
         sched=5;
+        sun(1900+info->tm_year,1+info->tm_mon,info->tm_mday,LAT,LNG,&HHr,&MMr,&HHs,&MMs);
         strcpy(buf,"E5");
       }
       else if(sched!=6 && info->tm_hour==6 && info->tm_min==0){
@@ -204,6 +206,14 @@ int main(){
       else if(sched!=8 && info->tm_hour==18 && info->tm_min==0){
         sched=8;
         strcpy(buf,"E8");
+      }
+      else if(esun!=9 && info->tm_hour==HHr && info->tm_min==MMr){
+        esun=9;
+        strcpy(buf,"E9");
+      }
+      else if(esun!=10 && info->tm_hour==HHs && info->tm_min==MMs){
+        esun=10;
+        strcpy(buf,"E10");
       }
       else {
         usleep(10000);
