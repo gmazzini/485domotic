@@ -8,7 +8,6 @@
 #include "arpa/inet.h"
 #include "sys/socket.h"
 #include "unistd.h"
-#define PORTCMD 55555
 #define PORTWWW 55556
 #define TOTEK 500
 #define TOTEX 20
@@ -40,7 +39,7 @@ int main(){
     struct ek *next;
   };
   struct ek *ee,*ex,*en,*em;
-  int sock,sockwww,rr;
+  int sockwww;
   unsigned int fromlen;
   struct sockaddr from;
   struct sockaddr_in server_addr;
@@ -153,16 +152,12 @@ int main(){
 
   // initilize 
   for(q=0;q<TOTRELAIS;q++)relais[q]=0;
-  sock=socket(AF_INET,SOCK_DGRAM,0);
   fromlen=sizeof(from);
-  fcntl(sock,F_SETFL,O_NONBLOCK);
-  server_addr.sin_family=AF_INET;
-  server_addr.sin_port=htons(PORTCMD);
-  server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
-  bind(sock,(struct sockaddr *)&server_addr,sizeof(server_addr));
   sockwww=socket(AF_INET,SOCK_DGRAM,0);
   fcntl(sockwww,F_SETFL,O_NONBLOCK);
+  server_addr.sin_family=AF_INET;
   server_addr.sin_port=htons(PORTWWW);
+  server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
   bind(sockwww,(struct sockaddr *)&server_addr,sizeof(server_addr));
   time(&myt);
   info=localtime(&myt);
@@ -176,11 +171,8 @@ int main(){
   // receiving events
   for(;;){
     mye=managewww(sockwww);
-    
-//    rr=recvfrom(sock,buf,100,0,&from,&fromlen);
     time(&myt);
     info=localtime(&myt);
-  //  if(rr>=0)*(buf+rr)='\0';
     if(strlen(mye)>0)strcpy(buf,mye);
     else {
       if(info->tm_min!=last_min){
