@@ -22,7 +22,7 @@ void managewww(int sock){
   if(rr<1)return;
   *(buf+rr)='\0';
   printf("%s\n",buf);
-  sendto(sock,buf,strlen(buf),MSG_CONFIRM,&from,fromlen);
+  sendto(sock,buf,strlen(buf),0,&from,fromlen);
 }
 
 void sun(int year,int month,int day,float lat,float lng,uint8_t *HHr,uint8_t *MMr,uint8_t *HHs,uint8_t *MMs){
