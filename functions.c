@@ -4,7 +4,8 @@
 #include <stdarg.h>
 
 struct sockaddr from;
-unsigned int fromlen=sizeof(from);;
+unsigned int fromlen=sizeof(from);
+char *cmd[]={"onoff","on","off","condon","condoff"};
 
 void myout(int sock,int end,char *format, ...){
   static char out[PAGE*3];
@@ -74,10 +75,9 @@ char * managewww(int sock){
       en=ee+q;
       for(;;){
         if(en->event==0)break;
-        myout(sock,1,"-- EE %d\n",en->event);
+        myout(sock,1,"---- EK K%d,%d %d ----\n",q/10,q%10,en->event);
         if(en->nR>0){
-          myout(sock,1,"R");
-          for(j=0;j<en->nR;j++)myout(sock,1," %d,%d",en->R[j]/10,en->R[j]%10);
+          for(j=0;j<en->nR;j++)myout(sock,1,"R%d,%d ",en->R[j]/10,en->R[j]%10);
           myout(sock,1,"\n");
         }
         if(en->nC>0){
@@ -86,8 +86,7 @@ char * managewww(int sock){
           myout(sock,1,"\n");
         }
         if(en->nT>0){
-          myout(sock,1,"T");
-          for(j=0;j<en->nT;j++)myout(sock,1," %d,%d,%d",(en->T[j]%1000)/10,en->T[j]%10,en->T[j]/1000);
+          for(j=0;j<en->nT;j++)myout(sock,1,"T%d,%d,%d ",(en->T[j]%1000)/10,en->T[j]%10,en->T[j]/1000);
           myout(sock,1,"\n");
         }
         if(en->next==NULL)break;
