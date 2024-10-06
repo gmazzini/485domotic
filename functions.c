@@ -15,14 +15,14 @@ void managewww(int sock){
   struct sockaddr from;
   unsigned int fromlen;
   fromlen=sizeof(from);
-  char buf[100];
+  char buf[100],out[1000];
   int rr;
  
   rr=recvfrom(sock,buf,100,0,&from,&fromlen);
   if(rr<1)return;
   *(buf+rr)='\0';
-  printf("ciaoo%sciaooo\n",buf);
-  sendto(sock,buf,strlen(buf),0,&from,fromlen);
+  sprintf(out,"ciao %s ciao\n",buf);
+  sendto(sock,out,strlen(out),0,&from,fromlen);
 }
 
 void sun(int year,int month,int day,float lat,float lng,uint8_t *HHr,uint8_t *MMr,uint8_t *HHs,uint8_t *MMs){
