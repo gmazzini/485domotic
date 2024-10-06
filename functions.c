@@ -5,7 +5,7 @@
 
 struct sockaddr from;
 unsigned int fromlen=sizeof(from);
-char *cmd[]={"onoff","on","off","condon","condoff"};
+char *cmd[]={"","onoff","on","off","condon","condoff"};
 
 void myout(int sock,int end,char *format, ...){
   static char out[PAGE*3];
