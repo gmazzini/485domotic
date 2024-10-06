@@ -11,7 +11,15 @@
 #define PI 3.1415926
 #define ZENITH 1
 
-void managewww(char *buf,int rr){
+void managewww(int sock){
+  struct sockaddr from;
+  unsigned int fromlen;
+  fromlen=sizeof(from);
+  char buf[100];
+  int rr;
+ 
+  rr=recvfrom(sockwww,buf,100,0,&from,&fromlen);
+  if(rr<1)retrun;
   *(buf+rr)='\0';
   printf("%s\n",buf);
 }
