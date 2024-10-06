@@ -37,7 +37,7 @@ struct log{
 struct ek *ee,*ex;
 struct log *mylog;
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS];
-iunt16_t nevent;
+uint16_t nevent;
 time_t start;
 #include "functions.c"
 
