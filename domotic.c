@@ -18,6 +18,7 @@
 #define SAVESTATUS "status"
 
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS];
+time_t start;
 #include "functions.c"
 
 int main(){
@@ -45,7 +46,7 @@ int main(){
   unsigned int fromlen;
   struct sockaddr from;
   struct sockaddr_in server_addr;
-  
+
   // parsing configuration file
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
   ex=(struct ek *)malloc(TOTEX*sizeof(struct ek));
@@ -152,7 +153,8 @@ int main(){
   free(lD);
   free(lT);
 
-  // initilize 
+  // initilize
+  time(&start);
   fromlen=sizeof(from);
   sockwww=socket(AF_INET,SOCK_DGRAM,0);
   fcntl(sockwww,F_SETFL,O_NONBLOCK);
