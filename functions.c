@@ -21,7 +21,7 @@ void managewww(int sock){
   rr=recvfrom(sock,buf,100,0,&from,&fromlen);
   if(rr<1)return;
   *(buf+rr)='\0';
-  printf("%s\n",buf);
+  printf("ciaoo%sciaooo\n",buf);
   sendto(sock,buf,strlen(buf),0,&from,fromlen);
 }
 
