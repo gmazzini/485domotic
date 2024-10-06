@@ -1,19 +1,20 @@
 #define PI 3.1415926
 #define ZENITH 1
+#define PAGE 100
 #include <stdarg.h>
 
 struct sockaddr from;
 unsigned int fromlen=sizeof(from);;
 
 void myout(int sock,int end,char *format, ...){
-  static char out[1000];
+  static char out[PAGE*3];
   if(end==0)*out='\0';
   unsigned int fromlen=sizeof(from);
   va_list argptr;
   va_start(argptr,format);
   vsprintf(out+strlen(out),format,argptr);
   va_end(argptr);
-  if(strlen(out)>500 || end==2){
+  if(strlen(out)>PAGE || end==2){
     if(end==1)sprintf(out+strlen(out),"<next>\n");
     else sprintf(out+strlen(out),"<end>\n");
     sendto(sock,out,strlen(out),0,&from,fromlen);
