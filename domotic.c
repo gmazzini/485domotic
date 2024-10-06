@@ -153,7 +153,6 @@ int main(){
   free(lT);
 
   // initilize 
-  for(q=0;q<TOTRELAIS;q++)relais[q]=0;
   fromlen=sizeof(from);
   sockwww=socket(AF_INET,SOCK_DGRAM,0);
   fcntl(sockwww,F_SETFL,O_NONBLOCK);
@@ -169,6 +168,9 @@ int main(){
   every10=every30=100;
   sun(1900+info->tm_year,1+info->tm_mon,info->tm_mday,LAT,LNG,&HHr,&MMr,&HHs,&MMs);
   esun=0;
+  fp=fopen(SAVESTATUS,"rb");
+  fread(relais,sizeof(uint8_t),TOTRELAIS,fp);
+  fclose(fp);
   
   // receiving events
   for(;;){
