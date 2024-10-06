@@ -238,12 +238,10 @@ int main(){
     if(buf[0]=='K'){
       f=strchr(buf,','); *f='\0';
       q=10*atoi(buf+1)+atoi(f+1);
-      if(q==0)break;
       en=ee+q;
     }
     else if(buf[0]=='E'){
       q=atoi(buf+1);
-      if(q==0)break;
       en=ex+q;
     }
     else continue;
