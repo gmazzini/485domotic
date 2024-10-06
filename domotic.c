@@ -101,9 +101,9 @@ int main(){
           break;
       }
     }
-    for(q=0;q<nlK;q++){
-      i=lK[q];
-      en=ee+i;      
+    for(q=0;q<nlK+nlE;q++){
+      if(q<nlk)en=ee+lK[q];
+      else en=ex+lE[q-nlK]; 
       if(en->event>0){
         for(;en->next!=NULL;en=en->next);
         em=(struct ek *)malloc(sizeof(struct ek));
@@ -123,31 +123,7 @@ int main(){
       en->T=(uint16_t *)malloc(nlT*sizeof(uint16_t));
       for(j=0;j<nlT;j++)en->T[j]=lT[j];
       en->next=NULL;
-    }
-    for(q=0;q<nlE;q++){
-      i=lE[q];
-      en=ex+i;      
-      if(en->event>0){
-        for(;en->next!=NULL;en=en->next);
-        em=(struct ek *)malloc(sizeof(struct ek));
-        en->next=em;
-        en=em;
-      } 
-      en->event=nevent++;
-      en->nR=nlR;
-      en->R=(uint16_t *)malloc(nlR*sizeof(uint16_t));
-      for(j=0;j<nlR;j++)en->R[j]=lR[j];
-      en->nC=nlC;
-      en->C=(uint16_t *)malloc(nlC*sizeof(uint16_t));
-      for(j=0;j<nlC;j++)en->C[j]=lC[j];
-      en->D=(uint64_t *)malloc(23*sizeof(uint64_t));
-      for(j=0;j<23;j++)en->D[j]=lD[j];
-      en->nT=nlT;
-      en->T=(uint16_t *)malloc(nlT*sizeof(uint16_t));
-      for(j=0;j<nlT;j++)en->T[j]=lT[j];
-      en->next=NULL;
-    }
-    
+    } 
   }
   fclose(fp);
   free(lK);
