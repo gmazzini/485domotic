@@ -13,7 +13,7 @@
 #define TOTEX 20
 #define TOTRELAIS 120
 
-void sun(int,int,int,float,float);
+void sun(int,int,int,float,float,char *,char *);
 
 int main(){
   FILE *fp;
