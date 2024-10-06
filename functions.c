@@ -1,11 +1,22 @@
 #define PI 3.1415926
 #define ZENITH 1
 
+void myout(int sock,struct sockaddr *from,int end,char *format, ...){
+  static char out[1000];
+  unsigned int fromlen=sizeof(from);
+  va_list argptr;
+  va_start(argptr,format);
+  vsprintf(out+strlen(out),format,argptr);
+  va_end(argptr);
+  if(strlen(out)>500 || end==1){
+    sendto(sock,out,strlen(out),0,&from,fromlen);
+  }
+}
+
 char * managewww(int sock){
   static char ret[50];
   struct sockaddr from;
-  unsigned int fromlen;
-  fromlen=sizeof(from);
+  unsigned int fromlen=sizeof(from);
   char buf[100],*out,*t1,*t2,*f;
   int rr,quit;
   uint16_t q,j;
