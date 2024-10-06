@@ -17,6 +17,18 @@
 #define CONFIG "config"
 #define SAVESTATUS "status"
 
+struct ek{
+    uint8_t act;
+    uint16_t nR;
+    uint16_t *R;
+    uint16_t nC;
+    uint16_t *C;
+    uint64_t *D;
+    uint16_t nT;
+    uint16_t *T;
+    struct ek *next;
+};
+struct ek *ee,*ex;
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS];
 time_t start;
 #include "functions.c"
@@ -30,18 +42,7 @@ int main(){
   struct tm *info;
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30,esun;
   uint64_t *lD;
-  struct ek{
-    uint8_t act;
-    uint16_t nR;
-    uint16_t *R;
-    uint16_t nC;
-    uint16_t *C;
-    uint64_t *D;
-    uint16_t nT;
-    uint16_t *T;
-    struct ek *next;
-  };
-  struct ek *ee,*ex,*en,*em;
+  struct ek *en,*em;
   int sockwww;
   unsigned int fromlen;
   struct sockaddr from;
@@ -173,6 +174,12 @@ int main(){
   fp=fopen(SAVESTATUS,"rb");
   fread(relais,sizeof(uint8_t),TOTRELAIS,fp);
   fclose(fp);
+  en=ex; en->act=1; 
+  en->nR=1; en->R=(uint16_t *)malloc(sizeof(uint16_t)); en->R[0]=0;
+  en->nC=1; en->C=(uint16_t *)malloc(sizeof(uint16_t)); en->C[0]=0;
+  en->D=(uint64_t *)malloc(23*sizeof(uint64_t)); for(q=0;q<23;q++)en->D[q]=0;
+  en->nT=0; en->T=NULL;
+  en->next=NULL;
   
   // receiving events
   for(;;){
