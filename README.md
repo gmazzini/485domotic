@@ -6,6 +6,7 @@ E=Event w=event
 D=deactive i=HHMM start,j=HHMM stop
 T=test i=device,j=relais,s=status(0|1)
 w:
+  0 Reserved for internal communications
   1 Every minute
   2 Every 10 minutes
   3 Every 30 minutes
