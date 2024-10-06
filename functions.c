@@ -6,7 +6,7 @@ char * managewww(int sock){
   struct sockaddr from;
   unsigned int fromlen;
   fromlen=sizeof(from);
-  char buf[100],out[2000],*t1,*t2,*f;
+  char buf[100],out[10000],*t1,*t2,*f;
   int rr,quit;
   uint16_t q,j;
   FILE *fp;
