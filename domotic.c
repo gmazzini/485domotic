@@ -17,6 +17,7 @@
 #define LNG 11.3
 
 void sun(int,int,int,float,float,uint8_t *,uint8_t *,uint8_t *,uint8_t *);
+void managewww(char *,int);
 
 int main(){
   FILE *fp;
@@ -174,6 +175,8 @@ int main(){
   
   // receiving events
   for(;;){
+    rr=recvfrom(sockwww,buf,100,0,&from,&fromlen);
+    if(rr>0)managewww(buf,rr);
     rr=recvfrom(sock,buf,100,0,&from,&fromlen);
     time(&myt);
     info=localtime(&myt);
