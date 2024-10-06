@@ -52,8 +52,7 @@ char * managewww(int sock){
     sprintf(out+strlen(out),"\n");
   }
   else if(strcmp(t1,"showevents")==0){
-    sprintf(out+strlen(out),"NLK %d\n",nlK);
-    for(q=0;q<nlK;q++){ // fare nlE
+    for(q=0;q<TOTEK;q++){ // fare TOTEX
       en=ee+q;
       for(;;){
         if(en->event==0)break;
