@@ -8,7 +8,7 @@ char * managewww(int sock){
   fromlen=sizeof(from);
   char buf[100],out[2000],*t1,*t2,*f;
   int rr,quit;
-  uint8_t 16,y;
+  uint16_t q,y;
   FILE *fp;
   time_t myt;
   struct tm *info;
