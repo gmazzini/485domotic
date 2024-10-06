@@ -15,6 +15,9 @@ void sun(int year,int month,int day,float lat,float lng){
   float N1,N2,N3,N,lngHour,tr,ts,Mr,Ms,Lr,Ls;
   float RAr,RAs,Lquadrantr,Lquadrants,RAquadrantr,RAquadrants;
   float sinDecr,sinDecs,cosDecr,cosDecs,cosHr,cosHs,Hr,Hs,Tr,Ts,UTr,UTs;
+  time_t myt;
+  struct tm *loctime,*gmttime;
+  int delta;
   
   N1=floor(275*month/9);
   N2=floor((month+9)/12);
@@ -49,7 +52,12 @@ void sun(int year,int month,int day,float lat,float lng){
   Hs=Hs/15;
   Tr=Hr+RAr-(0.06571*tr)-6.622;
   Ts=Hs+RAs-(0.06571*ts)-6.622;
-  UTr=fmod(24.0+Tr-lngHour,24.0);
-  UTs=fmod(24.0+Ts-lngHour,24.0);
+  time(&myt);
+  loctime=loctime(&myt);
+  gmttime=gmttime(&myt);
+  delta=loctime->tm_hour-gmttime->tm_hour;
+  UTr=fmod(24.0+Tr-lngHour+delta,24.0);
+  UTs=fmod(24.0+Ts-lngHour+delta,24.0);
+  
   printf("SUN %f %f\n",UTr,UTs);
 }
