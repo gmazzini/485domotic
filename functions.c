@@ -1,6 +1,6 @@
 #define PI 3.1415926
 #define ZENITH 1
-#define PAGE 100
+#define PAGE 500
 #include <stdarg.h>
 
 struct sockaddr from;
