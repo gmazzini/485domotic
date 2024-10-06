@@ -6,12 +6,13 @@ char * managewww(int sock){
   struct sockaddr from;
   unsigned int fromlen;
   fromlen=sizeof(from);
-  char buf[100],out[1000],*t1,*t2;
+  char buf[100],out[1000],*t1,*t2,*f;
   int rr,quit;
   uint8_t q;
   FILE *fp;
   time_t myt;
   struct tm *info;
+  struct ek *en;
 
   *ret='\0';
   quit=0;
@@ -28,8 +29,14 @@ char * managewww(int sock){
     sprintf(out+strlen(out),"sunrise: %02d%02d\n",HHr,MMr);
     sprintf(out+strlen(out),"sunset: %02d%02d\n",HHs,MMs);
   }
+  else if(strcmp(t1,"seton")==0){
+    sprintf(out,"set relais to on: %s",t2);
+    f=strchr(t2,','); *f='\0';
+    en=ex; en->R[0]=10*atoi(t2+1)+atoi(f+1); en->nC=1; en->C[j]=2;
+    strcpy(ret,"E0");
+  }
   else if(strcmp(t1,"showon")==0){
-    sprintf(out,"relais on:");
+    sprintf(out,"show relais on:");
     for(q=0;q<TOTRELAIS;q++)if(relais[q]==1)sprintf(out+strlen(out)," R%d,%d",q/10,q%10);
     sprintf(out+strlen(out),"\n");
   }
@@ -43,6 +50,7 @@ char * managewww(int sock){
   }
   else if(strcmp(t1,"help")==0){
     sprintf(out,"time, show actual time informations\n");
+    sprintf(out,"seton Ri,j, set the relais Ri,j to on\n");
     sprintf(out+strlen(out),"showon, show relais in on state\n");
     sprintf(out+strlen(out),"inject xxx, inject the xxx event (like Ki,j or Ew) in the system\n");
     sprintf(out+strlen(out),"quit, shutdown the system\n");
