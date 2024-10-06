@@ -11,6 +11,11 @@
 #define PI 3.1415926
 #define ZENITH 1
 
+void managewww(char *buf,int rr){
+  *(buf+rr)='\0';
+  printf("%s\n",buf);
+}
+
 void sun(int year,int month,int day,float lat,float lng,uint8_t *HHr,uint8_t *MMr,uint8_t *HHs,uint8_t *MMs){
   float N1,N2,N3,N,lngHour,tr,ts,Mr,Ms,Lr,Ls;
   float RAr,RAs,Lquadrantr,Lquadrants,RAquadrantr,RAquadrants;
