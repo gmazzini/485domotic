@@ -12,7 +12,13 @@ void managewww(int sock){
   if(rr<1)return;
   *(buf+rr)='\0';
   if(strcmp(buf,"show sunrise")==0){
-    sprintf(out,"sunrise: %d%d\n",HHr,MMr);
+    sprintf(out,"sunrise: %02d%02d\n",HHr,MMr);
+  }
+  else if(strcmp(buf,"show sunset")==0){
+    sprintf(out,"sunset: %02d%02d\n",HHs,MMs);
+  }
+  else if(strcmp(buf,"help")==0){
+    sprintf(out,"show sunset\nshow sunrise\nhelp\n");
   }
   else sprintf(out,"command not find\n");
   sendto(sock,out,strlen(out),0,&from,fromlen);
