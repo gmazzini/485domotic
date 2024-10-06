@@ -11,7 +11,7 @@
 #define PI 3.1415926
 #define ZENITH 1
 
-void sun(int year,int month,int day,float lat,float lng){
+void sun(int year,int month,int day,float lat,float lng,char *HHMMr,char *HHMMs){
   float N1,N2,N3,N,lngHour,tr,ts,Mr,Ms,Lr,Ls;
   float RAr,RAs,Lquadrantr,Lquadrants,RAquadrantr,RAquadrants;
   float sinDecr,sinDecs,cosDecr,cosDecs,cosHr,cosHs,Hr,Hs,Tr,Ts,UTr,UTs;
@@ -58,6 +58,6 @@ void sun(int year,int month,int day,float lat,float lng){
   delta=loctime->tm_hour-gmttime->tm_hour;
   UTr=fmod(24.0+Tr-lngHour+delta,24.0);
   UTs=fmod(24.0+Ts-lngHour+delta,24.0);
-  
-  printf("SUN %f %f\n",UTr,UTs);
+  sprintf(HHMMr,"%02d%02d",floor(UTr),floor((UTr-floor(UTr))*60));
+  sprintf(HHMMr,"%02d%02d",floor(UTs),floor((UTs-floor(UTs))*60));
 }
