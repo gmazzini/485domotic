@@ -17,7 +17,7 @@ void sun(int,int,int,float,float);
 
 int main(){
   FILE *fp;
-  char buf[100],relais[TOTRELAIS],mod[TOTRELAIS];
+  char buf[100],relais[TOTRELAIS],mod[TOTRELAIS],HHMMr[5],HHMMs[5];
   char *token,*f,*g;
   time_t myt;
   struct tm *info;
@@ -146,8 +146,6 @@ int main(){
   free(lD);
   free(lT);
 
-  sun(2024,10,6,44.5,11.3);
-
   // initilize 
   for(q=0;q<TOTRELAIS;q++)relais[q]=0;
   sock=socket(AF_INET,SOCK_DGRAM,0);
@@ -163,6 +161,8 @@ int main(){
   last_hour=info->tm_hour;
   sched=0;
   every10=every30=100;
+  sun(2024,10,6,44.5,11.3,HHMMr,HHMMs);
+  printf("Suntise:%s Sunset:%s\n",HHMMr,HHMMs);
   
   // receiving events
   for(;;){
