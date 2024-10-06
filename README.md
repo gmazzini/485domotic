@@ -14,6 +14,8 @@ w:
   6 Every day at 0600
   7 Every day at 1200
   8 Every day at 1800
+  9 Every sunrise
+  10 Every sunset
 
 onoff {Ki,j} {Ri,j} {Ew} {Di,j}
 off {Ki,j} {Ri,j} {Ew} {Di,j}
