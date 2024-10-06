@@ -19,7 +19,7 @@ void managewww(int sock){
   int rr;
  
   rr=recvfrom(sock,buf,100,0,&from,&fromlen);
-  if(rr<1)retrun;
+  if(rr<1)return;
   *(buf+rr)='\0';
   printf("%s\n",buf);
 }
