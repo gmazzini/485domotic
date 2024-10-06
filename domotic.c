@@ -92,11 +92,7 @@ int main(){
           break;
         case 'C':
           slC=0;
-          if(strcmp(token+1,cmd[1])==0)slC=1;
-          else if(strcmp(token+1,cmd[2])==0)slC=2;
-          else if(strcmp(token+1,cmd[3])==0)slC=3;
-          else if(strcmp(token+1,cmd[4])==0)slC=4;
-          else if(strcmp(token+1,cmd[5])==0)slC=5;
+          for(q=1;q<6;q++)if(strcmp(token+1,cmd[q])==0){slC=q; break;}
           if(slC>0)lC[nlC++]=slC;
           break;
         case 'T':
