@@ -8,7 +8,7 @@ char * managewww(int sock){
   fromlen=sizeof(from);
   char buf[100],out[2000],*t1,*t2,*f;
   int rr,quit;
-  uint8_t q,y;
+  uint8_t 16,y;
   FILE *fp;
   time_t myt;
   struct tm *info;
@@ -51,6 +51,20 @@ char * managewww(int sock){
     for(q=0;q<TOTRELAIS;q++)if(relais[q]==1)sprintf(out+strlen(out)," R%d,%d",q/10,q%10);
     sprintf(out+strlen(out),"\n");
   }
+  else if(strcmp(t1,"showevents")==0){
+    for(q=0;q<nlK;q++){ // fare nlE
+      en=ee+q;
+      for(;;){
+        if(en->event==0)break;
+        sprintf(out+strlen(out),"EE %d\n",en->event);
+        sprintf(out+strlen(out),"R"); for(j=0;j<en->nR;j++)printf(out+strlen(out)," %d",en->R[j]); printf(out+strlen(out),"\n");
+        sprintf(out+strlen(out),"C"); for(j=0;j<en->nC;j++)printf(out+strlen(out)," %d",en->C[j]); printf(out+strlen(out),"\n");
+        sprintf(out+strlen(out),"T"); for(j=0;j<en->nT;j++)printf(out+strlen(out)," %d",en->T[j]); printf(out+strlen(out),"\n");
+        if(en->next==NULL)break;
+        en=en->next;
+      }
+    }
+  }
   else if(strcmp(t1,"inject")==0){
     sprintf(out+strlen(out),"inject: %s\n",t2);
     strcpy(ret,t2);
@@ -64,6 +78,7 @@ char * managewww(int sock){
     sprintf(out+strlen(out),"seton Ri,j, set the relais Ri,j to on\n");
     sprintf(out+strlen(out),"setoff Ri,j, set the relais Ri,j to off\n");
     sprintf(out+strlen(out),"showon, show relais in on state\n");
+    sprintf(out+strlen(out),"showevents, show all the events\n");
     sprintf(out+strlen(out),"inject xxx, inject the xxx event (like Ki,j or Ew) in the system\n");
     sprintf(out+strlen(out),"quit, shutdown the system\n");
     sprintf(out+strlen(out),"help, this help\n");
