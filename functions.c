@@ -30,7 +30,7 @@ char * managewww(int sock){
     sprintf(out+strlen(out),"sunset: %02d%02d\n",HHs,MMs);
   }
   else if(strcmp(t1,"seton")==0){
-    sprintf(out,"set relais to on: %s",t2);
+    sprintf(out,"set relais to on: %s\n",t2);
     f=strchr(t2,','); *f='\0';
     en=ex; en->R[0]=10*atoi(t2+1)+atoi(f+1); en->nC=1; en->C[0]=2;
     strcpy(ret,"E0");
