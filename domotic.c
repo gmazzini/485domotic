@@ -37,6 +37,7 @@ struct log{
 struct ek *ee,*ex;
 struct log *mylog;
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS];
+iunt16_t nrule;
 time_t start;
 #include "functions.c"
 
@@ -47,7 +48,7 @@ int main(){
   char *token,*f,*g,*mye;
   time_t myt;
   struct tm *info;
-  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30,esun,nrule;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30,esun;
   uint64_t *lD;
   struct ek *en,*em;
   int sockwww;
@@ -182,7 +183,7 @@ int main(){
   fp=fopen(SAVESTATUS,"rb");
   fread(relais,sizeof(uint8_t),TOTRELAIS,fp);
   fclose(fp);
-  en=ex; en->rule=nrule++; 
+  en=ex; en->rule=nrule; 
   en->nR=1; en->R=(uint16_t *)malloc(sizeof(uint16_t)); en->R[0]=0;
   en->nC=1; en->C=(uint16_t *)malloc(sizeof(uint16_t)); en->C[0]=0;
   en->D=(uint64_t *)malloc(23*sizeof(uint64_t)); for(q=0;q<23;q++)en->D[q]=0;
