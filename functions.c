@@ -67,7 +67,7 @@ char * managewww(int sock){
   else if(strcmp(t1,"showon")==0){
     myout(sock,1,"show relais on:");
     for(q=0;q<TOTRELAIS;q++)if(relais[q]==1)myout(sock,1," R%d,%d",q/10,q%10);
-    myout(sock,w,"\n");
+    myout(sock,2,"\n");
   }
   else if(strcmp(t1,"showevents")==0){
     for(q=0;q<TOTEK;q++){ // fare TOTEX
