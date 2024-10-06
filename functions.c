@@ -59,5 +59,5 @@ void sun(int year,int month,int day,float lat,float lng,char *HHMMr,char *HHMMs)
   UTr=fmod(24.0+Tr-lngHour+delta,24.0);
   UTs=fmod(24.0+Ts-lngHour+delta,24.0);
   sprintf(HHMMr,"%02d%02d",(int)UTr,(int)((UTr-(int)UTr)*60));
-  sprintf(HHMMr,"%02d%02d",(int)UTs,(int)((UTs-(int)UTs)*60));
+  sprintf(HHMMs,"%02d%02d",(int)UTs,(int)((UTs-(int)UTs)*60));
 }
