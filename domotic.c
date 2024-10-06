@@ -19,17 +19,17 @@
 #define SAVESTATUS "status"
 
 struct ek{
-    uint16_t rule;
-    uint16_t nR;
-    uint16_t *R;
-    uint16_t nC;
-    uint16_t *C;
-    uint64_t *D;
-    uint16_t nT;
-    uint16_t *T;
-    struct ek *next;
+  uint16_t rule;
+  uint16_t nR;
+  uint16_t *R;
+  uint16_t nC;
+  uint16_t *C;
+  uint64_t *D;
+  uint16_t nT;
+  uint16_t *T;
+  struct ek *next;
 };
-strict log{
+struct log{
   time_t time;
   uint8_t action;
   char desc[10];
