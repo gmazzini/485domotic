@@ -2,7 +2,7 @@
 #define ZENITH 1
 
 char * managewww(int sock){
-  static ret[50];
+  static char ret[50];
   struct sockaddr from;
   unsigned int fromlen;
   fromlen=sizeof(from);
