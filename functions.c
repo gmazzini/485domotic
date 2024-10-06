@@ -19,8 +19,8 @@ void managewww(int sock){
     sprintf(out,"sunset: %02d%02d\n",HHs,MMs);
   }
   else if(strcmp(buf,"on")==0){
-    sprintf(out,"on: ");
-    for(q=0;q<TOTRELAIS;q++)if(relais[q]==1)sprintf(out+strlen(out)," %d",q);
+    sprintf(out,"on:");
+    for(q=0;q<TOTRELAIS;q++)if(relais[q]==1)sprintf(out+strlen(out)," R%d,%d",q/10,q%10);
     sprintf(out+strlen(out),"\n");
   }
   else if(strcmp(buf,"help")==0){
