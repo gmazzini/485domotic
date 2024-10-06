@@ -7,10 +7,11 @@ char * managewww(int sock){
   unsigned int fromlen;
   fromlen=sizeof(from);
   char buf[100],out[1000],*t1,*t2;
-  int rr;
+  int rr,quit;
   uint8_t q;
 
   *ret='\0';
+  quit=0;
   rr=recvfrom(sock,buf,100,0,&from,&fromlen);
   if(rr<1)return ret;
   *(buf+rr)='\0';
@@ -31,11 +32,19 @@ char * managewww(int sock){
     sprintf(out,"inject: %s\n",t2);
     strcpy(ret,t2);
   }
+  else if(strcmp(t1,"quit")==0){
+    sprintf(out,"quitting\n");
+    quit=1;
+  }
   else if(strcmp(t1,"help")==0){
-    sprintf(out,"sunset\nsunrise\non\ninject xx\nhelp\n");
+    sprintf(out,"sunset\nsunrise\non\ninject xx\nquit\nhelp\n");
   }
   else sprintf(out,"command not find\n");
   sendto(sock,out,strlen(out),0,&from,fromlen);
+  if(quit==1){
+    usleep(2000000);
+    exit(0);
+  }
   return ret;
 }
 
