@@ -16,8 +16,6 @@
 #define LAT 44.5
 #define LNG 11.3
 
-void sun(int,int,int,float,float,uint8_t *,uint8_t *,uint8_t *,uint8_t *);
-void managewww(int);
 uint8_t HHr,MMr,HHs,MMs;
 #include "functions.c"
 
