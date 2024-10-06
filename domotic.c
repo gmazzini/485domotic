@@ -163,8 +163,8 @@ int main(){
   last_hour=info->tm_hour;
   sched=0;
   every10=every30=100;
-  sun(1900+info->tm_year,info->tm_mon,info->tm_mday,LAT,LNG,HHMMr,HHMMs);
-  printf("Suntise:%s Sunset:%s %d %d %d\n",HHMMr,HHMMs,1900+info->tm_year,info->tm_mon,info->tm_mday);
+  sun(1900+info->tm_year,1+info->tm_mon,info->tm_mday,LAT,LNG,HHMMr,HHMMs);
+  printf("Suntise:%s Sunset:%s %d %d %d\n",HHMMr,HHMMs,1900+info->tm_year,1+info->tm_mon,info->tm_mday);
   
   // receiving events
   for(;;){
