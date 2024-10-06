@@ -18,6 +18,7 @@
 
 void sun(int,int,int,float,float,uint8_t *,uint8_t *,uint8_t *,uint8_t *);
 void managewww(int);
+uint8_t HHr,MMr,HHs,MMs;
 
 int main(){
   FILE *fp;
@@ -25,7 +26,6 @@ int main(){
   char *token,*f,*g;
   time_t myt;
   struct tm *info;
-  uint8_t HHr,MMr,HHs,MMs;
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30,esun;
   uint64_t *lD;
   struct ek{
