@@ -6,7 +6,7 @@ char * managewww(int sock){
   struct sockaddr from;
   unsigned int fromlen;
   fromlen=sizeof(from);
-  char buf[100],out[1000];
+  char buf[100],out[1000],*t1,*t2;
   int rr;
   uint8_t q;
 
@@ -14,22 +14,24 @@ char * managewww(int sock){
   rr=recvfrom(sock,buf,100,0,&from,&fromlen);
   if(rr<1)return ret;
   *(buf+rr)='\0';
-  if(strcmp(buf,"sunrise")==0){
+  t1=strtok(buf," \n\r\t");
+  t2=strtok(NULL," \n\r\t")
+  if(strcmp(t1,"sunrise")==0){
     sprintf(out,"sunrise: %02d%02d\n",HHr,MMr);
   }
-  else if(strcmp(buf,"sunset")==0){
+  else if(strcmp(t1,"sunset")==0){
     sprintf(out,"sunset: %02d%02d\n",HHs,MMs);
   }
-  else if(strcmp(buf,"on")==0){
+  else if(strcmp(t1,"on")==0){
     sprintf(out,"on:");
     for(q=0;q<TOTRELAIS;q++)if(relais[q]==1)sprintf(out+strlen(out)," R%d,%d",q/10,q%10);
     sprintf(out+strlen(out),"\n");
   }
-  else if(strcmp(buf,"inject E1")==0){
-    sprintf(out,"innnn\n");
-    strcpy(ret,"E1");
+  else if(strcmp(t1,"inject")==0){
+    sprintf(out,"inject: %s\n",t2);
+    strcpy(ret,t2);
   }
-  else if(strcmp(buf,"help")==0){
+  else if(strcmp(t1,"help")==0){
     sprintf(out,"sunset\nsunrise\non\ninject xx\nhelp\n");
   }
   else sprintf(out,"command not find\n");
