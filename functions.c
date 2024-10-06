@@ -9,6 +9,7 @@ char * managewww(int sock){
   char buf[100],out[1000],*t1,*t2;
   int rr,quit;
   uint8_t q;
+  FILE *fp;
 
   *ret='\0';
   quit=0;
@@ -42,6 +43,9 @@ char * managewww(int sock){
   else sprintf(out,"command not find\n");
   sendto(sock,out,strlen(out),0,&from,fromlen);
   if(quit==1){
+    fp=fopen(SAVESTATUS,"wb");
+    fwrite(relais,sizeof(uint8_t),TOTRELAIS,fp);
+    fclose(fp);
     usleep(2000000);
     exit(0);
   }
