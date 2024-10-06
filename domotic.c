@@ -16,12 +16,13 @@
 #define LAT 44.5
 #define LNG 11.3
 
-uint8_t HHr,MMr,HHs,MMs;
+uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS];
 #include "functions.c"
 
 int main(){
   FILE *fp;
-  char buf[100],relais[TOTRELAIS],mod[TOTRELAIS];
+  char buf[100];
+  uint8_t mod[TOTRELAIS];
   char *token,*f,*g;
   time_t myt;
   struct tm *info;
