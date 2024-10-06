@@ -52,6 +52,7 @@ char * managewww(int sock){
     sprintf(out+strlen(out),"\n");
   }
   else if(strcmp(t1,"showevents")==0){
+    sprintf(out+strlen(out),"NLK %d\n",nlK);
     for(q=0;q<nlK;q++){ // fare nlE
       en=ee+q;
       for(;;){
