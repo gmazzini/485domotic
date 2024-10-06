@@ -18,6 +18,7 @@ void myout(int sock,int end,char *format, ...){
     if(end==1)sprintf(out+strlen(out),"<next>\n");
     else sprintf(out+strlen(out),"<end>\n");
     sendto(sock,out,strlen(out),0,&from,fromlen);
+    *out='\0';
   }
 }
 
