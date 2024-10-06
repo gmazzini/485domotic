@@ -102,7 +102,7 @@ int main(){
       }
     }
     for(q=0;q<nlK+nlE;q++){
-      if(q<nlk)en=ee+lK[q];
+      if(q<nlK)en=ee+lK[q];
       else en=ex+lE[q-nlK]; 
       if(en->event>0){
         for(;en->next!=NULL;en=en->next);
