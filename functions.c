@@ -2,7 +2,10 @@
 #define ZENITH 1
 #include <stdarg.h>
 
-void myout(int sock,struct sockaddr *from,int end,char *format, ...){
+struct sockaddr from;
+unsigned int fromlen=sizeof(from);;
+
+void myout(int sock,int end,char *format, ...){
   static char out[1000];
   unsigned int fromlen=sizeof(from);
   va_list argptr;
@@ -16,8 +19,6 @@ void myout(int sock,struct sockaddr *from,int end,char *format, ...){
 
 char * managewww(int sock){
   static char ret[50];
-  struct sockaddr from;
-  unsigned int fromlen=sizeof(from);
   char buf[100],*out,*t1,*t2,*f;
   int rr,quit;
   uint16_t q,j;
