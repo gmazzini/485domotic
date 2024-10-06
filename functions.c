@@ -29,7 +29,7 @@ char * managewww(int sock){
     sprintf(out+strlen(out),"sunset: %02d%02d\n",HHs,MMs);
   }
   else if(strcmp(t1,"showon")==0){
-    sprintf(out,"relains on:");
+    sprintf(out,"relais on:");
     for(q=0;q<TOTRELAIS;q++)if(relais[q]==1)sprintf(out+strlen(out)," R%d,%d",q/10,q%10);
     sprintf(out+strlen(out),"\n");
   }
