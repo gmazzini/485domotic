@@ -6,14 +6,15 @@ char * managewww(int sock){
   struct sockaddr from;
   unsigned int fromlen;
   fromlen=sizeof(from);
-  char buf[100],out[2000],*t1,*t2,*f;
+  char buf[100],*out,*t1,*t2,*f;
   int rr,quit;
   uint16_t q,j;
   FILE *fp;
   time_t myt;
   struct tm *info;
   struct ek *en;
-
+  
+  out=malloc(5000);
   *ret='\0';
   quit=0;
   rr=recvfrom(sock,buf,100,0,&from,&fromlen);
@@ -104,6 +105,7 @@ char * managewww(int sock){
     usleep(2000000);
     exit(0);
   }
+  free(out);
   return ret;
 }
 
