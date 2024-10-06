@@ -32,7 +32,7 @@ char * managewww(int sock){
   else if(strcmp(t1,"seton")==0){
     sprintf(out,"set relais to on: %s",t2);
     f=strchr(t2,','); *f='\0';
-    en=ex; en->R[0]=10*atoi(t2+1)+atoi(f+1); en->nC=1; en->C[j]=2;
+    en=ex; en->R[0]=10*atoi(t2+1)+atoi(f+1); en->nC=1; en->C[0]=2;
     strcpy(ret,"E0");
   }
   else if(strcmp(t1,"showon")==0){
