@@ -6,7 +6,7 @@ char * managewww(int sock){
   struct sockaddr from;
   unsigned int fromlen;
   fromlen=sizeof(from);
-  char buf[100],out[10000],*t1,*t2,*f;
+  char buf[100],out[2000],*t1,*t2,*f;
   int rr,quit;
   uint16_t q,j;
   FILE *fp;
@@ -57,9 +57,21 @@ char * managewww(int sock){
       for(;;){
         if(en->event==0)break;
         sprintf(out+strlen(out),"-- EE %d\n",en->event);
-        sprintf(out+strlen(out),"R"); for(j=0;j<en->nR;j++)sprintf(out+strlen(out)," %d,%d",en->R[j]/10,en->R[j]%10); sprintf(out+strlen(out),"\n");
-        sprintf(out+strlen(out),"C"); for(j=0;j<en->nC;j++)sprintf(out+strlen(out)," %d",en->C[j]); sprintf(out+strlen(out),"\n");
-        sprintf(out+strlen(out),"T"); for(j=0;j<en->nT;j++)sprintf(out+strlen(out)," %d,%d,%d",(en->T[j]%1000)/10,en->T[j]%10,en->T[j]/1000); sprintf(out+strlen(out),"\n");
+        if(en->nR>0){
+          sprintf(out+strlen(out),"R");
+          for(j=0;j<en->nR;j++)sprintf(out+strlen(out)," %d,%d",en->R[j]/10,en->R[j]%10);
+          sprintf(out+strlen(out),"\n");
+        }
+        if(en->nC>0){
+          sprintf(out+strlen(out),"C");
+          for(j=0;j<en->nC;j++)sprintf(out+strlen(out)," %d",en->C[j]);
+          sprintf(out+strlen(out),"\n");
+        }
+        if(en->nT>0){
+          sprintf(out+strlen(out),"T");
+          for(j=0;j<en->nT;j++)sprintf(out+strlen(out)," %d,%d,%d",(en->T[j]%1000)/10,en->T[j]%10,en->T[j]/1000);
+          sprintf(out+strlen(out),"\n");
+        }
         if(en->next==NULL)break;
         en=en->next;
       }
