@@ -56,8 +56,8 @@ char * managewww(int sock){
   }
   else if(strcmp(t1,"help")==0){
     sprintf(out,"time, show actual time informations\n");
-    sprintf(out,"seton Ri,j, set the relais Ri,j to on\n");
-    sprintf(out,"setoff Ri,j, set the relais Ri,j to off\n");
+    sprintf(out+strlen(out),"seton Ri,j, set the relais Ri,j to on\n");
+    sprintf(out+strlen(out),"setoff Ri,j, set the relais Ri,j to off\n");
     sprintf(out+strlen(out),"showon, show relais in on state\n");
     sprintf(out+strlen(out),"inject xxx, inject the xxx event (like Ki,j or Ew) in the system\n");
     sprintf(out+strlen(out),"quit, shutdown the system\n");
