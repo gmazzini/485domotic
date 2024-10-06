@@ -92,11 +92,11 @@ int main(){
           break;
         case 'C':
           slC=0;
-          if(strcmp(token+1,"onoff")==0)slC=1;
-          else if(strcmp(token+1,"on")==0)slC=2;
-          else if(strcmp(token+1,"off")==0)slC=3;
-          else if(strcmp(token+1,"condon")==0)slC=4;
-          else if(strcmp(token+1,"condoff")==0)slC=5;
+          if(strcmp(token+1,cmd[1])==0)slC=1;
+          else if(strcmp(token+1,cmd[2])==0)slC=2;
+          else if(strcmp(token+1,cmd[3])==0)slC=3;
+          else if(strcmp(token+1,cmd[4])==0)slC=4;
+          else if(strcmp(token+1,cmd[5])==0)slC=5;
           if(slC>0)lC[nlC++]=slC;
           break;
         case 'T':
