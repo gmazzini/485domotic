@@ -181,7 +181,8 @@ int main(){
     time(&myt);
     info=localtime(&myt);
   //  if(rr>=0)*(buf+rr)='\0';
-    if(strlen(mye)==0){
+    if(strlen(mye)>0)strcpu(buf,mye);
+    else {
       if(info->tm_min!=last_min){
         last_min=info->tm_min;
         strcpy(buf,"E1");
@@ -228,15 +229,15 @@ int main(){
         continue;
       }
     }
-    printf("input: %s\n",mye);
+    printf("input: %s\n",buf);
     if(buf[0]=='K'){
-      f=strchr(mye,','); *f='\0';
-      q=10*atoi(mye+1)+atoi(f+1);
+      f=strchr(buf,','); *f='\0';
+      q=10*atoi(buf+1)+atoi(f+1);
       if(q==0)break;
       en=ee+q;
     }
-    else if(mye[0]=='E'){
-      q=atoi(mye+1);
+    else if(buf[0]=='E'){
+      q=atoi(buf+1);
       if(q==0)break;
       en=ex+q;
     }
