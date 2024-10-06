@@ -22,9 +22,9 @@ char * managewww(int sock){
   t2=strtok(NULL," \n\r\t");
   if(strcmp(t1,"time")==0){
     time(&myt); info=localtime(&myt); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
-    sprintf(out,"now: %s\n",info);
+    sprintf(out,"now: %s\n",buf);
     info=localtime(&start); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
-    sprintf(out+strlen(out),"start: %s\n",info);
+    sprintf(out+strlen(out),"start: %s\n",buf);
     sprintf(out+strlen(out),"sunrise: %02d%02d\n",HHr,MMr);
     sprintf(out+strlen(out),"sunset: %02d%02d\n",HHs,MMs);
   }
