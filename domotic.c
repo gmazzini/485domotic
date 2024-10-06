@@ -8,7 +8,8 @@
 #include "arpa/inet.h"
 #include "sys/socket.h"
 #include "unistd.h"
-#define PORT 55555
+#define PORTCMD 55555
+#define PORTWWW 55556
 #define TOTEK 500
 #define TOTEX 20
 #define TOTRELAIS 120
@@ -38,7 +39,7 @@ int main(){
     struct ek *next;
   };
   struct ek *ee,*ex,*en,*em;
-  int sock,rr;
+  int sock,sockwww,rr;
   unsigned int fromlen;
   struct sockaddr from;
   struct sockaddr_in server_addr;
@@ -155,9 +156,13 @@ int main(){
   fromlen=sizeof(from);
   fcntl(sock,F_SETFL,O_NONBLOCK);
   server_addr.sin_family=AF_INET;
-  server_addr.sin_port=htons(PORT);
+  server_addr.sin_port=htons(PORTCMD);
   server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
   bind(sock,(struct sockaddr *)&server_addr,sizeof(server_addr));
+  sockwww=socket(AF_INET,SOCK_DGRAM,0);
+  fcntl(sockwww,F_SETFL,O_NONBLOCK);
+  server_addr.sin_port=htons(PORTWWW);
+  bind(sockwww,(struct sockaddr *)&server_addr,sizeof(server_addr));
   time(&myt);
   info=localtime(&myt);
   last_min=info->tm_min;
