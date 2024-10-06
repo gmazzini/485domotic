@@ -59,7 +59,7 @@ char * managewww(int sock){
     strcpy(ret,"E0");
   }
   else if(strcmp(t1,"setoff")==0){
-    smyout(sock,2,"set relais to off: %s\n",t2);
+    myout(sock,2,"set relais to off: %s\n",t2);
     f=strchr(t2,','); *f='\0';
     en=ex; en->R[0]=10*atoi(t2+1)+atoi(f+1); en->nC=1; en->C[0]=3;
     strcpy(ret,"E0");
