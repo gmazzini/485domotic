@@ -56,10 +56,10 @@ char * managewww(int sock){
       en=ee+q;
       for(;;){
         if(en->event==0)break;
-        sprintf(out+strlen(out),"EE %d\n",en->event);
-        sprintf(out+strlen(out),"R"); for(j=0;j<en->nR;j++)sprintf(out+strlen(out)," %d",en->R[j]); sprintf(out+strlen(out),"\n");
+        sprintf(out+strlen(out),"-- EE %d\n",en->event);
+        sprintf(out+strlen(out),"R"); for(j=0;j<en->nR;j++)sprintf(out+strlen(out)," %d,%d",en->R[j]/10,en->R[j]%10); sprintf(out+strlen(out),"\n");
         sprintf(out+strlen(out),"C"); for(j=0;j<en->nC;j++)sprintf(out+strlen(out)," %d",en->C[j]); sprintf(out+strlen(out),"\n");
-        sprintf(out+strlen(out),"T"); for(j=0;j<en->nT;j++)sprintf(out+strlen(out)," %d",en->T[j]); sprintf(out+strlen(out),"\n");
+        sprintf(out+strlen(out),"T"); for(j=0;j<en->nT;j++)sprintf(out+strlen(out)," %d,%d,%d",en->(T[j]%1000)/10,T[j]%10,en->T[j]/1000); sprintf(out+strlen(out),"\n");
         if(en->next==NULL)break;
         en=en->next;
       }
