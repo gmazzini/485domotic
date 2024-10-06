@@ -23,7 +23,7 @@ int main(){
   FILE *fp;
   char buf[100];
   uint8_t mod[TOTRELAIS];
-  char *token,*f,*g;
+  char *token,*f,*g,*mye;
   time_t myt;
   struct tm *info;
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30,esun;
@@ -175,12 +175,13 @@ int main(){
   
   // receiving events
   for(;;){
-    managewww(sockwww);
-    rr=recvfrom(sock,buf,100,0,&from,&fromlen);
+    mye=managewww(sockwww);
+    
+//    rr=recvfrom(sock,buf,100,0,&from,&fromlen);
     time(&myt);
     info=localtime(&myt);
-    if(rr>=0)*(buf+rr)='\0';
-    else {
+  //  if(rr>=0)*(buf+rr)='\0';
+    if(strlen(mye)==0){
       if(info->tm_min!=last_min){
         last_min=info->tm_min;
         strcpy(buf,"E1");
@@ -227,15 +228,15 @@ int main(){
         continue;
       }
     }
-    printf("input: %s\n",buf);
+    printf("input: %s\n",mye);
     if(buf[0]=='K'){
-      f=strchr(buf,','); *f='\0';
-      q=10*atoi(buf+1)+atoi(f+1);
+      f=strchr(mye,','); *f='\0';
+      q=10*atoi(mye+1)+atoi(f+1);
       if(q==0)break;
       en=ee+q;
     }
-    else if(buf[0]=='E'){
-      q=atoi(buf+1);
+    else if(mye[0]=='E'){
+      q=atoi(mye+1);
       if(q==0)break;
       en=ex+q;
     }
