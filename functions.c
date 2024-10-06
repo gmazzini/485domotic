@@ -1,13 +1,3 @@
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "stdint.h"
-#include "time.h"
-#include "fcntl.h"
-#include "math.h"
-#include "arpa/inet.h"
-#include "sys/socket.h"
-#include "unistd.h"
 #define PI 3.1415926
 #define ZENITH 1
 
