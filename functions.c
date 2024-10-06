@@ -27,7 +27,7 @@ char * managewww(int sock){
   static char ret[50];
   char buf[100],*t1,*t2,*f;
   int rr,quit;
-  uint16_t q,j;
+  uint16_t q,j,dis;
   FILE *fp;
   time_t myt;
   struct tm *info;
@@ -84,6 +84,9 @@ char * managewww(int sock){
           for(j=0;j<en->nC;j++)myout(sock,1,"C%s ",cmd[en->C[j]]);
           myout(sock,1,"\n");
         }
+        dis=1;
+        for(j=0;j<1440;j++)if((en->D[j>>6] & (1ULL<<(j%64)))==dis){dis=1-dis; myout(sock,1,"%02%02 ",j/60,j%60);}
+          
         if(en->nT>0){
           for(j=0;j<en->nT;j++)myout(sock,1,"T%d,%d,%d ",(en->T[j]%1000)/10,en->T[j]%10,en->T[j]/1000);
           myout(sock,1,"\n");
