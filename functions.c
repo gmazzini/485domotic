@@ -125,7 +125,7 @@ char * managewww(int sock){
         myout(sock,1,"%s %03d %d %s\n",buf,q,mylog[q%LOGLEN].action,mylog[q%LOGLEN].desc); 
       }
     }
-    myout(sock,2,"End Log from %d to %d\n",i,j);
+    myout(sock,2,"End Log from %03d to %03d\n",i%LOGLEN,(j-1+LOGLEN)%LOGLEN);
   }
   else if(strcmp(t1,"quit")==0){
     myout(sock,2,"quitting\n");
