@@ -92,7 +92,7 @@ char * managewww(int sock){
         for(j=0;j<23;j++)printf("%d %llx\n",j,en->D[j]);
         dis=1;
         for(j=0;j<1440;j++){
-          if((en->D[j/64] & mask[j%64])==dis){
+          if(en->D[j/64]&mask[j%64]>0 && dis || en->D[j/64]&mask[j%64]==0 && !dis){
             dis=1-dis;
             myout(sock,1,"%02d%02d ",(j-dis)/60,(j-dis)%60);
           }
