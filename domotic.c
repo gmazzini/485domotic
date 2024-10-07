@@ -218,7 +218,6 @@ int main(){
         continue;
       }
     }
-    printf("input: %s\n",buf);
     mylog[poslog].time=myt;
     mylog[poslog].action=1;
     strcpy(mylog[poslog].desc,buf);
@@ -269,9 +268,8 @@ int main(){
     }
     for(q=0;q<TOTRELAIS;q++)if(mod[q]!=relais[q]){
       mylog[poslog].time=myt;
-      mylog[poslog].action=2;
+      mylog[poslog].action=3;
       sprintf(mylog[poslog].desc,"R%d,%d,%d->%d",q/10,q%10,relais[q],mod[q]);
-      printf("%s\n",mylog[poslog].desc);
       if(++poslog>=LOGLEN){poslog=0; fulllog=1;}
       relais[q]=mod[q];
     }
