@@ -36,8 +36,8 @@ struct log{
 };
 struct ek *ee,*ex;
 struct log *mylog;
-uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS];
-uint16_t nevent;
+uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS],fulllog;
+uint16_t nevent,poslog;
 time_t start;
 uint64_t mask[64];
 #include "functions.c"
@@ -162,6 +162,8 @@ int main(){
   en->nT=0; en->T=NULL;
   en->next=NULL;
   mylog=(struct log *)malloc(LOGLEN*sizeof(struct log));
+  poslog=0;
+  fulllog=0;
   
   // receiving events
   for(;;){
@@ -217,6 +219,10 @@ int main(){
       }
     }
     printf("input: %s\n",buf);
+    log[poslog]->time=myt;
+    log[poslog]->action=1;
+    strcpy(log[poslog].desc,buf);
+    if(++logpos>TOTLOG){logpos=0; fulllog=1};
     if(buf[0]=='K'){
       f=strchr(buf,','); *f='\0';
       q=10*atoi(buf+1)+atoi(f+1);
