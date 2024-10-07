@@ -219,9 +219,9 @@ int main(){
       }
     }
     printf("input: %s\n",buf);
-    log[poslog]->time=myt;
-    log[poslog]->action=1;
-    strcpy(log[poslog].desc,buf);
+    mylog[poslog]->time=myt;
+    mylog[poslog]->action=1;
+    strcpy(mylog[poslog].desc,buf);
     if(++logpos>TOTLOG){logpos=0; fulllog=1};
     if(buf[0]=='K'){
       f=strchr(buf,','); *f='\0';
