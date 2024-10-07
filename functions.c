@@ -127,10 +127,10 @@ char * managewww(int sock){
       printf("%d %d %d %d\n",i,j,poslog,fulllog);
       for(q=i;q<j;q++){
         info=localtime(&mylog[q%LOGLEN].time); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
-        myout(sock,1,"%s %03d %d %s\n",buf,q,mylog[q%LOGLEN].action,mylog[q%LOGLEN].desc); 
+        myout(sock,1,"%s %03d %d %s\n",buf,q%LOGLEN,mylog[q%LOGLEN].action,mylog[q%LOGLEN].desc); 
       }
     }
-    myout(sock,2,"End Log from %03d to %03d\n",i,j-1);
+    myout(sock,2,"End Log from %03d to %03d\n",i%LOGLEN,(j-1+LOGLEN)%LOGLEN);
   }
   else if(strcmp(t1,"quit")==0){
     myout(sock,2,"quitting\n");
