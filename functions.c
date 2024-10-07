@@ -124,7 +124,6 @@ char * managewww(int sock){
         if(fulllog==0){i=(k<poslog)?poslog-k:0; j=poslog;}
         else {i=poslog-k+LOGLEN; j=poslog+LOGLEN;}
       }
-      printf("%d %d %d %d\n",i,j,poslog,fulllog);
       for(q=i;q<j;q++){
         info=localtime(&mylog[q%LOGLEN].time); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
         myout(sock,1,"%s %03d %d %s\n",buf,q%LOGLEN,mylog[q%LOGLEN].action,mylog[q%LOGLEN].desc); 
