@@ -271,8 +271,8 @@ int main(){
       mylog[poslog].time=myt;
       mylog[poslog].action=2;
       sprintf(mylog[poslog].desc,"R%d,%d,%d->%d",q/10,q%10,relais[q],mod[q]);
+      printf("%s\n",mylog[poslog].desc);
       if(++poslog>LOGLEN){poslog=0; fulllog=1;}
-      printf("%s\n",aux);
       relais[q]=mod[q];
     }
   }
