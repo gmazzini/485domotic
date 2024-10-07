@@ -113,6 +113,7 @@ char * managewww(int sock){
     strcpy(ret,t2);
   }
   else if(strcmp(t1,"showlog")==0){
+    i=j=0;
     if(fulllog || poslog>0){
       if(t2==NULL){
         if(fulllog==0){i=0; j=poslog;}
