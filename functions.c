@@ -122,7 +122,7 @@ char * managewww(int sock){
       else {
         k=atoi(t2)%LOGLEN;
         if(fulllog==0){i=(k<poslog)?poslog-k:0; j=poslog;}
-        else {i=poslog+(k<poslog)?poslog-k:0; j=poslog+LOGLEN;}
+        else {i=poslog+((k<poslog)?poslog-k:0); j=poslog+LOGLEN;}
       }
       printf("%d %d %d %d\n",i,j,poslog,fulllog);
       for(q=i;q<j;q++){
