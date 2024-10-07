@@ -86,9 +86,21 @@ char * managewww(int sock){
           for(j=0;j<en->nC;j++)myout(sock,1,"C%s ",cmd[en->C[j]]);
           myout(sock,1,"\n");
         }
+
+
+
+        
         dis=1;
-        for(j=0;j<1440;j++)if((en->D[j>>6] & (1ULL<<(j%64)))==dis){dis=1-dis; myout(sock,1,"%02d%02d ",(j-dis)/60,(j-dis)%60);}
-          
+        for(j=0;j<1440;j++){
+          if((en->D[j/64] & mask[q%64])==dis){
+            dis=1-dis;
+            myout(sock,1,"%02d%02d ",(j-dis)/60,(j-dis)%60);
+          }
+        }
+
+
+
+        
         if(en->nT>0){
           for(j=0;j<en->nT;j++)myout(sock,1,"T%d,%d,%d ",(en->T[j]%1000)/10,en->T[j]%10,en->T[j]/1000);
           myout(sock,1,"\n");
