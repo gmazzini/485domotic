@@ -27,7 +27,7 @@ char * managewww(int sock){
   static char ret[50];
   char buf[100],*t1,*t2,*f;
   int rr,quit;
-  uint16_t q,j,dis,totdis;
+  uint16_t q,i,j,dis,totdis;
   uint64_t flag;
   FILE *fp;
   time_t myt;
@@ -111,6 +111,14 @@ char * managewww(int sock){
     myout(sock,2,"inject: %s\n",t2);
     strcpy(ret,t2);
   }
+  else if(strcmp(t1,"showlog")==0){
+    if(fulllog==0){i=0; j=poslog;}
+    else {i=poslog; j=poslog+LOGLEN;}
+    for(q=i;q<j;q++){
+      info=localtime(&mylog[q%LOGLEN].time); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
+      myout(sock,(q==j-1)?2:1,"%s %d %s",buf,mylog[q%LOGLEN].action,mylog[q%LOGLEN].desc); 
+    }
+  }
   else if(strcmp(t1,"quit")==0){
     myout(sock,2,"quitting\n");
     quit=1;
@@ -122,6 +130,7 @@ char * managewww(int sock){
     myout(sock,1,"showon, show relais in on state\n");
     myout(sock,1,"showevents, show all the events\n");
     myout(sock,1,"inject xxx, inject the xxx event (like Ki,j or Ew) in the system\n");
+    myout(sock,1,"showlog, show rotative log\n");
     myout(sock,1,"quit, shutdown the system\n");
     myout(sock,2,"help, this help\n");
   }
