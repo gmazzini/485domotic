@@ -119,6 +119,10 @@ char * managewww(int sock){
         if(fulllog==0){i=0; j=poslog;}
         else {i=poslog; j=poslog+LOGLEN;} 
       }
+      else {
+        k=atoi(t2)%LOGLEN;
+        if(fulllog==0){i=(k<poslog)?poslog-k:0; j=poslog;}
+      }
       printf("%d %d %d %d\n",i,j,poslog,fulllog);
       for(q=i;q<j;q++){
         info=localtime(&mylog[q%LOGLEN].time); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
