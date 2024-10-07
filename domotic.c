@@ -93,6 +93,7 @@ int main(){
           j=atoi(f+3); *(f+3)='\0'; j+=atoi(f+1)*60;
           printf("-- %d %d --\n",i,j);
           for(q=i;q<=j;q++)lD[q/64]|=mask[q%64];
+          for(q=0;q<23;q)printf("%d %xll\n",q,lD[q/64]);
           break;
         case 'C':
           slC=0;
