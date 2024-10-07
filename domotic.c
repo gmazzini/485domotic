@@ -91,9 +91,7 @@ int main(){
           f=strchr(token,','); *f='\0';
           i=atoi(token+3); *(token+3)='\0'; i+=atoi(token+1)*60;
           j=atoi(f+3); *(f+3)='\0'; j+=atoi(f+1)*60;
-          printf("-- %d %d --\n",i,j);
           for(q=i;q<=j;q++)lD[q/64]|=mask[q%64];
-          for(q=0;q<23;q++)printf("%d %llx\n",q,lD[q]);
           break;
         case 'C':
           slC=0;
@@ -235,7 +233,7 @@ int main(){
     for(;;){
       if(en->event==0)break;
       j=info->tm_hour*60+info->tm_min;
-      if((en->D[j/64] & (1ULL<<(j%64)))==0){
+      if((en->D[j/64] & mask[j%64])==0){
         for(j=0;j<en->nC;j++){
           switch(en->C[j]){
             case 1:
