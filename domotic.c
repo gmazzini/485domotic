@@ -44,7 +44,7 @@ uint64_t mask[64];
 
 int main(){
   FILE *fp;
-  char buf[100],aux[100];
+  char buf[100];
   uint8_t mod[TOTRELAIS];
   char *token,*f,*g,*mye;
   time_t myt;
@@ -270,8 +270,7 @@ int main(){
     for(q=0;q<TOTRELAIS;q++)if(mod[q]!=relais[q]){
       mylog[poslog].time=myt;
       mylog[poslog].action=2;
-      sprintf(aux,"R%d,%d,%d->%d",q/10,q%10,relais[q],mod[q]);
-      strcpy(mylog[poslog].desc,aux);
+      sprintf(mylog[poslog].desc,"R%d,%d,%d->%d",q/10,q%10,relais[q],mod[q]);
       if(++poslog>LOGLEN){poslog=0; fulllog=1;}
       printf("%s\n",aux);
       relais[q]=mod[q];
