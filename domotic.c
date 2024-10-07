@@ -222,7 +222,7 @@ int main(){
     mylog[poslog].time=myt;
     mylog[poslog].action=1;
     strcpy(mylog[poslog].desc,buf);
-    if(++poslog>LOGLEN){poslog=0; fulllog=1;}
+    if(++poslog>=LOGLEN){poslog=0; fulllog=1;}
     if(buf[0]=='K'){
       f=strchr(buf,','); *f='\0';
       q=10*atoi(buf+1)+atoi(f+1);
@@ -272,7 +272,7 @@ int main(){
       mylog[poslog].action=2;
       sprintf(mylog[poslog].desc,"R%d,%d,%d->%d",q/10,q%10,relais[q],mod[q]);
       printf("%s\n",mylog[poslog].desc);
-      if(++poslog>LOGLEN){poslog=0; fulllog=1;}
+      if(++poslog>=LOGLEN){poslog=0; fulllog=1;}
       relais[q]=mod[q];
     }
   }
