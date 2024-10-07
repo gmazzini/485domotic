@@ -89,7 +89,7 @@ char * managewww(int sock){
 
 
 
-        
+        for(q=0;q<23;q++)printf("%d %llx\n",q,en->D[q]);
         dis=1;
         for(j=0;j<1440;j++){
           if((en->D[j/64] & mask[j%64])==dis){
