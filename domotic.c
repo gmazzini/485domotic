@@ -89,6 +89,7 @@ int main(){
           f=strchr(token,','); *f='\0';
           i=atoi(token+3); *(token+3)='\0'; i+=atoi(token+1)*60;
           j=atoi(f+3); *(f+3)='\0'; j+=atoi(f+1)*60;
+          printf("-- %d %d --\n",i,j);
           for(q=i;q<=j;q++)lD[q/64]|=(1ULL<<(q%64));
           break;
         case 'C':
