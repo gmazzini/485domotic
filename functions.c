@@ -112,7 +112,7 @@ char * managewww(int sock){
     myout(sock,2,"inject: %s\n",t2);
     strcpy(ret,t2);
   }
-  else if(strcmp(t1,"showlog")==0){
+  else if(strcmp(t1,"showlog")==0 && (fulllog || poslog>0)){
     k=atoi(t2);
     if(fulllog==0){i=(k>0)?poslog-k:0; j=poslog;}
     else {i=poslog; j=poslog+LOGLEN;}
