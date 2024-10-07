@@ -39,6 +39,7 @@ struct log *mylog;
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS];
 uint16_t nevent;
 time_t start;
+uint64_t mask[64];
 #include "functions.c"
 
 int main(){
@@ -54,7 +55,8 @@ int main(){
   int sockwww;
   struct sockaddr_in server_addr;
 
-  // parsing configuration file
+  // processing the configuration file
+  for(q=0;q<64;q++)mask[q]=1ULL<<q;
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
   ex=(struct ek *)malloc(TOTEX*sizeof(struct ek));
   for(q=0;q<TOTEK;q++)ee[q].event=0;
@@ -90,7 +92,7 @@ int main(){
           i=atoi(token+3); *(token+3)='\0'; i+=atoi(token+1)*60;
           j=atoi(f+3); *(f+3)='\0'; j+=atoi(f+1)*60;
           printf("-- %d %d --\n",i,j);
-          for(q=i;q<=j;q++)lD[q/64]|=(1ULL<<(q%64));
+          for(q=i;q<=j;q++)lD[q/64]|=mask[q%64];
           break;
         case 'C':
           slC=0;
