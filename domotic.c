@@ -221,8 +221,8 @@ int main(){
     printf("input: %s\n",buf);
     mylog[poslog].time=myt;
     mylog[poslog].action=1;
-    strcpy(mylog+poslog.desc,buf);
-    if(++logpos>LOGLEN){logpos=0; fulllog=1;}
+    strcpy(mylog[poslog].desc,buf);
+    if(++poslog>LOGLEN){poslog=0; fulllog=1;}
     if(buf[0]=='K'){
       f=strchr(buf,','); *f='\0';
       q=10*atoi(buf+1)+atoi(f+1);
