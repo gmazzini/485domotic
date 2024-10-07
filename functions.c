@@ -52,7 +52,8 @@ char * managewww(int sock){
     info=localtime(&start); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
     myout(sock,1,"time start: %s\n",buf);
     myout(sock,1,"time sunrise: %02d:%02d\n",HHr,MMr);
-    myout(sock,2,"time sunset: %02d:%02d\n",HHs,MMs);
+    myout(sock,1,"time sunset: %02d:%02d\n",HHs,MMs);
+    myout(sock,2,"log dimension: %d\n",(fulllog)?LOGLEN:poslog);
   }
   else if(strcmp(t1,"seton")==0){
     myout(sock,2,"set relais to on: %s\n",t2);
