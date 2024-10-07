@@ -27,7 +27,7 @@ char * managewww(int sock){
   static char ret[50];
   char buf[100],*t1,*t2,*f;
   int rr,quit;
-  uint16_t q,j,dis;
+  uint16_t q,j,dis,totdis;
   uint64_t flag;
   FILE *fp;
   time_t myt;
@@ -87,22 +87,16 @@ char * managewww(int sock){
           for(j=0;j<en->nC;j++)myout(sock,1,"C%s ",cmd[en->C[j]]);
           myout(sock,1,"\n");
         }
-
-
-
-        for(j=0;j<23;j++)printf("%d %llx\n",j,en->D[j]);
-        dis=1;
+        totdis=0; dis=1;
         for(j=0;j<1440;j++){
           flag=en->D[j/64]&mask[j%64];
           if(flag>0 && dis || flag==0 && !dis){
+            totdis++;
             dis=1-dis;
-            myout(sock,1,"%02d%02d ",(j-dis)/60,(j-dis)%60);
+            myout(sock,1,"D%02d%02d ",(j-dis)/60,(j-dis)%60);
           }
         }
-
-
-
-        
+        if(totdis)myout(sock,1,"\n");
         if(en->nT>0){
           for(j=0;j<en->nT;j++)myout(sock,1,"T%d,%d,%d ",(en->T[j]%1000)/10,en->T[j]%10,en->T[j]/1000);
           myout(sock,1,"\n");
