@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <termios.h>
 
 #define PORTWWW 55556
 #define TOTEK 500
