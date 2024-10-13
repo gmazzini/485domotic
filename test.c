@@ -57,7 +57,7 @@ void setserial(int fd){
 }
 
 void myset(int fd,uint8_t dev,uint8_t relais){
-  uint8_t oo[4];
+  uint8_t oo[4],i;
   oo[0]=0xCC;
   oo[1]=dev;
   oo[2]=relais;
@@ -69,8 +69,7 @@ void myset(int fd,uint8_t dev,uint8_t relais){
 }
 
 int main(){
-  int fd,i;
-  char buf[200];
+  int fd;
   
   fd=open(SERIAL,O_RDWR);
   setserial(fd);
