@@ -66,6 +66,36 @@ void myset(int fd,uint8_t dev,uint8_t relais){
   }
 }
 
+uint16_t myread(int fd){
+  uint8_t dd,vv,cc,i;
+  static uint8_t ss=0,v[4];
+  vv=read(fd,&dd,1);
+  if(ss==0 && dd==0xFF){
+    v[0]=dd;
+    ss=1;
+    return 0;
+  }
+  if(ss>0 && dd==0xFF){
+    ss=0;
+    return 0;
+  }
+  if(ss==1){
+    v[1]=dd;
+    ss=2;
+    return 0;
+  }
+  if(ss==2){
+    v[2]=dd;
+    ss=3;
+    return 0;
+  }
+  v[3]=dd;
+  ss=0;
+  for(cc=0,i=0;i<3;i++)cc=crc8_table[(cc ^ v[i])];
+  if(v[3]!=cc)return 0;
+  return v[1]*256+v[2];
+}
+
 void myout(int sock,int end,char *format, ...){
   static char out[PAGE*3];
   if(end==0)*out='\0';
