@@ -37,7 +37,7 @@ function myset($fp,$dev,$relais){
   }
 }
 
-$fp=fopen("/dev/tty.usbserial-A10LKMB6","r+");
+$fp=fopen("/dev/cu.usbserial-A10LKMB6","r+");
 
 for(;;){
   echo "on\n";
