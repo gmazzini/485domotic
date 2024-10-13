@@ -64,7 +64,7 @@ int main(){
   buf[0]=0xCC;
   buf[1]=1;
   buf[2]=0x21;
-  for(buf[3]=0,i=0;i<3;i++)buf[3]=crc8_table[(buf[3] ^ v[i])];
+  for(buf[3]=0,i=0;i<3;i++)buf[3]=crc8_table[(buf[3] ^ buf[i])];
   for(i=0;i<4;i++){
     write(fd,buf[i],1);
     usleep(1250);
