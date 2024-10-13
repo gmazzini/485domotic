@@ -3,7 +3,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <unistd.h>
-#define SERIAL "/dev/tty.usbserial-A10LKMB6"
+#define SERIAL "/dev/cu.usbserial-A10LKMB6"
 
 static unsigned char const crc8_table[] = {
   0xea, 0xd4, 0x96, 0xa8, 0x12, 0x2c, 0x6e, 0x50, 0x7f, 0x41, 0x03, 0x3d,
