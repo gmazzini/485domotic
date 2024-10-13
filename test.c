@@ -29,10 +29,8 @@ static unsigned char const crc8_table[] = {
   0xd0, 0xee, 0xac, 0x92, 0x28, 0x16, 0x54, 0x6a, 0x45, 0x7b, 0x39, 0x07,
   0xbd, 0x83, 0xc1, 0xff};
 
-int main(){
-  int fd;
+void setserial(int fd){
   struct termios tty;
-  fd=open(SERIAL,O_RDWR);
   tcgetattr(fd,&tty);
   tty.c_cflag &= ~PARENB;
   tty.c_cflag &= ~CSTOPB;
@@ -53,59 +51,22 @@ int main(){
   tty.c_cc[VMIN] = 0;
   cfsetispeed(&tty,B9600);
   cfsetospeed(&tty,B9600);
-  
-  
+  tcsetattr(fd,TCSANOW,&tty);
 }
 
-void setup(){
-  int r;
-  Serial.begin(9600);
-  for(r=1;r<=8;r++){
-    pinMode(r+1,OUTPUT);
-    digitalWrite(r+1,1);
-  }
-  pinMode(13,OUTPUT);
-  digitalWrite(13,0);
-}
-
-unsigned char ss=0,v[4];
-
-void loop(){
-  unsigned char cc,i,r,o;
-  int dd;
-  if(Serial.available()>0){
-    dd=Serial.read();
-    if(ss==0 && dd==0xCC){
-      v[0]=dd;
-      ss=1;
-      return;
-    }
-    if(ss>0 && dd==0xCC){
-      ss=0;
-      return;
-    }
-    if(ss==1){
-      v[1]=dd;
-      ss=2;
-      return;
-    }
-    if(ss==2){
-      v[2]=dd;
-      ss=3;
-      return;
-    }
-    v[3]=dd;
-    ss=0;
-    for(cc=0,i=0;i<3;i++)cc=crc8_table[(cc ^ v[i])];
-    if(v[3]!=cc)return;
-    if(v[1]!=DEV && v[1]!=0)return;
-    r=v[2]>>4;
-    o=v[2]&1;
-    if(r>=1 && r<=8)digitalWrite(r+1,1-o);
-    else if(r==9)digitalWrite(13,o);
-    else if(r==0x0f){
-      for(r=1;r<=8;r++)digitalWrite(r+1,1-o);
-      digitalWrite(13,o);
-    }
+int main(){
+  int fd,i;
+  char buf[200];
+  
+  fd=open(SERIAL,O_RDWR);
+  setserial(fd);
+  
+  buf[0]=0xCC;
+  buf[1]=1;
+  buf[2]=0x21;
+  for(buf[3]=0,i=0;i<3;i++)buf[3]=crc8_table[(buf[3] ^ v[i])];
+  for(i=0;i<4;i++){
+    write(fd,buf[i],1);
+    usleep(1250);
   }
 }
