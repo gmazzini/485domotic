@@ -1,13 +1,15 @@
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "stdint.h"
-#include "time.h"
-#include "fcntl.h"
-#include "math.h"
-#include "arpa/inet.h"
-#include "sys/socket.h"
-#include "unistd.h"
+#include <stdio.h">
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <time.h>
+#include "<fcntl.h>
+#include <math.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <stdarg.h>
+
 #define PORTWWW 55556
 #define TOTEK 500
 #define TOTEX 20
@@ -15,6 +17,7 @@
 #define LOGLEN 1000
 #define LAT 44.5
 #define LNG 11.3
+#define SERIAL "/dev/cu.usbserial-A10LKMB6"
 #define CONFIG "config"
 #define SAVESTATUS "status"
 
@@ -52,7 +55,7 @@ int main(){
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30,esun;
   uint64_t *lD;
   struct ek *en,*em;
-  int sockwww;
+  int sockwww,fd;
   struct sockaddr_in server_addr;
 
   // processing the configuration file
@@ -164,6 +167,8 @@ int main(){
   mylog=(struct log *)malloc(LOGLEN*sizeof(struct log));
   poslog=0;
   fulllog=0;
+  fd=open(SERIAL,O_RDWR);
+  setserial(fd);
   
   // receiving events
   for(;;){
@@ -269,6 +274,7 @@ int main(){
     for(q=0;q<TOTRELAIS;q++)if(mod[q]!=relais[q]){
       mylog[poslog].time=myt;
       mylog[poslog].action=3;
+      myset(fd,q/10,(q%10)*16+mod[q]);
       sprintf(mylog[poslog].desc,"R%d,%d,%d->%d",q/10,q%10,relais[q],mod[q]);
       if(++poslog>=LOGLEN){poslog=0; fulllog=1;}
       relais[q]=mod[q];
