@@ -41,7 +41,7 @@ struct log{
 struct ek *ee,*ex;
 struct log *mylog;
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS],fulllog;
-uint16_t nevent,poslog;
+uint16_t nevent,poslog,rr;
 time_t start;
 uint64_t mask[64];
 #include "functions.c"
@@ -173,9 +173,9 @@ int main(){
   
   // receiving events
   for(;;){
-    mye=managewww(sockwww);
     time(&myt);
     info=localtime(&myt);
+    mye=managewww(sockwww);
     if(strlen(mye)>0)strcpy(buf,mye);
     else {
       if(info->tm_min!=last_min){
@@ -220,8 +220,12 @@ int main(){
         strcpy(buf,"E10");
       }
       else {
-        usleep(10000);
-        continue;
+        rr=myread(fd);
+        if(rr && rr%2)sprintf(buf,"K%d,%d",rr/256,(rr%256)>>4);
+        else {
+          usleep(10000);
+          continue;
+        }
       }
     }
     mylog[poslog].time=myt;
