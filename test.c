@@ -3,6 +3,8 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <unistd.h>
+#include "stdint.h"
+
 #define SERIAL "/dev/cu.usbserial-A10LKMB6"
 
 static unsigned char const crc8_table[] = {
