@@ -40,9 +40,11 @@ function myset($fp,$dev,$relais){
 $fp=fopen("/dev/tty.usbserial-A10LKMB6","r+");
 
 for(;;){
-  myset($fp,2,0xf1);
+  echo "on\n";
+  myset($fp,2,0x11);
   usleep(300000);
-  myset($fp,2,0xf0);
+  echo "off\n";
+  myset($fp,2,0x10);
   usleep(300000);
 }
 
