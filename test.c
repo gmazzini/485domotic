@@ -95,7 +95,7 @@ uint16_t myread(int fd){
   ss=0;
   for(cc=0,i=0;i<3;i++)cc=crc8_table[(cc ^ v[i])];
   if(v[3]!=cc)return 0;
-  return v[1]*100+v[2];
+  return v[1]*256+v[2];
 }
 
 int main(){
@@ -107,7 +107,7 @@ int main(){
   
   for(;;){
     rr=myread(fd);
-    if(rr)printf("%d\n",rr);
+    if(rr)printf("%d,%d,%d\n",rr/256,(rr%256)>>4,rr%1);
     usleep(10000);
    
   }
