@@ -107,7 +107,7 @@ int main(){
   
   for(;;){
     rr=myread(fd);
-    if(rr)printf("%d,%d,%d\n",rr/256,(rr%256)>>4,rr%1);
+    if(rr)printf("%d,%d,%d\n",rr/256,(rr%256)>>4,rr%2);
     usleep(10000);
    
   }
