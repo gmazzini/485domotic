@@ -18,7 +18,7 @@
 #define LOGLEN 1000
 #define LAT 44.5
 #define LNG 11.3
-#define SERIAL "/dev/cu.usbserial-A10LKMB6"
+#define SERIAL "/dev/ttyACM0"
 #define CONFIG "config"
 #define SAVESTATUS "status"
 
