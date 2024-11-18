@@ -1,3 +1,16 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <time.h>
+#include <fcntl.h>
+#include <math.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <stdarg.h>
+#include <termios.h>
+
 union uw {uint16_t w; uint8_t u[2]; };
 union uf {float f; uint8_t u[4]; };
 
