@@ -21,6 +21,7 @@ void main(){
   myw(fd,"\x01\x03\x01\x06",2);
   *((float *)(buf+8))=myr_f(fd);
   sendto(fd2,buf,12,0,(struct sockaddr *)&servaddr,sizeof(servaddr));
+  printf("%f %f %f\n",*((float *)buf),*((float *)(buf+4)),*((float *)(buf+8)));
   close(fd2);
   close(fd);  
 }
