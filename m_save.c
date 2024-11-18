@@ -6,7 +6,7 @@
 void main(){
   int fd,fd2;
   char buf[12];
-  sockaddr_in servaddr;
+  struct sockaddr_in servaddr;
   fd=open(SERIAL,O_RDWR);
   setserial(fd);
   fd2=socket(AF_INET,SOCK_DGRAM,0);
