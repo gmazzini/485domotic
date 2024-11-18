@@ -20,7 +20,7 @@ void main(){
   *((float *)(buf+4))=myr_f(fd);
   myw(fd,"\x01\x03\x01\x06",2);
   *((float *)(buf+8))=myr_f(fd);
-  sendto(fd,buf,12,0,(sockaddr*)&servaddr,sizeof(servaddr));
+  sendto(fd,buf,12,0,&servaddr,sizeof(servaddr));
   close(fd2);
   close(fd);  
 }
