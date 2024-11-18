@@ -1,15 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-#include <time.h>
-#include <fcntl.h>
-#include <math.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <termios.h>
 #define noDEBUG
 #define SERIAL "/dev/ttyACM1"
 #include "m_functions.c"
@@ -37,8 +25,7 @@ void main(){
   myw(fd,"\x01\x03\x01\x02",2); of=myr_f(fd); printf("Energia 1: %f\n",of);
   myw(fd,"\x01\x03\x01\x04",2); of=myr_f(fd); printf("Energia 2: %f\n",of);
   myw(fd,"\x01\x03\x01\x06",2); of=myr_f(fd); printf("Energia 3: %f\n",of);
-  myw(fd,"\x01\x03\x00\x3C",4); os=myr_s(fd,8); if(os!=NULL)printf("Data: %02x/%02x/%02x %02x:%02x:%02x\n",os[4],os[5],os[6],os
-[2],os[1],os[0]);
+  myw(fd,"\x01\x03\x00\x3C",4); os=myr_s(fd,8); if(os!=NULL)printf("Data: %02x/%02x/%02x %02x:%02x:%02x\n",os[4],os[5],os[6],os[2],os[1],os[0]);
 
   close(fd);
 }
