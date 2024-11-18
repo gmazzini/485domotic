@@ -1,3 +1,6 @@
+union uw {uint16_t w; uint8_t u[2]; };
+union uf {float f; uint8_t u[4]; };
+
 void setserial(int fd){
   struct termios tty;
   tcgetattr(fd,&tty);
