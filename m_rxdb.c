@@ -11,7 +11,7 @@
 #include <stdarg.h>
 #include <termios.h>
 #include <mysql/mysql.h>
-#include "mysetup.c"
+#include "/root/mysetup.c"
 
 void main(){
   int fd,rr;
