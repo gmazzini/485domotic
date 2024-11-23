@@ -4,14 +4,15 @@
 
 void main(){
   int fd,ow;
-  float of;
+  float *of;
   uint8_t *os;
 
   fd=open(SERIAL,O_RDWR);
   setserial(fd);
 
-  myw(fd,"\x01\x03\x00\x0E",6); of=myr_f(fd); printf("Tensione 1: %f\n",of);
-
+  myw(fd,"\x01\x03\x00\x0E",6); 
+  of=myr_fn(fd,1); 
+  printf("V1: %f\n",*of);
 
   close(fd);
 }
