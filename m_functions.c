@@ -116,6 +116,32 @@ float myr_f(int fd){
   return uf.f;
 }
 
+float *myr_fn(int fd,int n){
+  union uw uw;
+  static union uf uf[10];
+  int x,i;
+  static uint8_t aux[100];
+  for(i=0;;i++){
+    if(i>3000)return -1000;
+    x=read(fd,aux,100);
+    if(x!=0)break;
+    usleep(1000);
+  }
+  if(x!=5+4*n)return -1000;
+  uw.u[0]=aux[3+4*n]; uw.u[1]=aux[4+4*n];
+  if(crc(aux,3+4*n)!=uw.w)return -1000;
+  #ifdef DEBUG
+  for(i=0;i<x;i++)printf("%02x ",aux[i]); printf("\n");
+  #endif
+  for(i=0;i<n;i++){
+    uf[i].u[3]=aux[3+4*i]; 
+    uf[i].u[2]=aux[4+4*i];
+    uf[i].u[1]=aux[5+4*i];
+    uf[i].u[0]=aux[6+4*i];
+  }
+  return &uf[0].f;
+}
+
 uint8_t *myr_s(int fd,int len){
   union uw uw;
   int x,i;
