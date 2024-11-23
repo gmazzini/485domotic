@@ -33,12 +33,17 @@ void main(){
   for(;;){
     rr=recvfrom(fd,buf,100,0,&from,&fromlen);
     if(rr<1){usleep(10000); continue;}
+    t=time(NULL);
     switch(*buf){
       case 1:
-        printf("v1:%f v2:%f v3:%f i1:%f i2:%f i3:%f\n",*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9),*(float *)(buf+13),*(float *)(buf+17),*(float *)(buf+21));
+        sprintf(query,"insert into vi (epoch,v1,v2,v3,i1,i2,i3) values(%ld,%f,%f,%f,%f,%f,%f)",t,*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9),*(float *)(buf+13),*(float *)(buf+17),*(float *)(buf+21));
+        mysql_query(con,query);
+        // printf("v1:%f v2:%f v3:%f i1:%f i2:%f i3:%f\n",*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9),*(float *)(buf+13),*(float *)(buf+17),*(float *)(buf+21));
       break;
       case 2:
-        printf("e1:%f e2:%f e3:%f\n",*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9));
+        sprintf(query,"insert into energy (epoch,i1,i2,i3) values(%ld,%f,%f,%f)",t,*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9));
+        mysql_query(con,query);
+        // printf("e1:%f e2:%f e3:%f\n",*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9));
         break;
     }
   }
