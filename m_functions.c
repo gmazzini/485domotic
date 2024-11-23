@@ -122,14 +122,14 @@ float *myr_fn(int fd,int n){
   int x,i;
   static uint8_t aux[100];
   for(i=0;;i++){
-    if(i>3000)return -1000;
+    if(i>3000)return NULL;
     x=read(fd,aux,100);
     if(x!=0)break;
     usleep(1000);
   }
-  if(x!=5+4*n)return -1000;
+  if(x!=5+4*n)return NULL;
   uw.u[0]=aux[3+4*n]; uw.u[1]=aux[4+4*n];
-  if(crc(aux,3+4*n)!=uw.w)return -1000;
+  if(crc(aux,3+4*n)!=uw.w)return NULL;
   #ifdef DEBUG
   for(i=0;i<x;i++)printf("%02x ",aux[i]); printf("\n");
   #endif
