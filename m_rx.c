@@ -38,7 +38,7 @@ void main(){
         printf("v1:%5.2f v2:%5.2f v3:%5.2f i1:%5.2f i2:%5.2f i3:%5.2f\n",*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9),*(float *)(buf+13),*(float *)(buf+17),*(float *)(buf+21));
       break;
       case 2:
-        printf("v1:%5.2f v2:%5.2f v3:%5.2f i1:%5.2f i2:%5.2f i3:%5.2f\n",*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9));
+        printf("e1:%5.2f e2:%5.2f e3:%5.2f\n",*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9));
         break;
     }
   }
