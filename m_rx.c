@@ -35,10 +35,10 @@ void main(){
     if(rr<1){usleep(10000); continue;}
     switch(*buf){
       case 1:
-        printf("v1:%5.2f v2:%5.2f v3:%5.2f i1:%5.2f i2:%5.2f i3:%5.2f\n",*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9),*(float *)(buf+13),*(float *)(buf+17),*(float *)(buf+21));
+        printf("v1:%f v2:%f v3:%f i1:%f i2:%f i3:%f\n",*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9),*(float *)(buf+13),*(float *)(buf+17),*(float *)(buf+21));
       break;
       case 2:
-        printf("e1:%5.2f e2:%5.2f e3:%5.2f\n",*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9));
+        printf("e1:%f e2:%f e3:%f\n",*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9));
         break;
     }
   }
