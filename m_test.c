@@ -12,8 +12,12 @@ void main(){
   setserial(fd);
 
   myw(fd,"\x01\x03\x01\x0A",1); ow=myr_w(fd); printf("Hz: %d\n",ow);
-  myw(fd,"\x01\x03\x01\x00",2); ol=myr_ln(fd,1); printf("V: %ld\n",*ol);
-
-
+  myw(fd,"\x01\x03\x01\x00",4); 
+  ol=myr_ln(fd,2);
+  if(ol!=NULL){
+    printf("V: %ld\n",ol[0]);
+    printf("I: %ld\n",ol[1]);
+  }
+  
   close(fd);
 }
