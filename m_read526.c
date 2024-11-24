@@ -17,6 +17,11 @@ void main(){
     printf("V: %ld\n",ol[0]);
     printf("I: %ld\n",ol[1]);
   }
+  myw(fd,"\x01\x03\x01\x0E",2); 
+  ol=myr_ln(fd,1);
+  if(ol!=NULL){
+    printf("E: %ld\n",ol[0]);
+  }
   
   close(fd);
 }
