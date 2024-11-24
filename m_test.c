@@ -4,8 +4,7 @@
 
 void main(){
   int fd,ow;
-  long *ol;
-  float of;
+  uint32_t *ol;
   uint8_t *os;
 
   fd=open(SERIAL,O_RDWR);
