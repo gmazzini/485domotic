@@ -1,4 +1,4 @@
-#define DEBUG
+#define noDEBUG
 #define SERIAL "/dev/ttyACM2"
 #include "m_functions.c"
 
