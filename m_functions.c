@@ -13,6 +13,7 @@
 #include <termios.h>
 
 union uw {uint16_t w; uint8_t u[2]; };
+union ul {uint32_t w; uint8_t u[4]; };
 union uf {float f; uint8_t u[4]; };
 
 void setserial(int fd){
@@ -140,6 +141,32 @@ float *myr_fn(int fd,int n){
     uf[i].u[0]=aux[6+4*i];
   }
   return &uf[0].f;
+}
+
+long *myr_ln(int fd,int n){
+  union uw uw;
+  static union ul ul[10];
+  int x,i;
+  static uint8_t aux[100];
+  for(i=0;;i++){
+    if(i>3000)return NULL;
+    x=read(fd,aux,100);
+    if(x!=0)break;
+    usleep(1000);
+  }
+  if(x!=5+4*n)return NULL;
+  uw.u[0]=aux[3+4*n]; uw.u[1]=aux[4+4*n];
+  if(crc(aux,3+4*n)!=uw.w)return NULL;
+  #ifdef DEBUG
+  for(i=0;i<x;i++)printf("%02x ",aux[i]); printf("\n");
+  #endif
+  for(i=0;i<n;i++){
+    ul[i].u[3]=aux[3+4*i]; 
+    ul[i].u[2]=aux[4+4*i];
+    ul[i].u[1]=aux[5+4*i];
+    ul[i].u[0]=aux[6+4*i];
+  }
+  return &ul[0].l;
 }
 
 uint8_t *myr_s(int fd,int len){
