@@ -143,7 +143,7 @@ float *myr_fn(int fd,int n){
   return &uf[0].f;
 }
 
-long *myr_ln(int fd,int n){
+uint32_t *myr_ln(int fd,int n){
   union uw uw;
   static union ul ul[10];
   int x,i;
