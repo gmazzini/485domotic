@@ -289,8 +289,9 @@ void sun(int year,int month,int day,float lat,float lng,uint8_t *HHr,uint8_t *MM
   Ts=Hs+RAs-(0.06571*ts)-6.622;
   time(&myt);
   loctime=localtime(&myt);
+  delta=loctime->tm_hour;
   gmttime=gmtime(&myt);
-  delta=loctime->tm_hour-gmttime->tm_hour;
+  delta-=gmttime->tm_hour;
   UTr=fmod(24.0+Tr-lngHour+delta,24.0);
   UTs=fmod(24.0+Ts-lngHour+delta,24.0);
   *HHr=(int)UTr;
