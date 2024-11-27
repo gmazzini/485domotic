@@ -290,9 +290,9 @@ int main(){
     }
     for(q=0;q<TOTRELAIS;q++)if(mod[q]!=relais[q]){
       myset(fd,q/10,(q%10)*16+mod[q]);
-      relais[q]=mod[q];
       sprintf(buf,"R%d,%d,%d->%d",q/10,q%10,relais[q],mod[q]);
-      inslog(myt,10,buf);      
+      inslog(myt,10,buf);
+      relais[q]=mod[q];
     }
   }
 }
