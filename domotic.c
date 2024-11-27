@@ -228,10 +228,7 @@ int main(){
         }
       }
     }
-    mylog[poslog].time=myt;
-    mylog[poslog].action=1;
-    strcpy(mylog[poslog].desc,buf);
-    if(++poslog>=LOGLEN){poslog=0; fulllog=1;}
+    inslog(myt,1,buf);
     if(buf[0]=='K'){
       f=strchr(buf,','); *f='\0';
       q=10*atoi(buf+1)+atoi(f+1);
@@ -277,12 +274,10 @@ int main(){
       en=en->next;
     }
     for(q=0;q<TOTRELAIS;q++)if(mod[q]!=relais[q]){
-      mylog[poslog].time=myt;
-      mylog[poslog].action=3;
       myset(fd,q/10,(q%10)*16+mod[q]);
-      sprintf(mylog[poslog].desc,"R%d,%d,%d->%d",q/10,q%10,relais[q],mod[q]);
-      if(++poslog>=LOGLEN){poslog=0; fulllog=1;}
       relais[q]=mod[q];
+      sprintf(buf,"R%d,%d,%d->%d",q/10,q%10,relais[q],mod[q]);
+      inslog(myt,3,buf);      
     }
   }
 }
