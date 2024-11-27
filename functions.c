@@ -202,6 +202,14 @@ char * managewww(int sock){
     strcpy(ret,t2);
   }
   else if(strcmp(t1,"showlog")==0){
+    i=0;
+    for(q=poslog;q>=0;q--){
+      memcpy(&info,localtime(&mylog[q].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
+      myout(sock,1,"%s %03d %d %s\n",buf,q,mylog[q].action,mylog[q].desc);
+      if(++i>t2)break;
+    }
+    
+if(1==0){
     i=j=0;
     if(fulllog || poslog>0){
       if(t2==NULL){
@@ -219,6 +227,8 @@ char * managewww(int sock){
       }
     }
     myout(sock,2,"End Log from %03d to %03d\n",i%LOGLEN,(j-1+LOGLEN)%LOGLEN);
+}
+    
   }
   else if(strcmp(t1,"quit")==0){
     myout(sock,2,"quitting\n");
