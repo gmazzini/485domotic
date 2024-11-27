@@ -120,7 +120,7 @@ char * managewww(int sock){
   uint64_t flag;
   FILE *fp;
   time_t myt;
-  struct tm *info;
+  struct tm info;
   struct ek *en;
   
   *ret='\0';
@@ -136,9 +136,9 @@ char * managewww(int sock){
     for(j=0,q=0;q<TOTRELAIS;q++)if(relais[q]==1)j++;
     myout(sock,1,"relais on: %d\n",j);
     myout(sock,1,"events: %d\n",nevent);
-    time(&myt); info=localtime(&myt); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
+    time(&myt); memcpy(&info,localtime(&myt),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
     myout(sock,1,"time now: %s\n",buf);
-    info=localtime(&start); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
+    memcpy(&info,localtime(&start),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
     myout(sock,1,"time start: %s\n",buf);
     myout(sock,1,"time sunrise: %02d:%02d\n",HHr,MMr);
     myout(sock,1,"time sunset: %02d:%02d\n",HHs,MMs);
@@ -214,7 +214,7 @@ char * managewww(int sock){
         else {i=poslog-k+LOGLEN; j=poslog+LOGLEN;}
       }
       for(q=i;q<j;q++){
-        info=localtime(&mylog[q%LOGLEN].time); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",info);
+        memcpy(&info,localtime(&mylog[q%LOGLEN].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
         myout(sock,1,"%s %03d %d %s\n",buf,q%LOGLEN,mylog[q%LOGLEN].action,mylog[q%LOGLEN].desc); 
       }
     }
@@ -251,8 +251,7 @@ void sun(int year,int month,int day,float lat,float lng,uint8_t *HHr,uint8_t *MM
   float RAr,RAs,Lquadrantr,Lquadrants,RAquadrantr,RAquadrants;
   float sinDecr,sinDecs,cosDecr,cosDecs,cosHr,cosHs,Hr,Hs,Tr,Ts,UTr,UTs;
   time_t myt;
-  struct tm *loctime,*gmttime;
-  int delta;
+  struct tm loctime,gmttime;
   
   N1=floor(275*month/9);
   N2=floor((month+9)/12);
@@ -288,12 +287,10 @@ void sun(int year,int month,int day,float lat,float lng,uint8_t *HHr,uint8_t *MM
   Tr=Hr+RAr-(0.06571*tr)-6.622;
   Ts=Hs+RAs-(0.06571*ts)-6.622;
   time(&myt);
-  loctime=localtime(&myt);
-  delta=loctime->tm_hour;
-  gmttime=gmtime(&myt);
-  delta-=gmttime->tm_hour;
-  UTr=fmod(24.0+Tr-lngHour+delta,24.0);
-  UTs=fmod(24.0+Ts-lngHour+delta,24.0);
+  memcpy(&loctime,localtime(&myt),sizeof(struct tm));
+  memcpy(&gmttime,gmtime(&myt),sizeof(struct tm));
+  UTr=fmod(24.0+Tr-lngHour+loctime.tm_hour-gmttime.tm_hour,24.0);
+  UTs=fmod(24.0+Ts-lngHour+loctime.tm_hour-gmttime.tm_hour,24.0);
   *HHr=(int)UTr;
   *MMr=(int)((UTr-(int)UTr)*60);
   *HHs=(int)UTs;
