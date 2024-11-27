@@ -296,3 +296,13 @@ void sun(int year,int month,int day,float lat,float lng,uint8_t *HHr,uint8_t *MM
   *HHs=(int)UTs;
   *MMs=(int)((UTs-(int)UTs)*60);
 }
+
+void inslog(time_t myt,int action,char *desc){
+  mylog[poslog].time=myt;
+  mylog[poslog].action=action;
+  strcpy(mylog[poslog].desc,desc);
+  if(++poslog>=LOGLEN){
+    poslog=0;
+    fulllog=1;
+  }
+}
