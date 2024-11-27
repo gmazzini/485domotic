@@ -52,7 +52,7 @@ int main(){
   uint8_t mod[TOTRELAIS];
   char *token,*f,*g,*mye;
   time_t myt;
-  struct tm *info;
+  struct tm info;
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30,esun;
   uint64_t *lD;
   struct ek *en,*em;
@@ -149,12 +149,12 @@ int main(){
   server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
   bind(sockwww,(struct sockaddr *)&server_addr,sizeof(server_addr));
   time(&myt);
-  info=localtime(&myt);
-  last_min=info->tm_min;
-  last_hour=info->tm_hour;
+  memcpy(&info,localtime(&myt),sizeof(struct tm));
+  last_min=info.tm_min;
+  last_hour=info.tm_hour;
   sched=0;
   every10=every30=100;
-  sun(1900+info->tm_year,1+info->tm_mon,info->tm_mday,LAT,LNG,&HHr,&MMr,&HHs,&MMs);
+  sun(1900+info.tm_year,1+info.tm_mon,info.tm_mday,LAT,LNG,&HHr,&MMr,&HHs,&MMs);
   esun=0;
   fp=fopen(SAVESTATUS,"rb");
   fread(relais,sizeof(uint8_t),TOTRELAIS,fp);
@@ -174,48 +174,48 @@ int main(){
   // receiving events
   for(;;){
     time(&myt);
-    info=localtime(&myt);
+    memcpy(&info,localtime(&myt),sizeof(struct tm));
     mye=managewww(sockwww);
     if(strlen(mye)>0)strcpy(buf,mye);
     else {
-      if(info->tm_min!=last_min){
-        last_min=info->tm_min;
+      if(info.tm_min!=last_min){
+        last_min=info.tm_min;
         strcpy(buf,"E1");
       }
-      else if(info->tm_hour!=last_hour){
-        last_hour=info->tm_hour;
+      else if(info.tm_hour!=last_hour){
+        last_hour=info.tm_hour;
         strcpy(buf,"E2");
       }
-      else if(every10!=info->tm_min && info->tm_min%10==0){
-        every10=info->tm_min;
+      else if(every10!=info.tm_min && info.tm_min%10==0){
+        every10=info.tm_min;
         strcpy(buf,"E3");
       }
-      else if(every30!=info->tm_min && info->tm_min%30==0){
-        every30=info->tm_min;
+      else if(every30!=info.tm_min && info.tm_min%30==0){
+        every30=info.tm_min;
         strcpy(buf,"E4");
       }
-      else if(sched!=5 && info->tm_hour==0 && info->tm_min==0){
+      else if(sched!=5 && info.tm_hour==0 && info.tm_min==0){
         sched=5;
-        sun(1900+info->tm_year,1+info->tm_mon,info->tm_mday,LAT,LNG,&HHr,&MMr,&HHs,&MMs);
+        sun(1900+info.tm_year,1+info.tm_mon,info.tm_mday,LAT,LNG,&HHr,&MMr,&HHs,&MMs);
         strcpy(buf,"E5");
       }
-      else if(sched!=6 && info->tm_hour==6 && info->tm_min==0){
+      else if(sched!=6 && info.tm_hour==6 && info.tm_min==0){
         sched=6;
         strcpy(buf,"E6");
       }
-      else if(sched!=7 && info->tm_hour==12 && info->tm_min==0){
+      else if(sched!=7 && info.tm_hour==12 && info.tm_min==0){
         sched=7;
         strcpy(buf,"E7");
       }
-      else if(sched!=8 && info->tm_hour==18 && info->tm_min==0){
+      else if(sched!=8 && info.tm_hour==18 && info.tm_min==0){
         sched=8;
         strcpy(buf,"E8");
       }
-      else if(esun!=9 && info->tm_hour==HHr && info->tm_min==MMr){
+      else if(esun!=9 && info.tm_hour==HHr && info.tm_min==MMr){
         esun=9;
         strcpy(buf,"E9");
       }
-      else if(esun!=10 && info->tm_hour==HHs && info->tm_min==MMs){
+      else if(esun!=10 && info.tm_hour==HHs && info.tm_min==MMs){
         esun=10;
         strcpy(buf,"E10");
       }
@@ -247,7 +247,7 @@ int main(){
     for(q=0;q<TOTRELAIS;q++)mod[q]=relais[q];
     for(;;){
       if(en->event==0)break;
-      j=info->tm_hour*60+info->tm_min;
+      j=info.tm_hour*60+info.tm_min;
       if((en->D[j/64] & mask[j%64])==0){
         for(j=0;j<en->nC;j++){
           switch(en->C[j]){
