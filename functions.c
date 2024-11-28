@@ -206,6 +206,10 @@ char * managewww(int sock){
     i=0;
     k=atoi(t2)%LOGLEN;
     j=atoi(t3);
+
+
+    printf("...\n");
+
     for(q=poslog-1;q>=0 && i<k;q--){
       if(mylog[q].action==j)continue;
       memcpy(&info,localtime(&mylog[q].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
