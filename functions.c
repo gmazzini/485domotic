@@ -132,7 +132,9 @@ char * managewww(int sock){
   myout(sock,1,">> %s\n",buf);
   t1=strtok(buf," \n\r\t");
   t2=strtok(NULL," \n\r\t");
+  printf(".\n");
   t3=strtok(NULL," \n\r\t");
+  printf("..\n");
   if(strcmp(t1,"status")==0){
     for(j=0,q=0;q<TOTRELAIS;q++)if(relais[q]==1)j++;
     myout(sock,1,"relais on: %d\n",j);
