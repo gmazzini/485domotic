@@ -222,7 +222,7 @@ char * managewww(int sock){
         i++;
       }
     }
-    myout(sock,2,"End Log %03d entry, total %03d\n",i,(fulllog)?LOGLEN:poslog);
+    myout(sock,2,"End showlog of %03d entries, total %03d\n",i,(fulllog)?LOGLEN:poslog);
   }
   else if(strcmp(t1,"quit")==0){
     myout(sock,2,"quitting\n");
