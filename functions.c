@@ -265,6 +265,7 @@ void sun(int year,int month,int day,float lat,float lng,uint8_t *HHr,uint8_t *MM
   float sinDecr,sinDecs,cosDecr,cosDecs,cosHr,cosHs,Hr,Hs,Tr,Ts,UTr,UTs;
   time_t myt;
   struct tm loctime,gmttime;
+  int delta;
   
   N1=floor(275*month/9);
   N2=floor((month+9)/12);
@@ -302,8 +303,9 @@ void sun(int year,int month,int day,float lat,float lng,uint8_t *HHr,uint8_t *MM
   time(&myt);
   memcpy(&loctime,localtime(&myt),sizeof(struct tm));
   memcpy(&gmttime,gmtime(&myt),sizeof(struct tm));
-  UTr=fmod(24.0+Tr-lngHour+loctime.tm_hour-gmttime.tm_hour,24.0);
-  UTs=fmod(24.0+Ts-lngHour+loctime.tm_hour-gmttime.tm_hour,24.0);
+  delta=fmod(24.0+loctime.tm_hour-gmttime.tm_hour,24.0);
+  UTr=fmod(24.0+Tr-lngHour+delta,24.0);
+  UTs=fmod(24.0+Ts-lngHour+delta,24.0);
   *HHr=(int)UTr;
   *MMr=(int)((UTr-(int)UTr)*60);
   *HHs=(int)UTs;
