@@ -202,37 +202,19 @@ char * managewww(int sock){
     strcpy(ret,t2);
   }
   else if(strcmp(t1,"showlog")==0){
-    if(1==1){
     i=0;
     k=atoi(t2)%LOGLEN;
-    for(q=poslog-1;q>=0;q--){
+    for(q=poslog-1;q>=0 && i<k;q--){
       memcpy(&info,localtime(&mylog[q].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
       myout(sock,1,"%s %03d %d %s\n",buf,q,mylog[q].action,mylog[q].desc);
-      if(++i>k)break;
+      k++;
     }
-          myout(sock,2,"End Log from %03d to %03d\n",i%LOGLEN,(j-1+LOGLEN)%LOGLEN);
-
+    if(fulllog){
     }
     
-if(1==0){
-    i=j=0;
-    if(fulllog || poslog>0){
-      if(t2==NULL){
-        if(fulllog==0){i=0; j=poslog;}
-        else {i=poslog; j=poslog+LOGLEN;} 
-      }
-      else {
-        k=atoi(t2)%LOGLEN;
-        if(fulllog==0){i=(k<poslog)?poslog-k:0; j=poslog;}
-        else {i=poslog-k+LOGLEN; j=poslog+LOGLEN;}
-      }
-      for(q=i;q<j;q++){
-        memcpy(&info,localtime(&mylog[q%LOGLEN].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
-        myout(sock,1,"%s %03d %d %s\n",buf,q%LOGLEN,mylog[q%LOGLEN].action,mylog[q%LOGLEN].desc); 
-      }
-    }
-    myout(sock,2,"End Log from %03d to %03d\n",i%LOGLEN,(j-1+LOGLEN)%LOGLEN);
-}
+    myout(sock,2,"End Log %03d entry\n",i);
+
+    
     
   }
   else if(strcmp(t1,"quit")==0){
