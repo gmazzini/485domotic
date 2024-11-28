@@ -208,7 +208,7 @@ char * managewww(int sock){
     i=0;
     k=atoi(t2)%LOGLEN;
     printf("...\n");
-    j=atoi(t3);
+    j=1;
 
 
     printf("....\n");
