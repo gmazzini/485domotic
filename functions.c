@@ -132,9 +132,7 @@ char * managewww(int sock){
   myout(sock,1,">> %s\n",buf);
   t1=strtok(buf," \n\r\t");
   t2=strtok(NULL," \n\r\t");
-  printf(".\n");
   t3=strtok(NULL," \n\r\t");
-  printf("..\n");
   if(strcmp(t1,"status")==0){
     for(j=0,q=0;q<TOTRELAIS;q++)if(relais[q]==1)j++;
     myout(sock,1,"relais on: %d\n",j);
@@ -206,13 +204,10 @@ char * managewww(int sock){
   }
   else if(strcmp(t1,"showlog")==0){
     i=0;
-    k=atoi(t2)%LOGLEN;
-    printf("...\n");
-    j=1;
-
-
-    printf("....\n");
-
+    if(t2!=NULL)k=atoi(t2)%LOGLEN;
+    else k=0;
+    if(t3!=NULL)j=atoi(t3);
+    else j=0;
     for(q=poslog-1;q>=0 && i<k;q--){
       if(mylog[q].action==j)continue;
       memcpy(&info,localtime(&mylog[q].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
