@@ -207,7 +207,7 @@ char * managewww(int sock){
     for(q=poslog-1;q>=0 && i<k;q--){
       memcpy(&info,localtime(&mylog[q].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
       myout(sock,1,"%s %03d %d %s\n",buf,q,mylog[q].action,mylog[q].desc);
-      k++;
+      i++;
     }
     if(fulllog){
     }
