@@ -202,17 +202,17 @@ char * managewww(int sock){
     strcpy(ret,t2);
   }
   else if(strcmp(t1,"showlog")==0){
-    if(1==0){
+    if(1==1){
     i=0;
     j=atoi(t2);
-    for(q=poslog;q>=0;q--){
+    for(q=poslog-1;q>=0;q--){
       memcpy(&info,localtime(&mylog[q].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
       myout(sock,1,"%s %03d %d %s\n",buf,q,mylog[q].action,mylog[q].desc);
       if(++i>j)break;
     }
     }
     
-if(1==1){
+if(1==0){
     i=j=0;
     if(fulllog || poslog>0){
       if(t2==NULL){
