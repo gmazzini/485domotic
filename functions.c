@@ -114,7 +114,7 @@ void myout(int sock,int end,char *format, ...){
 
 char * managewww(int sock){
   static char ret[50];
-  char buf[100],*t1,*t2,*f;
+  char buf[100],*t1,*t2,*t3,*f;
   int rr,quit,q;
   uint16_t i,j,k,dis,totdis;
   uint64_t flag;
@@ -132,6 +132,7 @@ char * managewww(int sock){
   myout(sock,1,">> %s\n",buf);
   t1=strtok(buf," \n\r\t");
   t2=strtok(NULL," \n\r\t");
+  t3=strtok(NULL," \n\r\t");
   if(strcmp(t1,"status")==0){
     for(j=0,q=0;q<TOTRELAIS;q++)if(relais[q]==1)j++;
     myout(sock,1,"relais on: %d\n",j);
@@ -204,18 +205,22 @@ char * managewww(int sock){
   else if(strcmp(t1,"showlog")==0){
     i=0;
     k=atoi(t2)%LOGLEN;
+    j=atoi(t3);
     for(q=poslog-1;q>=0 && i<k;q--){
+      if(mylog[q].action==j)continue;
       memcpy(&info,localtime(&mylog[q].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
       myout(sock,1,"%s %03d %d %s\n",buf,q,mylog[q].action,mylog[q].desc);
       i++;
     }
     if(fulllog){
+      for(q=LOGLEN-1;q>=poslog && i<k;q--){
+        if(mylog[q].action==j)continue;
+        memcpy(&info,localtime(&mylog[q].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
+        myout(sock,1,"%s %03d %d %s\n",buf,q,mylog[q].action,mylog[q].desc);
+        i++;
+      }
     }
-    
-    myout(sock,2,"End Log %03d entry\n",i);
-
-    
-    
+    myout(sock,2,"End Log %03d entry, total %03d\n",i,(fulllog)?LOGLEN:poslog);
   }
   else if(strcmp(t1,"quit")==0){
     myout(sock,2,"quitting\n");
@@ -228,7 +233,7 @@ char * managewww(int sock){
     myout(sock,1,"showon, show relais in on state\n");
     myout(sock,1,"showevents, show all the events\n");
     myout(sock,1,"inject xxx, inject the xxx event (like Ki,j or Ew) in the system\n");
-    myout(sock,1,"showlog [n], show rotative log last n lines or all\n");
+    myout(sock,1,"showlog n m, show rotative log last n lines with esclusion of action m\n");
     myout(sock,1,"quit, shutdown the system\n");
     myout(sock,2,"help, this help\n");
   }
