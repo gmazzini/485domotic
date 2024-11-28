@@ -207,10 +207,11 @@ char * managewww(int sock){
   else if(strcmp(t1,"showlog")==0){
     i=0;
     k=atoi(t2)%LOGLEN;
+    printf("...\n");
     j=atoi(t3);
 
 
-    printf("...\n");
+    printf("....\n");
 
     for(q=poslog-1;q>=0 && i<k;q--){
       if(mylog[q].action==j)continue;
