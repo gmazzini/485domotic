@@ -76,6 +76,8 @@ int main(){
   for(;;){
     fgets(buf,100,fp);
     if(feof(fp))break;
+    if(strlen(buf)<5)continue;
+    if(buf[0]=='#')continue;
     nlK=nlR=nlE=nlC=nlT=0;
     for(q=0;q<23;q++)lD[q]=0;
     for(token=strtok(buf," \n\r\t");token;token=strtok(NULL," \n\r\t")){
