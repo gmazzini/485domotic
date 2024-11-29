@@ -18,11 +18,11 @@ w:
   9 Every sunrise
   10 Every sunset
 
-onoff {Ki,j} {Ri,j} {Ew} {Di,j}
-off {Ki,j} {Ri,j} {Ew} {Di,j}
-on {Ki,j} {Ri,j} {Ew} {Di,j}
-condon {Ki,j} {Ri,j} {Di,j} {Ti,j,s}
-condoff {Ki,j} {Ri,j} {Di,j} {Ti,j,s}
+Conoff {Ki,j} {Ri,j} {Ew} {Di,j}
+Coff {Ki,j} {Ri,j} {Ew} {Di,j}
+Con {Ki,j} {Ri,j} {Ew} {Di,j}
+Ccondon {Ki,j} {Ri,j} {Di,j} {Ti,j,s}
+Ccondoff {Ki,j} {Ri,j} {Di,j} {Ti,j,s}
   
   
 <b>Hardware notes:</b>
