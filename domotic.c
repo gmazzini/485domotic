@@ -21,6 +21,7 @@
 #define SERIAL "/dev/ttyACM0"
 #define CONFIG "config"
 #define SAVESTATUS "status"
+#define SAVELOG "log"
 
 struct ek{
   uint16_t event;
@@ -168,8 +169,17 @@ int main(){
   en->nT=0; en->T=NULL;
   en->next=NULL;
   mylog=(struct log *)malloc(LOGLEN*sizeof(struct log));
-  poslog=0;
-  fulllog=0;
+  fp=fopen(SAVELOG,"rb");
+  if(fp!=null){
+    fread(&poslog,sizeof(uint16_t),1,fp);
+    fread(&fulllog,sizeof(uint8_t),1,fp);
+    fread(mylog,sizeof(struct log),LOGLEN,fp);
+    fclose(fp);
+  }
+  else {
+    poslog=0;
+    fulllog=0;
+  }
   fd=open(SERIAL,O_RDWR);
   setserial(fd);
   
