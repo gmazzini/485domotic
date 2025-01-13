@@ -244,6 +244,11 @@ char * managewww(int sock){
     fp=fopen(SAVESTATUS,"wb");
     fwrite(relais,sizeof(uint8_t),TOTRELAIS,fp);
     fclose(fp);
+    fp=fopen(SAVELOG,"wb");
+    fwrite(&poslog,sizeof(uint16_t),1,fp);
+    fwrite(&fulllog,sizeof(uint8_t),1,fp);
+    fwrite(mylog,sizeof(struct log),LOGLEN,fp);
+    fclose(fp);
     usleep(2000000);
     exit(0);
   }
