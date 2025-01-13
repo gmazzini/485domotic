@@ -180,65 +180,55 @@ int main(){
     mye=managewww(sockwww);
     if(strlen(mye)>0){
       strcpy(buf,mye);
-      inslog(myt,2,buf);
+      inslog(myt,1,buf);
     }
     else {
       if(info.tm_min!=last_min){
         last_min=info.tm_min;
         strcpy(buf,"E1");
-        inslog(myt,1,buf);
       }
       else if(info.tm_hour!=last_hour){
         last_hour=info.tm_hour;
         strcpy(buf,"E2");
-        inslog(myt,1,buf);
       }
       else if(every10!=info.tm_min && info.tm_min%10==0){
         every10=info.tm_min;
         strcpy(buf,"E3");
-        inslog(myt,1,buf);
       }
       else if(every30!=info.tm_min && info.tm_min%30==0){
         every30=info.tm_min;
         strcpy(buf,"E4");
-        inslog(myt,1,buf);
       }
       else if(sched!=5 && info.tm_hour==0 && info.tm_min==0){
         sched=5;
         sun(1900+info.tm_year,1+info.tm_mon,info.tm_mday,LAT,LNG,&HHr,&MMr,&HHs,&MMs);
         strcpy(buf,"E5");
-        inslog(myt,1,buf);
       }
       else if(sched!=6 && info.tm_hour==6 && info.tm_min==0){
         sched=6;
         strcpy(buf,"E6");
-        inslog(myt,1,buf);
       }
       else if(sched!=7 && info.tm_hour==12 && info.tm_min==0){
         sched=7;
         strcpy(buf,"E7");
-        inslog(myt,1,buf);
       }
       else if(sched!=8 && info.tm_hour==18 && info.tm_min==0){
         sched=8;
         strcpy(buf,"E8");
-        inslog(myt,1,buf);
       }
       else if(esun!=9 && info.tm_hour==HHr && info.tm_min==MMr){
         esun=9;
         strcpy(buf,"E9");
-        inslog(myt,1,buf);
       }
       else if(esun!=10 && info.tm_hour==HHs && info.tm_min==MMs){
         esun=10;
         strcpy(buf,"E10");
-        inslog(myt,1,buf);
       }
       else {
         rr=myread(fd);
         if(rr && rr%2){
           sprintf(buf,"K%d,%d",rr/256,(rr%256)>>4);
-          inslog(myt,3,buf);
+          inslog(myt,2,buf);
         }
         else {
           usleep(10000);
@@ -293,7 +283,7 @@ int main(){
     for(q=0;q<TOTRELAIS;q++)if(mod[q]!=relais[q]){
       myset(fd,q/10,(q%10)*16+mod[q]);
       sprintf(buf,"R%d,%d,%d->%d",q/10,q%10,relais[q],mod[q]);
-      inslog(myt,10,buf);
+      inslog(myt,3,buf);
       relais[q]=mod[q];
     }
   }
