@@ -170,7 +170,7 @@ int main(){
   en->next=NULL;
   mylog=(struct log *)malloc(LOGLEN*sizeof(struct log));
   fp=fopen(SAVELOG,"rb");
-  if(fp!=null){
+  if(fp!=NULL){
     fread(&poslog,sizeof(uint16_t),1,fp);
     fread(&fulllog,sizeof(uint8_t),1,fp);
     fread(mylog,sizeof(struct log),LOGLEN,fp);
