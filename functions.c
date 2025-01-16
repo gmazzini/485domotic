@@ -114,9 +114,9 @@ void myout(int sock,int end,char *format, ...){
 
 char * managewww(int sock){
   static char ret[50];
-  char buf[100],*t1,*t2,*t3,*f;
+  char buf[100],*t1,*t2,*f;
   int rr,quit,q;
-  uint16_t i,j,k,dis,totdis;
+  uint16_t i,j,k,dis,totdis,fb,fe;
   uint64_t flag;
   FILE *fp;
   time_t myt;
@@ -132,7 +132,6 @@ char * managewww(int sock){
   myout(sock,1,">> %s\n",buf);
   t1=strtok(buf," \n\r\t");
   t2=strtok(NULL," \n\r\t");
-  t3=strtok(NULL," \n\r\t");
   if(strcmp(t1,"status")==0){
     for(j=0,q=0;q<TOTRELAIS;q++)if(relais[q]==1)j++;
     myout(sock,1,"relais on: %d\n",j);
@@ -203,24 +202,16 @@ char * managewww(int sock){
     strcpy(ret,t2);
   }
   else if(strcmp(t1,"showlog")==0){
-    i=0;
     if(t2!=NULL)k=atoi(t2)%LOGLEN;
-    else k=0;
-    if(t3!=NULL)j=atoi(t3);
-    else j=0;
-    for(q=poslog-1;q>=0 && i<k;q--){
-      if(mylog[q].action==j)continue;
-      memcpy(&info,localtime(&mylog[q].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
-      myout(sock,1,"%s %03d %d %s\n",buf,q,mylog[q].action,mylog[q].desc);
+    else k=10;
+    i=0;
+    fb=(fulllog)?poslog-1+LOGLEN:poslog-1;
+    fe=(fulllog)?poslog:0;
+    for(q=fb;q>=fe && i<k;q--){
+      j=q%LOGLEN;
+      memcpy(&info,localtime(&mylog[j].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
+      myout(sock,1,"%s %03d %d %s\n",buf,j,mylog[j].action,mylog[j].desc);
       i++;
-    }
-    if(fulllog){
-      for(q=LOGLEN-1;q>=poslog && i<k;q--){
-        if(mylog[q].action==j)continue;
-        memcpy(&info,localtime(&mylog[q].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
-        myout(sock,1,"%s %03d %d %s\n",buf,q,mylog[q].action,mylog[q].desc);
-        i++;
-      }
     }
     myout(sock,2,"End showlog of %03d entries, total %03d\n",i,(fulllog)?LOGLEN:poslog);
   }
