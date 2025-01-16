@@ -213,7 +213,7 @@ char * managewww(int sock){
       memcpy(&info,localtime(&mylog[j].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
       
       
-      myout(sock,1,"%d %03d %d %s\n",strlen(buf),j,mylog[j].action,mylog[j].desc);
+      myout(sock,1,"%d %03d %d %s\n",strlen(mylog[j].desc),j,mylog[j].action,mylog[j].desc);
   
       //myout(sock,1,"%s %03d %d %s\n",buf,j,mylog[j].action,mylog[j].desc);
       i++;
