@@ -203,9 +203,8 @@ char * managewww(int sock){
     strcpy(ret,t2);
   }
   else if(strcmp(t1,"showlog")==0){
-    // if(t2!=NULL)k=atoi(t2)%LOGLEN;
-    // else k=10;
-    k=12;
+    if(t2!=NULL)k=atoi(t2)%LOGLEN;
+    else k=10;
     i=0;
     fb=(fulllog)?poslog-1+LOGLEN:poslog-1;
     fe=(fulllog)?poslog:0;
