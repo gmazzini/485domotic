@@ -208,14 +208,10 @@ char * managewww(int sock){
     i=0;
     fb=(fulllog)?poslog-1+LOGLEN:poslog-1;
     fe=(fulllog)?poslog:0;
-    
-for(q=fb;q>=fe && i<k;q--){
-  j=q%LOGLEN;
-
+    for(q=fb;q>=fe && i<k;q--){
+      j=q%LOGLEN;
+      memcpy(&info,localtime(&mylog[j].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
   myout(sock,1,"%03d %d %s\n",j,mylog[j].action,mylog[j].desc);
-
-  memcpy(&info,localtime(&mylog[j].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
-
   
       //myout(sock,1,"%s %03d %d %s\n",buf,j,mylog[j].action,mylog[j].desc);
       i++;
