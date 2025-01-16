@@ -1,6 +1,7 @@
+#define LOGLEN 1000
+#define PAGE 500
 #define PI 3.1415926
 #define ZENITH 1
-#define PAGE 500
 
 struct sockaddr from;
 unsigned int fromlen=sizeof(from);
