@@ -209,7 +209,7 @@ char * managewww(int sock){
     fb=(fulllog)?poslog-1+LOGLEN:poslog-1;
     fe=(fulllog)?poslog:0;
 
-      myout(sock,1,"i:%03d fb:%03d fe:%03d\n",i,fb,fe);
+      myout(sock,1,"k:%03d fb:%03d fe:%03d\n",k,fb,fe);
 
 
     
