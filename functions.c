@@ -208,14 +208,9 @@ char * managewww(int sock){
     i=0;
     fb=(fulllog)?poslog-1+LOGLEN:poslog-1;
     fe=(fulllog)?poslog:0;
-
-      myout(sock,1,"k:%03d fb:%03d fe:%03d\n",k,fb,fe);
-
-
     
 for(q=fb;q>=fe && i<k;q--){
   j=q%LOGLEN;
-        myout(sock,1,"j:%03d\n",j);
 
   myout(sock,1,"%03d %d %s\n",j,mylog[j].action,mylog[j].desc);
 
