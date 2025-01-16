@@ -130,7 +130,7 @@ char * managewww(int sock){
   if(rr<1)return ret;
   *(buf+rr)='\0';
   myout(sock,0,"domotic by GM @2024\n");
-  myout(sock,1,">> %s\n",buf);
+  myout(sock,1,"`>> %s`\n",buf);
   t1=strtok(buf," \n\r\t");
   t2=strtok(NULL," \n\r\t");
   if(strcmp(t1,"status")==0){
