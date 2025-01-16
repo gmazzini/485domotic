@@ -15,7 +15,6 @@
 #define TOTEK 500
 #define TOTEX 20
 #define TOTRELAIS 120
-#define LOGLEN 1000
 #define LAT 44.5
 #define LNG 11.3
 #define SERIAL "/dev/ttyACM0"
