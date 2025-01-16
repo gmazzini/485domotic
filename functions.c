@@ -307,7 +307,7 @@ void sun(int year,int month,int day,float lat,float lng,uint8_t *HHr,uint8_t *MM
 void inslog(time_t myt,int action,char *desc){
   mylog[poslog].time=myt;
   mylog[poslog].action=action;
-  strcpy(mylog[poslog].desc,desc);
+  strncpy(mylog[poslog].desc,desc,12);
   if(++poslog>=LOGLEN){
     poslog=0;
     fulllog=1;
