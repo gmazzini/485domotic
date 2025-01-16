@@ -214,7 +214,9 @@ for(q=fb;q>=fe && i<k;q--){
 
   myout(sock,1,"%03d %d %s\n",j,mylog[j].action,mylog[j].desc);
 
-    //  memcpy(&info,localtime(&mylog[j].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
+  memcpy(&info,localtime(&mylog[j].time),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
+
+  
       //myout(sock,1,"%s %03d %d %s\n",buf,j,mylog[j].action,mylog[j].desc);
       i++;
     }
