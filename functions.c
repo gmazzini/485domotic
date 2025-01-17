@@ -137,9 +137,9 @@ char * managewww(int sock){
     for(j=0,q=0;q<TOTRELAIS;q++)if(relais[q]==1)j++;
     myout(sock,1,"relais on: %d\n",j);
     myout(sock,1,"events: %d\n",nevent);
-    time(&myt); memcpy(&info,localtime(&myt),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
+    time(&myt); memcpy(&info,localtime(&myt),sizeof(struct tm)); strftime(buf,100,"%d/%m/%y %H:%M:%S %A",&info);
     myout(sock,1,"time now: %s\n",buf);
-    memcpy(&info,localtime(&start),sizeof(struct tm)); strftime(buf,100,"%d.%m.%Y %H:%M:%S %A",&info);
+    memcpy(&info,localtime(&start),sizeof(struct tm)); strftime(buf,100,"%d/%m/%y %H:%M:%S %A",&info);
     myout(sock,1,"time start: %s\n",buf);
     myout(sock,1,"time sunrise: %02d:%02d\n",HHr,MMr);
     myout(sock,1,"time sunset: %02d:%02d\n",HHs,MMs);
