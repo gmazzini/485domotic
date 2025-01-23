@@ -163,7 +163,7 @@ int main(){
     fread(relais,sizeof(uint8_t),TOTRELAIS,fp);
     fclose(fp);
   }
-  else for(i=0;i<TOTRELAIS,i++)relais[i]=0;
+  else for(i=0;i<TOTRELAIS;i++)relais[i]=0;
   en=ex; en->event=nevent; 
   en->nR=1; en->R=(uint16_t *)malloc(sizeof(uint16_t)); en->R[0]=0;
   en->nC=1; en->C=(uint16_t *)malloc(sizeof(uint16_t)); en->C[0]=0;
