@@ -56,8 +56,8 @@ int main(){
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30,esun;
   uint64_t *lD;
   struct ek *en,*em;
-  int sock,fd;
-  struct sockaddr_in server_addr;
+  int sockwww,fd;
+  struct addr_in server_addr;
 
   // processing the configuration file
   for(q=0;q<64;q++)mask[q]=1ULL<<q;
