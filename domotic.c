@@ -56,7 +56,7 @@ int main(){
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30,esun;
   uint64_t *lD;
   struct ek *en,*em;
-  int sockwww,fd;
+  int sock,fd;
   struct sockaddr_in server_addr;
 
   // processing the configuration file
@@ -189,7 +189,7 @@ int main(){
   for(;;){
     time(&myt);
     memcpy(&info,localtime(&myt),sizeof(struct tm));
-    mye=managewww(sockwww);
+    mye=strupr(managewww(sockwww));
     if(strlen(mye)>0){
       strcpy(buf,mye);
       inslog(myt,1,buf);
