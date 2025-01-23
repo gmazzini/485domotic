@@ -57,7 +57,7 @@ int main(){
   uint64_t *lD;
   struct ek *en,*em;
   int sockwww,fd;
-  struct addr_in server_addr;
+  struct sockaddr_in server_addr;
 
   // processing the configuration file
   for(q=0;q<64;q++)mask[q]=1ULL<<q;
