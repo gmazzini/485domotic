@@ -30,5 +30,5 @@ Ccondoff {Ki,j} {Ri,j} {Di,j} {Ti,j,s}
 2. In any MAX485 board cut the 120Ohm resistance from A and B (add only in the head and tail) it is labelled R7
 
 
-It seems that serial mode has embedded this command
+It seems that serial mode has embedded this command not good to put more devices in parallel
 pinMode(_hwserial_rx_pin, INPUT_PULLUP);
