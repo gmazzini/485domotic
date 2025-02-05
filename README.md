@@ -28,3 +28,7 @@ Ccondoff {Ki,j} {Ri,j} {Di,j} {Ti,j,s}
 <b>Hardware notes:</b>
 1. In the 8relais cut the 1KOhm resistance of RX led to avoid multiple impedence parallel
 2. In any MAX485 board cut the 120Ohm resistance from A and B (add only in the head and tail) it is labelled R7
+
+
+It seems that serial mode has embedded this command
+pinMode(_hwserial_rx_pin, INPUT_PULLUP);
