@@ -129,7 +129,7 @@ char * managewww(int sock){
   rr=recvfrom(sock,buf,100,0,&from,&fromlen);
   if(rr<1)return ret;
   *(buf+rr)='\0';
-  myout(sock,0,"domotic by GM @2024\n");
+  myout(sock,0,"domotic by GM @2024-2025\n");
   myout(sock,1,"cmd: %s\n",buf);
   t1=strtok(buf," \n\r\t");
   t2=strtok(NULL," \n\r\t");
