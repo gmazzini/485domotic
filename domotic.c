@@ -17,7 +17,7 @@
 #define TOTRELAIS 120
 #define LAT 44.5
 #define LNG 11.3
-#define SERIAL "/dev/ttyACM5"
+#define SERIAL "/dev/ttyACM4"
 #define CONFIG "config"
 #define SAVESTATUS "status"
 #define SAVELOG "log"
