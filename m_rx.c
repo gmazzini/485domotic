@@ -11,7 +11,7 @@
 #include <stdarg.h>
 #include <termios.h>
 #include <mysql/mysql.h>
-#include "/root/mysetup.c"
+#include "/home/tools/setup_energycc.c"
 
 void main(){
   int fd,rr;
