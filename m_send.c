@@ -1,6 +1,6 @@
 #define noDEBUG
 #define SERIAL "/dev/ttyACM1"
-#define HOSTNAME "energycc.mazzini.org"
+#define HOSTNAME "37.114.41.193"
 #define PORT 44444
 #include "m_functions.c"
 
