@@ -216,6 +216,9 @@ char * managewww(int sock){
     }
     myout(sock,2,"End showlog of %03d entries, total %03d\n",i,(fulllog)?LOGLEN:poslog);
   }
+  else if(strcmp(t1,"sync")==0){
+    for(q=0;q<TOTRELAIS;q++)myset(fd,q/10,(q%10)*16+relais[q]);
+  }
   else if(strcmp(t1,"quit")==0){
     myout(sock,2,"quitting\n");
     quit=1;
@@ -228,6 +231,7 @@ char * managewww(int sock){
     myout(sock,1,"showevents, show all the events\n");
     myout(sock,1,"inject xxx, inject the xxx event (like Ki,j or Ew) in the system\n");
     myout(sock,1,"showlog n m, show rotative log last n lines with esclusion of action m\n");
+    myout(sock,1,"sync, sync relais with status\n");
     myout(sock,1,"quit, shutdown the system\n");
     myout(sock,2,"help, this help\n");
   }
