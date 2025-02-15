@@ -17,7 +17,7 @@ EthernetUDP Udp;
 byte mac[]={0x90, 0xA2, 0xDA, 0x0D, 0x5C, 0x18};
 IPAddress ipsrc(10,0,0,29);
 unsigned int portsrc=8888;
-IPAddress ipdst(144,91,104,157);
+IPAddress ipdst(37,114,41,193);
 unsigned int portdst=8888;
 IPAddress dns(8,8,8,8);
 IPAddress gateway(10,0,0,1);
