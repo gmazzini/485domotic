@@ -113,7 +113,7 @@ void myout(int sock,int end,char *format, ...){
   }
 }
 
-char * managewww(int sock,fd){
+char * managewww(int sock,int fd){
   static char ret[50];
   char buf[100],*t1,*t2,*f;
   int rr,quit,q;
