@@ -189,7 +189,7 @@ int main(){
   for(;;){
     time(&myt);
     memcpy(&info,localtime(&myt),sizeof(struct tm));
-    mye=managewww(sockwww);
+    mye=managewww(sockwww,fd);
     if(strlen(mye)>0){
       strcpy(buf,mye);
       inslog(myt,1,buf);
