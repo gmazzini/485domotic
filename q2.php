@@ -17,6 +17,6 @@ for(;;){
     break;
   }
 }
-
+socket_close($socket);
 
 ?>
