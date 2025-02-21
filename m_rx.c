@@ -31,7 +31,7 @@ void main(){
   mysql_real_connect(con,"localhost",USER,PASSWORD,DB,0,NULL,0);
 
   for(;;){
-    rr=recvfrom(fd,buf,100,0,&from,&fromlen);
+    rr=recvfrom(fd,buf,100,0,(struct sockaddr *)&from,&fromlen);
     if(rr<1){usleep(10000); continue;}
     t=time(NULL);
     switch(*buf){
