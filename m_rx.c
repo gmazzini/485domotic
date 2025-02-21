@@ -16,7 +16,7 @@
 void main(){
   int fd,rr;
   char buf[100],query[200];
-  struct sockaddr from;
+  struct sockaddr_in6 from;
   struct sockaddr_in6 server_addr;
   unsigned int fromlen=sizeof(from);
   time_t t;
