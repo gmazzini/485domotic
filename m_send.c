@@ -14,7 +14,7 @@ void main(int argc,char **argv){
   mode=atoi(argv[1]);
   fd=open(SERIAL,O_RDWR);
   setserial(fd);
-  fd2=socket(AF_INET,SOCK_DGRAM,0);
+  fd2=socket(AF_INET6,SOCK_DGRAM,0);
   bzero(&servaddr,sizeof(servaddr));
   servaddr.sin6_family=AF_INET6;
   inet_pton(AF_INET6,HOSTNAME,&(servaddr.sin6_addr));
