@@ -17,16 +17,16 @@ void main(){
   int fd,rr;
   char buf[100],query[200];
   struct sockaddr from;
-  struct sockaddr_in server_addr;
+  struct sockaddr_in6 server_addr;
   unsigned int fromlen=sizeof(from);
   time_t t;
   MYSQL *con=mysql_init(NULL);
 
-  fd=socket(AF_INET,SOCK_DGRAM,0);
+  fd=socket(AF_INET6,SOCK_DGRAM,0);
   fcntl(fd,F_SETFL,O_NONBLOCK);
-  server_addr.sin_family=AF_INET;
-  server_addr.sin_port=htons(PORT);
-  server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
+  server_addr.sin6_family=AF_INET;
+  server_addr.sin6_port=htons(PORT);
+  server_addr.sin6_addr=in6addr_any;
   bind(fd,(struct sockaddr *)&server_addr,sizeof(server_addr));
   mysql_real_connect(con,"localhost",USER,PASSWORD,DB,0,NULL,0);
 
