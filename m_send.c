@@ -1,6 +1,6 @@
 #define noDEBUG
 #define SERIAL "/dev/ttyACM1"
-#define HOSTNAME "37.114.41.193"
+#define HOSTNAME "2a0e:97c0:3ea:4fa::1"
 #define PORT 44444
 #include "m_functions.c"
 
@@ -8,7 +8,7 @@ void main(int argc,char **argv){
   int fd,fd2,ow,mode;
   float *of;
   uint8_t *os;
-  struct sockaddr_in servaddr;
+  struct sockaddr_in6 servaddr;
   char buf[100];
 
   mode=atoi(argv[1]);
@@ -16,9 +16,9 @@ void main(int argc,char **argv){
   setserial(fd);
   fd2=socket(AF_INET,SOCK_DGRAM,0);
   bzero(&servaddr,sizeof(servaddr));
-  servaddr.sin_family=AF_INET;
-  servaddr.sin_addr.s_addr=inet_addr(HOSTNAME);
-  servaddr.sin_port=htons(PORT);
+  servaddr.sin6_family=AF_INET6;
+  servaddr.sin6_addr.s_addr=inet_addr(HOSTNAME);
+  servaddr.sin6_port=htons(PORT);
 
   switch(mode){
     case 1: // 1 v1 v2 v3 i1 i2 i3
