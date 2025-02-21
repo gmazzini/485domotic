@@ -17,7 +17,7 @@ void main(int argc,char **argv){
   fd2=socket(AF_INET,SOCK_DGRAM,0);
   bzero(&servaddr,sizeof(servaddr));
   servaddr.sin6_family=AF_INET6;
-  servaddr.sin6_addr.s_addr=inet_addr(HOSTNAME);
+  servaddr.sin6_addr=inet_addr(HOSTNAME);
   servaddr.sin6_port=htons(PORT);
 
   switch(mode){
