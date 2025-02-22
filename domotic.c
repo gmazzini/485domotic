@@ -57,7 +57,7 @@ int main(){
   uint64_t *lD;
   struct ek *en,*em;
   int sockwww,fd;
-  struct sockaddr_in server_addr;
+  struct sockaddr_in6 server_addr;
 
   // processing the configuration file
   for(q=0;q<64;q++)mask[q]=1ULL<<q;
@@ -144,12 +144,12 @@ int main(){
 
   // initilize
   time(&start);
-  sockwww=socket(AF_INET,SOCK_DGRAM,0);
+  sockwww=socket(PF_INET6,SOCK_DGRAM,0);
   fcntl(sockwww,F_SETFL,O_NONBLOCK);
-  server_addr.sin_family=AF_INET;
-  server_addr.sin_port=htons(PORTWWW);
-  server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
-  bind(sockwww,(struct sockaddr *)&server_addr,sizeof(server_addr));
+  server_addr.sin6_family=AF_INET6;
+  server_addr.sin6_port=htons(PORT);
+  server_addr.sin6_addr=in6addr_any;
+  bind(fd,(struct sockaddr *)&server_addr,sizeof(server_addr));
   time(&myt);
   memcpy(&info,localtime(&myt),sizeof(struct tm));
   last_min=info.tm_min;
