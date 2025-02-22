@@ -3,7 +3,7 @@
 #define PI 3.1415926
 #define ZENITH 1
 
-struct sockaddr from;
+struct sockaddr_in6 from;
 unsigned int fromlen=sizeof(from);
 char *cmd[]={"","onoff","on","off","condon","condoff"};
 static unsigned char const crc8_table[] = {
