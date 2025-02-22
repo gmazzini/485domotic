@@ -11,7 +11,7 @@
 #include <stdarg.h>
 #include <termios.h>
 
-#define PORTWWW 55556
+#define PORT 55556
 #define TOTEK 500
 #define TOTEX 20
 #define TOTRELAIS 120
