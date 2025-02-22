@@ -108,7 +108,7 @@ void myout(int sock,int end,char *format, ...){
   if(strlen(out)>PAGE || end==2){
     if(end==1)sprintf(out+strlen(out),"<next>");
     else sprintf(out+strlen(out),"<end>");
-    sendto(sock,out,strlen(out),0,&from,fromlen);
+    sendto(sock,out,strlen(out),0,(struct sockaddr *)&from,fromlen);
     *out='\0';
   }
 }
