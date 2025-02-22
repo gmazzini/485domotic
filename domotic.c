@@ -149,7 +149,7 @@ int main(){
   server_addr.sin6_family=AF_INET6;
   server_addr.sin6_port=htons(PORT);
   server_addr.sin6_addr=in6addr_any;
-  bind(fd,(struct sockaddr *)&server_addr,sizeof(server_addr));
+  bind(sockwww,(struct sockaddr *)&server_addr,sizeof(server_addr));
   time(&myt);
   memcpy(&info,localtime(&myt),sizeof(struct tm));
   last_min=info.tm_min;
