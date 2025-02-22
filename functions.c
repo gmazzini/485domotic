@@ -126,7 +126,7 @@ char * managewww(int sock,int fd){
   
   *ret='\0';
   quit=0;
-  rr=recvfrom(sock,buf,100,0,&from,&fromlen);
+  rr=recvfrom(sock,buf,100,0,(struct sockaddr *)&ì&from,&fromlen);
   if(rr<1)return ret;
   *(buf+rr)='\0';
   myout(sock,0,"domotic by GM @2024-2025\n");
