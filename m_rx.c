@@ -22,7 +22,7 @@ void main(){
   time_t t;
   MYSQL *con=mysql_init(NULL);
 
-  fd=socket(AF_INET6,SOCK_DGRAM,0);
+  fd=socket(PF_INET6,SOCK_DGRAM,0);
   fcntl(fd,F_SETFL,O_NONBLOCK);
   server_addr.sin6_family=AF_INET6;
   server_addr.sin6_port=htons(PORT);
