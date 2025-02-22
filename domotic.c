@@ -15,12 +15,14 @@
 #define TOTEK 500
 #define TOTEX 20
 #define TOTRELAIS 120
+#define TOTACCESS 50
 #define LAT 44.5
 #define LNG 11.3
 #define SERIAL "/dev/ttyGM1"
 #define CONFIG "config"
 #define SAVESTATUS "status"
 #define SAVELOG "log"
+#define ACCESS "access.v6"
 
 struct ek{
   uint16_t event;
@@ -41,9 +43,10 @@ struct log{
 struct ek *ee,*ex;
 struct log *mylog;
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS],fulllog;
-uint16_t nevent,poslog,rr;
+uint16_t nevent,poslog,rr,totaccess;
 time_t start;
 uint64_t mask[64];
+struct sockaddr_in6 access[TOTACCESS];
 #include "functions.c"
 
 int main(){
@@ -171,6 +174,18 @@ int main(){
   en->nT=0; en->T=NULL;
   en->next=NULL;
   mylog=(struct log *)malloc(LOGLEN*sizeof(struct log));
+
+
+
+  totaccess=0;
+  fp=fopen(ACCESS,"r");
+  while(fgets(buf,sizeof(buf),fp)){
+    totaccess++;
+
+  }
+  fclose(fp);
+
+  
   fp=fopen(SAVELOG,"rb");
   if(fp!=NULL){
     fread(&poslog,sizeof(uint16_t),1,fp);
