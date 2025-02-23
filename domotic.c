@@ -184,14 +184,15 @@ int main(){
   for(totwhite=0;;){
     if(fgets(buf,100,fp)==NULL)break;
     if(strlen(buf)>10){
-      inet_pton(AF_INET6,buf,&white[totwhite]);
+      int rrr;
+      rrr=inet_pton(AF_INET6,buf,&white[totwhite]);
       totwhite++;
       for(i=0;i<16;i++){
         printf("%02x",white[totwhite].s6_addr[i]);
         if(i%2==0 && i>0)printf(":");
       }
       printf("\n");
-      printf("%s %d\n",buf,totwhite);
+      printf("%d %s %d\n",rrr,buf,totwhite);
     }
   }
   fclose(fp);
