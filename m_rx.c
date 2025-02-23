@@ -16,8 +16,8 @@
 void main(){
   int fd,rr;
   char buf[100],query[200];
-  struct sockaddr_in6 from;
-  struct sockaddr_in6 server_addr;
+  struct sockaddr_in6 server_addr,from;
+  struct in6_addr white;
   unsigned int fromlen=sizeof(from);
   time_t t;
   MYSQL *con=mysql_init(NULL);
@@ -29,6 +29,8 @@ void main(){
   server_addr.sin6_addr=in6addr_any;
   bind(fd,(struct sockaddr *)&server_addr,sizeof(server_addr));
   mysql_real_connect(con,"localhost",USER,PASSWORD,DB,0,NULL,0);
+  inet_pton(AF_INET6,WHITE,&white);
+
 
   for(;;){
     rr=recvfrom(fd,buf,100,0,(struct sockaddr *)&from,&fromlen);
