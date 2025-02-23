@@ -15,14 +15,14 @@
 #define TOTEK 500
 #define TOTEX 20
 #define TOTRELAIS 120
-#define TOTACCESS 50
+#define TOTWHITE 50
 #define LAT 44.5
 #define LNG 11.3
 #define SERIAL "/dev/ttyGM1"
 #define CONFIG "config"
 #define SAVESTATUS "status"
 #define SAVELOG "log"
-#define LOADACCESS "access.v6"
+#define WHITE "access.v6"
 
 struct ek{
   uint16_t event;
@@ -43,10 +43,10 @@ struct log{
 struct ek *ee,*ex;
 struct log *mylog;
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS],fulllog;
-uint16_t nevent,poslog,rr,totaccess;
+uint16_t nevent,poslog,rr,totwhite;
 time_t start;
 uint64_t mask[64];
-struct in6_addr access[TOTACCESS];
+struct in6_addr white[TOTWHITE];
 #include "functions.c"
 
 int main(){
@@ -179,11 +179,11 @@ int main(){
   en->next=NULL;
   mylog=(struct log *)malloc(LOGLEN*sizeof(struct log));
 
-  totaccess=0;
-  fp=fopen(LOADACCESS,"rt");
+  totwhite=0;
+  fp=fopen(WHITEACCESS,"rt");
   while(fgets(buf,sizeof(buf),fp)){
-    inet_pton(AF_INET6,buf,access+totaccess);
-    totaccess++;
+    inet_pton(AF_INET6,buf,white+totwhite);
+    totwhite++;
   }
   fclose(fp);
   
