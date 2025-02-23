@@ -59,7 +59,7 @@ int main(){
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30,esun;
   uint64_t *lD;
   struct ek *en,*em;
-  int sockwww,fd;
+  int sockwww,fd,rrr;
   struct sockaddr_in6 server_addr;
 
   // processing the configuration file
@@ -186,12 +186,16 @@ int main(){
     i=strlen(buf);
     if(i>10){
       buf[i-1]='\0';
-      int rrr;
       rrr=inet_pton(AF_INET6,buf,&white[totwhite]);
-      totwhite++;
-      for(i=0;i<16;i++){
-        printf("%02x",white[totwhite].s6_addr[i]);
+      if(rrr==1){
+
+for(i=0;i<16;i++){
         if(i%2==0 && i>0)printf(":");
+        printf("%02x",white[totwhite].s6_addr[i]);
+      }
+        
+        totwhite++;
+     
       }
       printf("\n");
       printf("%d %s %d\n",rrr,buf,totwhite);
