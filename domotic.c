@@ -184,7 +184,7 @@ int main(){
   for(totwhite=0;;){
     if(fgets(buf,100,fp)==NULL)break;
     if(strlen(buf)>10){
-      inet_pton(AF_INET6,buf,white+totwhite);
+      inet_pton(AF_INET6,buf,&white[totwhite]);
       totwhite++;
       printf("%s %d\n",buf,totwhite);
     }
