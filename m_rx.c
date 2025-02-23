@@ -31,10 +31,10 @@ void main(){
   mysql_real_connect(con,"localhost",USER,PASSWORD,DB,0,NULL,0);
   inet_pton(AF_INET6,WHITE,&white);
 
-
   for(;;){
     rr=recvfrom(fd,buf,100,0,(struct sockaddr *)&from,&fromlen);
     if(rr<1){usleep(10000); continue;}
+    if(memcmp(&(from.sin6_addr),&white,sizeof(struct in6_addr))){usleep(10000); continue;}
     t=time(NULL);
     switch(*buf){
       case 1:
