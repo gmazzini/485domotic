@@ -187,7 +187,7 @@ int main(){
       inet_pton(AF_INET6,buf,&white[totwhite]);
       totwhite++;
       for(i=0;i<16;i++){
-        printf("%02x",white[totwhite][i]);
+        printf("%02x",white[totwhite].s6_addr[i]);
         if(i%2==0 && i>0)printf(":");
       }
       printf("\n");
