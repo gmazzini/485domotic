@@ -22,7 +22,7 @@
 #define CONFIG "config"
 #define SAVESTATUS "status"
 #define SAVELOG "log"
-#define ACCESS "access.v6"
+#define LOADACCESS "access.v6"
 
 struct ek{
   uint16_t event;
@@ -180,7 +180,7 @@ int main(){
   mylog=(struct log *)malloc(LOGLEN*sizeof(struct log));
 
   totaccess=0;
-  fp=fopen(ACCESS,"r");
+  fp=fopen(LOADACCESS,"rt");
   while(fgets(buf,sizeof(buf),fp)){
     inet_pton(AF_INET6,buf,access+totaccess);
     totaccess++;
