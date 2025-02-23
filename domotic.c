@@ -184,6 +184,7 @@ int main(){
   while(fgets(buf,sizeof(buf),fp)){
     inet_pton(AF_INET6,buf,white+totwhite);
     totwhite++;
+    printf("%s %d\n",buf,totwhite);
   }
   fclose(fp);
   
