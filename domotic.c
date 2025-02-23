@@ -182,7 +182,7 @@ int main(){
   totwhite=0;
   fp=fopen(WHITEACCESS,"rt");
   for(totwhite=0;;){
-    if(fgets(buf,100,fp))==NULL)break;
+    if(fgets(buf,100,fp)==NULL)break;
     if(strlen(buf)>10){
       inet_pton(AF_INET6,buf,white+totwhite);
       totwhite++;
