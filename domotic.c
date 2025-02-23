@@ -46,7 +46,7 @@ uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS],fulllog;
 uint16_t nevent,poslog,rr,totaccess;
 time_t start;
 uint64_t mask[64];
-struct sockaddr_in6 access[TOTACCESS];
+struct in6_addr access[TOTACCESS];
 #include "functions.c"
 
 int main(){
@@ -153,20 +153,24 @@ int main(){
   server_addr.sin6_port=htons(PORT);
   server_addr.sin6_addr=in6addr_any;
   bind(sockwww,(struct sockaddr *)&server_addr,sizeof(server_addr));
+  
   time(&myt);
   memcpy(&info,localtime(&myt),sizeof(struct tm));
   last_min=info.tm_min;
   last_hour=info.tm_hour;
+  
   sched=0;
   every10=every30=100;
   sun(1900+info.tm_year,1+info.tm_mon,info.tm_mday,LAT,LNG,&HHr,&MMr,&HHs,&MMs);
   esun=0;
+
   fp=fopen(SAVESTATUS,"rb");
   if(fp!=NULL){
     fread(relais,sizeof(uint8_t),TOTRELAIS,fp);
     fclose(fp);
   }
   else for(i=0;i<TOTRELAIS;i++)relais[i]=0;
+  
   en=ex; en->event=nevent; 
   en->nR=1; en->R=(uint16_t *)malloc(sizeof(uint16_t)); en->R[0]=0;
   en->nC=1; en->C=(uint16_t *)malloc(sizeof(uint16_t)); en->C[0]=0;
@@ -175,16 +179,13 @@ int main(){
   en->next=NULL;
   mylog=(struct log *)malloc(LOGLEN*sizeof(struct log));
 
-
-
   totaccess=0;
   fp=fopen(ACCESS,"r");
   while(fgets(buf,sizeof(buf),fp)){
+    inet_pton(AF_INET6,buf,access+totaccess);
     totaccess++;
-
   }
   fclose(fp);
-
   
   fp=fopen(SAVELOG,"rb");
   if(fp!=NULL){
