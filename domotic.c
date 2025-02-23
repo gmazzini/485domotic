@@ -186,7 +186,7 @@ int main(){
     if(strlen(buf)>10){
       inet_pton(AF_INET6,buf,&white[totwhite]);
       totwhite++;
-      fot(i=0;i<16;i++){
+      for(i=0;i<16;i++){
         printf("%02x",white[totwhite][i]);
         if(i%2==0 && i>0)printf(":");
       }
