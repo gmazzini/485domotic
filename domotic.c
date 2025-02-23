@@ -22,7 +22,7 @@
 #define CONFIG "config"
 #define SAVESTATUS "status"
 #define SAVELOG "log"
-#define WHITE "access.v6"
+#define WHITEACCESS "access.v6"
 
 struct ek{
   uint16_t event;
