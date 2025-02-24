@@ -14,7 +14,6 @@
 #include "/home/tools/setup_energycc.c"
 
 union uw {uint16_t w; uint8_t u[2]; };
-union ul {uint32_t l; uint8_t u[4]; };
 union uf {float f; uint8_t u[4]; };
 
 uint16_t crc(uint8_t *buf,int lenbuf){
