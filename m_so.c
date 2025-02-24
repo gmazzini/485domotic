@@ -56,71 +56,43 @@ void myw(int fd,uint8_t *ss,uint8_t nn){
   usleep(10000);
 }
 
-int main(){
-  int fd,ow;
-  float v1,v2,v3,i1,i2,i3;
+void main(int argc,char **argv){
+  int fd,ow,mode;
+  float v1,v2,v3,i1,i2,i3,e1,e2,e3;
   struct sockaddr_in server;
   MYSQL *con=mysql_init(NULL);
   time_t t;
-
+  char buf[100],query[200];
+  
+  mode=atoi(argv[1]);
   fd=socket(AF_INET,SOCK_STREAM,0);
-  server.sin_family = AF_INET;
-  server.sin_port = htons(4196);
-  server.sin_addr.s_addr = inet_addr(IP);
+  server.sin_family=AF_INET;
+  server.sin_port=htons(4196);
+  server.sin_addr.s_addr=inet_addr(IP);
   connect(fd,(struct sockaddr *)&server,sizeof(server)); 
   mysql_real_connect(con,"localhost",USER,PASSWORD,DB,0,NULL,0);
   t=time(NULL);
 
-  myw(fd,(uint8_t *)"\x01\x03\x00\x0E",2); v1=myr_f(fd);
-  myw(fd,(uint8_t *)"\x01\x03\x00\x10",2); v2=myr_f(fd);
-  myw(fd,(uint8_t *)"\x01\x03\x00\x12",2); v3=myr_f(fd);
-  myw(fd,(uint8_t *)"\x01\x03\x00\x16",2); i1=myr_f(fd);
-  myw(fd,(uint8_t *)"\x01\x03\x00\x18",2); i2=myr_f(fd);
-  myw(fd,(uint8_t *)"\x01\x03\x00\x1A",2); i3=myr_f(fd);
-  sprintf(query,"insert into vi (epoch,v1,v2,v3,i1,i2,i3) values(%ld,%f,%f,%f,%f,%f,%f)",t,v1,v2,v3,i1,i2,i3);
-  mysql_query(con,query);
-  
-  // myw(fd,(uint8_t *)"\x01\x03\x01\x02",2); of=myr_f(fd); printf("Energia 1: %f\n",of);
-  // myw(fd,(uint8_t *)"\x01\x03\x01\x04",2); of=myr_f(fd); printf("Energia 2: %f\n",of);
-  // myw(fd,(uint8_t *)"\x01\x03\x01\x06",2); of=myr_f(fd); printf("Energia 3: %f\n",of);
+  switch(mode){
+    case 1:
+      myw(fd,(uint8_t *)"\x01\x03\x00\x0E",2); v1=myr_f(fd);
+      myw(fd,(uint8_t *)"\x01\x03\x00\x10",2); v2=myr_f(fd);
+      myw(fd,(uint8_t *)"\x01\x03\x00\x12",2); v3=myr_f(fd);
+      myw(fd,(uint8_t *)"\x01\x03\x00\x16",2); i1=myr_f(fd);
+      myw(fd,(uint8_t *)"\x01\x03\x00\x18",2); i2=myr_f(fd);
+      myw(fd,(uint8_t *)"\x01\x03\x00\x1A",2); i3=myr_f(fd);
+      sprintf(query,"insert into vi_so (epoch,v1,v2,v3,i1,i2,i3) values(%ld,%f,%f,%f,%f,%f,%f)",t,v1,v2,v3,i1,i2,i3);
+      mysql_query(con,query);
+      break;
+
+    case 2:
+      myw(fd,(uint8_t *)"\x01\x03\x01\x02",2); e1=myr_f(fd);
+      myw(fd,(uint8_t *)"\x01\x03\x01\x04",2); e2=myr_f(fd);
+      myw(fd,(uint8_t *)"\x01\x03\x01\x06",2); e3=myr_f(fd);
+      sprintf(query,"insert into energy_so (epoch,e1,e2,e3) values(%ld,%f,%f,%f)",t,e1,e2,e3);
+      mysql_query(con,query);
+      break;
+  }
 
   close(fd);
-}
-
-void main(){
-  int fd,rr;
-  char buf[100],query[200];
-  struct sockaddr_in6 server_addr,from;
-  struct in6_addr white;
-  unsigned int fromlen=sizeof(from);
-  time_t t;
-  MYSQL *con=mysql_init(NULL);
-
-  fd=socket(PF_INET6,SOCK_DGRAM,0);
-  fcntl(fd,F_SETFL,O_NONBLOCK);
-  server_addr.sin6_family=AF_INET6;
-  server_addr.sin6_port=htons(PORT);
-  server_addr.sin6_addr=in6addr_any;
-  bind(fd,(struct sockaddr *)&server_addr,sizeof(server_addr));
-  mysql_real_connect(con,"localhost",USER,PASSWORD,DB,0,NULL,0);
-  inet_pton(AF_INET6,WHITE,&white);
-
-  for(;;){
-    rr=recvfrom(fd,buf,100,0,(struct sockaddr *)&from,&fromlen);
-    if(rr<1){usleep(10000); continue;}
-    if(memcmp(&(from.sin6_addr),&white,sizeof(struct in6_addr))){usleep(10000); continue;}
-    t=time(NULL);
-    switch(*buf){
-      case 1:
-        sprintf(query,"insert into vi (epoch,v1,v2,v3,i1,i2,i3) values(%ld,%f,%f,%f,%f,%f,%f)",t,*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9),*(float *)(buf+13),*(float *)(buf+17),*(float *)(buf+21));
-        mysql_query(con,query);
-        // printf("v1:%f v2:%f v3:%f i1:%f i2:%f i3:%f\n",*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9),*(float *)(buf+13),*(float *)(buf+17),*(float *)(buf+21));
-      break;
-      case 2:
-        sprintf(query,"insert into energy (epoch,e1,e2,e3) values(%ld,%f,%f,%f)",t,*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9));
-        mysql_query(con,query);
-        // printf("e1:%f e2:%f e3:%f\n",*(float *)(buf+1),*(float *)(buf+5),*(float *)(buf+9));
-        break;
-    }
-  }
 }
