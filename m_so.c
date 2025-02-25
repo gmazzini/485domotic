@@ -80,16 +80,20 @@ void main(int argc,char **argv){
       myw(fd,(uint8_t *)"\x01\x03\x00\x16",2); i1=myr_f(fd);
       myw(fd,(uint8_t *)"\x01\x03\x00\x18",2); i2=myr_f(fd);
       myw(fd,(uint8_t *)"\x01\x03\x00\x1A",2); i3=myr_f(fd);
-      sprintf(query,"insert into vi_so (epoch,v1,v2,v3,i1,i2,i3) values(%ld,%f,%f,%f,%f,%f,%f)",t,v1,v2,v3,i1,i2,i3);
-      mysql_query(con,query);
+      if(v1>=0 && v2>=0 && v3>=0 && i1>=0 && i2>=0 && i3>=0){
+        sprintf(query,"insert into vi_so (epoch,v1,v2,v3,i1,i2,i3) values(%ld,%f,%f,%f,%f,%f,%f)",t,v1,v2,v3,i1,i2,i3);
+        mysql_query(con,query);
+      }
       break;
 
     case 2:
       myw(fd,(uint8_t *)"\x01\x03\x01\x02",2); e1=myr_f(fd);
       myw(fd,(uint8_t *)"\x01\x03\x01\x04",2); e2=myr_f(fd);
       myw(fd,(uint8_t *)"\x01\x03\x01\x06",2); e3=myr_f(fd);
-      sprintf(query,"insert into energy_so (epoch,e1,e2,e3) values(%ld,%f,%f,%f)",t,e1,e2,e3);
-      mysql_query(con,query);
+      if(e1>=0 && e2>=0 && e3>=0){
+        sprintf(query,"insert into energy_so (epoch,e1,e2,e3) values(%ld,%f,%f,%f)",t,e1,e2,e3);
+        mysql_query(con,query);
+      }
       break;
   }
 
