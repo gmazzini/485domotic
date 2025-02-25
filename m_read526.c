@@ -10,7 +10,7 @@ void main(){
   fd=open(SERIAL,O_RDWR);
   setserial(fd);
 
-  myw(fd,"\x01\x03\x01\x0A",1); ow=prova_myr_w(fd); printf("Hz: %d\n",ow);
+  myw(fd,"\x01\x03\x01\x0A",1); ow=myr_w(fd); printf("Hz: %d\n",ow);
   myw(fd,"\x01\x03\x01\x00",4); 
   ol=myr_ln(fd,2);
   if(ol!=NULL){
