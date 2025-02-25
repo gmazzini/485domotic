@@ -68,7 +68,7 @@ void main(int argc,char **argv){
   server.sin_family=AF_INET;
   server.sin_port=htons(4196);
   server.sin_addr.s_addr=inet_addr(IP);
-  connect(fd,(struct sockaddr *)&server,sizeof(server)); 
+  if(connect(fd,(struct sockaddr *)&server,sizeof(server)))exit(1); 
   mysql_real_connect(con,"localhost",USER,PASSWORD,DB,0,NULL,0);
   t=time(NULL);
 
