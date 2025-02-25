@@ -11,6 +11,7 @@
 #include <stdarg.h>
 #include <termios.h>
 #include <mysql/mysql.h>
+#include "m_functions.c"
 #include "/home/tools/setup_energy.c"
 
 union uw {uint16_t w; uint8_t u[2]; };
