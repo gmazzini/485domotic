@@ -1,35 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-#include <time.h>
-#include <fcntl.h>
-#include <math.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <termios.h>
 #include <mysql/mysql.h>
+#include "m_functions.c"
 #include "/home/tools/setup_energy.c"
 
-union uw {uint16_t w; uint8_t u[2]; };
-union uf {float f; uint8_t u[4]; };
 
-uint16_t crc(uint8_t *buf,int lenbuf){
-  int i,j;
-  uint16_t out=0xFFFF;
-  for(j=0;j<lenbuf;j++){
-    out^=(uint16_t)buf[j];
-    for(i=0;i<8;++i){
-      if(out&1)out=(out>>1)^0xA001;
-      else out=(out>>1);
-    }
-  }
-  return out;
-}
-
-float myr_f(int fd){
+float zmyr_f(int fd){
   union uw uw;
   union uf uf;
   int x,i;
@@ -41,7 +15,7 @@ float myr_f(int fd){
   return uf.f;
 }
 
-void myw(int fd,uint8_t *ss,uint8_t nn){
+void zmyw(int fd,uint8_t *ss,uint8_t nn){
   union uw uw;
   uint8_t aux[8];
   int i;
