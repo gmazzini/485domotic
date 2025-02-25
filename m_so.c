@@ -1,6 +1,11 @@
 #include <mysql/mysql.h>
+#include <signal.h>
 #include "m_functions.c"
 #include "/home/tools/setup_energy.c"
+
+void handler(){
+  exit(1);
+}
 
 void main(int argc,char **argv){
   int fd,ow,mode;
@@ -9,7 +14,9 @@ void main(int argc,char **argv){
   MYSQL *con=mysql_init(NULL);
   time_t t;
   char buf[100],query[200];
-  
+
+  signal(SIGALRM,handler);
+  alarm(5);
   mode=atoi(argv[1]);
   fd=socket(AF_INET,SOCK_STREAM,0);
   server.sin_family=AF_INET;
