@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <termios.h>
+#define FAKE -11111
 
 union uw {uint16_t w; uint8_t u[2]; };
 union ul {uint32_t l; uint8_t u[4]; };
@@ -77,7 +78,7 @@ void myw_raw(int fd,uint8_t *ss,uint8_t len){
   write(fd,aux,len+2);
 }
 
-int myr_w(int fd){
+int old_myr_w(int fd){
   union uw uw;
   int x,i;
   static uint8_t aux[100];
@@ -92,6 +93,16 @@ int myr_w(int fd){
   #ifdef DEBUG
   for(i=0;i<x;i++)printf("%02x ",aux[i]); printf("\n");
   #endif
+  uw.u[1]=aux[3]; uw.u[0]=aux[4];
+  return uw.w;
+}
+
+int myr_w(int fd){
+  union uw uw;
+  uint8_t aux[9],i;
+  for(i=0;i<9;i++)read(fd,aux+i,1);
+  uw.u[0]=aux[5]; uw.u[1]=aux[6];
+  if(crc(aux,5)!=uw.w)return FAKE;
   uw.u[1]=aux[3]; uw.u[0]=aux[4];
   return uw.w;
 }
