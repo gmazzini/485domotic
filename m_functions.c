@@ -56,6 +56,37 @@ uint16_t crc(char *buf,int lenbuf){
   return out;
 }
 
+int prova_myr_w(int fd){
+  union uw uw;
+  uint8_t aux[7],i;
+  for(i=0;i<7;i++)while(!read(fd,aux+i,1))usleep(CHSLEEP);
+  uw.u[0]=aux[5]; uw.u[1]=aux[6];
+  if(crc(aux,5)!=uw.w)return FAKE;
+  uw.u[1]=aux[3]; uw.u[0]=aux[4];
+  return uw.w;
+}
+
+uint32_t *myr_ln(int fd,int n){
+  union uw uw;
+  union ul ul[10];
+  uint8_t aux[50],i;
+  for(i=0;i<5+4*n;i++)while(!read(fd,aux+i,1))usleep(CHSLEEP);
+  uw.u[0]=aux[3+4*n]; uw.u[1]=aux[4+4*n];
+  if(crc(aux,3+4*n)!=uw.w)return NULL;
+  for(i=0;i<n;i++){
+    ul[i].u[3]=aux[3+4*i]; 
+    ul[i].u[2]=aux[4+4*i];
+    ul[i].u[1]=aux[5+4*i];
+    ul[i].u[0]=aux[6+4*i];
+  }
+  return &ul[0].l;
+}
+
+
+
+
+
+
 void myw(int fd,uint8_t *ss,uint8_t nn){
   union uw uw;
   uint8_t aux[8];
@@ -94,16 +125,6 @@ int myr_w(int fd){
   #ifdef DEBUG
   for(i=0;i<x;i++)printf("%02x ",aux[i]); printf("\n");
   #endif
-  uw.u[1]=aux[3]; uw.u[0]=aux[4];
-  return uw.w;
-}
-
-int prova_myr_w(int fd){
-  union uw uw;
-  uint8_t aux[7],i;
-  for(i=0;i<7;i++)while(!read(fd,aux+i,1))usleep(CHSLEEP);
-  uw.u[0]=aux[5]; uw.u[1]=aux[6];
-  if(crc(aux,5)!=uw.w)return FAKE;
   uw.u[1]=aux[3]; uw.u[0]=aux[4];
   return uw.w;
 }
@@ -153,32 +174,6 @@ float *myr_fn(int fd,int n){
     uf[i].u[0]=aux[6+4*i];
   }
   return &uf[0].f;
-}
-
-uint32_t *myr_ln(int fd,int n){
-  union uw uw;
-  static union ul ul[10];
-  int x,i;
-  static uint8_t aux[100];
-  for(i=0;;i++){
-    if(i>3000)return NULL;
-    x=read(fd,aux,100);
-    if(x!=0)break;
-    usleep(1000);
-  }
-  if(x!=5+4*n)return NULL;
-  uw.u[0]=aux[3+4*n]; uw.u[1]=aux[4+4*n];
-  if(crc(aux,3+4*n)!=uw.w)return NULL;
-  #ifdef DEBUG
-  for(i=0;i<x;i++)printf("%02x ",aux[i]); printf("\n");
-  #endif
-  for(i=0;i<n;i++){
-    ul[i].u[3]=aux[3+4*i]; 
-    ul[i].u[2]=aux[4+4*i];
-    ul[i].u[1]=aux[5+4*i];
-    ul[i].u[0]=aux[6+4*i];
-  }
-  return &ul[0].l;
 }
 
 uint8_t *myr_s(int fd,int len){
