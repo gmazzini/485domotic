@@ -56,7 +56,7 @@ uint16_t crc(char *buf,int lenbuf){
   return out;
 }
 
-int prova_myr_w(int fd){
+int myr_w(int fd){
   union uw uw;
   uint8_t aux[7],i;
   for(i=0;i<7;i++)while(!read(fd,aux+i,1))usleep(CHSLEEP);
@@ -108,25 +108,6 @@ void myw_raw(int fd,uint8_t *ss,uint8_t len){
   aux[len]=uw.u[0];
   aux[len+1]=uw.u[1];
   write(fd,aux,len+2);
-}
-
-int myr_w(int fd){
-  union uw uw;
-  int x,i;
-  static uint8_t aux[100];
-  for(i=0;;i++){
-    if(i>3000)return -1000;
-    x=read(fd,aux,100);
-    if(x!=0)break;
-    usleep(1000);
-  }
-  uw.u[0]=aux[5]; uw.u[1]=aux[6];
-  if(crc(aux,5)!=uw.w)return -1000;
-  #ifdef DEBUG
-  for(i=0;i<x;i++)printf("%02x ",aux[i]); printf("\n");
-  #endif
-  uw.u[1]=aux[3]; uw.u[0]=aux[4];
-  return uw.w;
 }
 
 float myr_f(int fd){
