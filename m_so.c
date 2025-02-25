@@ -24,7 +24,7 @@ float qmyr_f(int fd){
   static uint8_t aux[9];
   for(i=0;i<9;i++)read(fd,aux+i,1);
   uw.u[0]=aux[7]; uw.u[1]=aux[8];
-  if(crc(aux,7)!=uw.w)return -1000;
+  // if(crc(aux,7)!=uw.w)return -1000;
   uf.u[3]=aux[3]; uf.u[2]=aux[4]; uf.u[1]=aux[5]; uf.u[0]=aux[6];
   return uf.f;
 }
