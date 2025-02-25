@@ -104,6 +104,22 @@ uint8_t *myr_s(int fd,int len){
   return aux+3;
 }
 
+float *myr_fn(int fd,int n){
+  union uw uw;
+  static union uf uf[10];
+  uint8_t aux[50],i;
+  for(i=0;i<5+4*n;i++)while(!read(fd,aux+i,1))usleep(CHSLEEP);
+  uw.u[0]=aux[3+4*n]; uw.u[1]=aux[4+4*n];
+  if(crc(aux,3+4*n)!=uw.w)return NULL;
+  for(i=0;i<n;i++){
+    uf[i].u[3]=aux[3+4*i]; 
+    uf[i].u[2]=aux[4+4*i];
+    uf[i].u[1]=aux[5+4*i];
+    uf[i].u[0]=aux[6+4*i];
+  }
+  return &uf[0].f;
+}
+
 void myw(int fd,uint8_t *ss,uint8_t nn){
   union uw uw;
   uint8_t aux[8];
@@ -117,44 +133,12 @@ void myw(int fd,uint8_t *ss,uint8_t nn){
   for(i=0;i<8;i++){write(fd,aux+i,1); usleep(CHSLEEP);}
 }
 
-// finire la revisione e applicare anche a m_so
-
-
-
 void myw_raw(int fd,uint8_t *ss,uint8_t len){
   union uw uw;
-  uint8_t aux[100];
+  uint8_t aux[50],i;
   memcpy(aux,ss,len);
   uw.w=crc(aux,len);
   aux[len]=uw.u[0];
   aux[len+1]=uw.u[1];
-  write(fd,aux,len+2);
+  for(i=0;i<len+2;i++){write(fd,aux+i,1); usleep(CHSLEEP);}
 }
-
-float *myr_fn(int fd,int n){
-  union uw uw;
-  static union uf uf[10];
-  int x,i;
-  static uint8_t aux[100];
-  for(i=0;;i++){
-    if(i>3000)return NULL;
-    x=read(fd,aux,100);
-    if(x!=0)break;
-    usleep(1000);
-  }
-  if(x!=5+4*n)return NULL;
-  uw.u[0]=aux[3+4*n]; uw.u[1]=aux[4+4*n];
-  if(crc(aux,3+4*n)!=uw.w)return NULL;
-  #ifdef DEBUG
-  for(i=0;i<x;i++)printf("%02x ",aux[i]); printf("\n");
-  #endif
-  for(i=0;i<n;i++){
-    uf[i].u[3]=aux[3+4*i]; 
-    uf[i].u[2]=aux[4+4*i];
-    uf[i].u[1]=aux[5+4*i];
-    uf[i].u[0]=aux[6+4*i];
-  }
-  return &uf[0].f;
-}
-
-
