@@ -1,4 +1,5 @@
 #include <mysql/mysql.h>
+#include <signal.h>
 #include "m_functions.c"
 #include "/home/tools/setup_energy.c"
 
