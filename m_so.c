@@ -3,7 +3,7 @@
 #include "/home/tools/setup_energy.c"
 
 
-float myr_f(int fd){
+float qmyr_f(int fd){
   union uw uw;
   union uf uf;
   int x,i;
@@ -15,7 +15,7 @@ float myr_f(int fd){
   return uf.f;
 }
 
-void myw(int fd,uint8_t *ss,uint8_t nn){
+void qmyw(int fd,uint8_t *ss,uint8_t nn){
   union uw uw;
   uint8_t aux[8];
   int i;
@@ -61,9 +61,9 @@ void main(int argc,char **argv){
       break;
 
     case 2:
-      myw(fd,(uint8_t *)"\x01\x03\x01\x02",2); e1=myr_f(fd);
-      myw(fd,(uint8_t *)"\x01\x03\x01\x04",2); e2=myr_f(fd);
-      myw(fd,(uint8_t *)"\x01\x03\x01\x06",2); e3=myr_f(fd);
+      qmyw(fd,(uint8_t *)"\x01\x03\x01\x02",2); e1=qmyr_f(fd);
+      qmyw(fd,(uint8_t *)"\x01\x03\x01\x04",2); e2=qmyr_f(fd);
+      qmyw(fd,(uint8_t *)"\x01\x03\x01\x06",2); e3=qmyr_f(fd);
       if(e1>=0 && e2>=0 && e3>=0){
         sprintf(query,"insert into energy_so (epoch,e1,e2,e3) values(%ld,%f,%f,%f)",t,e1,e2,e3);
         mysql_query(con,query);
