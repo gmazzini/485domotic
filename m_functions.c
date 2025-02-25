@@ -94,6 +94,16 @@ uint32_t *myr_ln(int fd,int n){
   return &ul[0].l;
 }
 
+uint8_t *myr_s(int fd,int len){
+  union uw uw;
+  uint8_t i;
+  static uint8_t aux[50];
+  for(i=0;i<5+len;i++)while(!read(fd,aux+i,1))usleep(CHSLEEP);
+  uw.u[0]=aux[3+len]; uw.u[1]=aux[4+len];
+  if(crc(aux,3+len)!=uw.w)return NULL;
+  return aux+3;
+}
+
 
 
 
@@ -151,21 +161,4 @@ float *myr_fn(int fd,int n){
   return &uf[0].f;
 }
 
-uint8_t *myr_s(int fd,int len){
-  union uw uw;
-  int x,i;
-  static uint8_t aux[100];
-  for(i=0;;i++){
-    if(i>3000)return NULL;
-    x=read(fd,aux,100);
-    if(x!=0)break;
-    usleep(1000);
-  }
-  if(x!=5+len)return NULL;
-  uw.u[0]=aux[3+len]; uw.u[1]=aux[4+len];
-  if(crc(aux,3+len)!=uw.w)return NULL;
-  #ifdef DEBUG
-  for(i=0;i<x;i++)printf("%02x ",aux[i]); printf("\n");
-  #endif
-  return aux+3;
-}
+
