@@ -68,7 +68,7 @@ int prova_myr_w(int fd){
 
 uint32_t *myr_ln(int fd,int n){
   union uw uw;
-  union ul ul[10];
+  static union ul ul[10];
   uint8_t aux[50],i;
   for(i=0;i<5+4*n;i++)while(!read(fd,aux+i,1))usleep(CHSLEEP);
   uw.u[0]=aux[3+4*n]; uw.u[1]=aux[4+4*n];
