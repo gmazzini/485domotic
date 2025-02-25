@@ -78,7 +78,7 @@ void myw_raw(int fd,uint8_t *ss,uint8_t len){
   write(fd,aux,len+2);
 }
 
-int old_myr_w(int fd){
+int myr_w(int fd){
   union uw uw;
   int x,i;
   static uint8_t aux[100];
@@ -97,7 +97,7 @@ int old_myr_w(int fd){
   return uw.w;
 }
 
-int myr_w(int fd){
+int nn_myr_w(int fd){
   union uw uw;
   uint8_t aux[9],i;
   for(i=0;i<9;i++)read(fd,aux+i,1);
