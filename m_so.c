@@ -15,8 +15,8 @@ void main(int argc,char **argv){
   time_t t;
   char buf[100],query[200];
 
-  signal(SIGALRM,handler);
-  alarm(5);
+  // signal(SIGALRM,handler);
+  // alarm(5);
   mode=atoi(argv[1]);
   fd=socket(AF_INET,SOCK_STREAM,0);
   server.sin_family=AF_INET;
