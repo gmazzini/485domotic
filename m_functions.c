@@ -105,7 +105,7 @@ uint8_t *myr_s(int fd,int len){
 }
 
 
-
+// finire la revisione e applicare anche a m_so
 
 
 
