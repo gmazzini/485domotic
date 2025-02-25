@@ -122,15 +122,17 @@ float *myr_fn(int fd,int n){
 
 void myw(int fd,uint8_t *ss,uint8_t nn){
   union uw uw;
-  uint8_t aux[8];
-  int i;
+  uint8_t aux[8],i;
   memcpy(aux,ss,4);
   aux[4]=0;
   aux[5]=nn;
   uw.w=crc(aux,6);
   aux[6]=uw.u[0];
   aux[7]=uw.u[1];
-  for(i=0;i<8;i++){write(fd,aux+i,1); usleep(CHSLEEP);}
+  write(fd,aux,8);
+  usleep(8*CHSLEEP);
+  
+//  for(i=0;i<8;i++){write(fd,aux+i,1); usleep(CHSLEEP);}
 }
 
 void myw_raw(int fd,uint8_t *ss,uint8_t len){
