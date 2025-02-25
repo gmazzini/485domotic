@@ -10,9 +10,6 @@ void main(){
   fd=open(SERIAL,O_RDWR);
   setserial(fd);
 
-// myw_raw(fd,"\x01\x10\x00\x3C\x00\x04\x08\x30\x29\x09\x01\x18\x11\x24\x00",15);
-// os=myr_s(fd,5); if(os!=NULL)printf("%02x %02x %02x %02x %02x\n",os[0],os[1],os[2],os[3],os[4]);
-
   myw(fd,"\x01\x03\x00\x03",1); ow=myr_w(fd); printf("Baud: %d\n",ow);
   myw(fd,"\x01\x03\x00\x0E",2); of=myr_f(fd); printf("Tensione 1: %f\n",of);
   myw(fd,"\x01\x03\x00\x10",2); of=myr_f(fd); printf("Tensione 2: %f\n",of);
