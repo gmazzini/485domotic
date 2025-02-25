@@ -43,7 +43,7 @@ void setserial(int fd){
   tcsetattr(fd,TCSANOW,&tty);
 }
 
-uint16_t crc(char *buf,int lenbuf){
+uint16_t crc(uint8_t *buf,uint8_t lenbuf){
   int i,j;
   uint16_t out=0xFFFF;
   for(j=0;j<lenbuf;j++){
@@ -140,6 +140,5 @@ void myw_raw(int fd,uint8_t *ss,uint8_t len){
   uw.w=crc(aux,len);
   aux[len]=uw.u[0];
   aux[len+1]=uw.u[1];
-  write(fd,aux,8); usleep(8*CHSLEEP);
   for(i=0;i<len+2;i++){write(fd,aux+i,1); usleep(CHSLEEP);}
 }
