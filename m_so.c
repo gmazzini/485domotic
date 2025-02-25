@@ -3,7 +3,7 @@
 #include "/home/tools/setup_energy.c"
 
 
-float zmyr_f(int fd){
+float myr_f(int fd){
   union uw uw;
   union uf uf;
   int x,i;
@@ -15,7 +15,7 @@ float zmyr_f(int fd){
   return uf.f;
 }
 
-void zmyw(int fd,uint8_t *ss,uint8_t nn){
+void myw(int fd,uint8_t *ss,uint8_t nn){
   union uw uw;
   uint8_t aux[8];
   int i;
