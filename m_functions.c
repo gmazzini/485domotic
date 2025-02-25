@@ -97,10 +97,10 @@ int myr_w(int fd){
   return uw.w;
 }
 
-int nn_myr_w(int fd){
+int prova_myr_w(int fd){
   union uw uw;
-  uint8_t aux[9],i;
-  for(i=0;i<9;i++)read(fd,aux+i,1);
+  uint8_t aux[7],i;
+  for(i=0;i<7;i++)read(fd,aux+i,1);
   uw.u[0]=aux[5]; uw.u[1]=aux[6];
   if(crc(aux,5)!=uw.w)return FAKE;
   uw.u[1]=aux[3]; uw.u[0]=aux[4];
