@@ -66,6 +66,18 @@ int myr_w(int fd){
   return uw.w;
 }
 
+float myr_f(int fd){
+  union uw uw;
+  union uf uf;
+  int x,i;
+  uint8_t aux[9];
+  for(i=0;i<9;i++)while(!read(fd,aux+i,1))usleep(CHSLEEP);
+  uw.u[0]=aux[7]; uw.u[1]=aux[8];
+  if(crc(aux,7)!=uw.w)return FAKE;
+  uf.u[3]=aux[3]; uf.u[2]=aux[4]; uf.u[1]=aux[5]; uf.u[0]=aux[6];
+  return uf.f;
+}
+
 uint32_t *myr_ln(int fd,int n){
   union uw uw;
   static union ul ul[10];
@@ -81,6 +93,9 @@ uint32_t *myr_ln(int fd,int n){
   }
   return &ul[0].l;
 }
+
+
+
 
 
 
@@ -108,27 +123,6 @@ void myw_raw(int fd,uint8_t *ss,uint8_t len){
   aux[len]=uw.u[0];
   aux[len+1]=uw.u[1];
   write(fd,aux,len+2);
-}
-
-float myr_f(int fd){
-  union uw uw;
-  union uf uf;
-  int x,i;
-  static uint8_t aux[100];
-  for(i=0;;i++){
-    if(i>3000)return -1000;
-    x=read(fd,aux,100);
-    if(x!=0)break;
-    usleep(1000);
-  }
-  if(x!=9)return -1000;
-  uw.u[0]=aux[7]; uw.u[1]=aux[8];
-  if(crc(aux,7)!=uw.w)return -1000;
-  #ifdef DEBUG
-  for(i=0;i<x;i++)printf("%02x ",aux[i]); printf("\n");
-  #endif
-  uf.u[3]=aux[3]; uf.u[2]=aux[4]; uf.u[1]=aux[5]; uf.u[0]=aux[6];
-  return uf.f;
 }
 
 float *myr_fn(int fd,int n){
