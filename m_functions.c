@@ -104,14 +104,6 @@ uint8_t *myr_s(int fd,int len){
   return aux+3;
 }
 
-
-// finire la revisione e applicare anche a m_so
-
-
-
-
-
-
 void myw(int fd,uint8_t *ss,uint8_t nn){
   union uw uw;
   uint8_t aux[8];
@@ -122,8 +114,12 @@ void myw(int fd,uint8_t *ss,uint8_t nn){
   uw.w=crc(aux,6);
   aux[6]=uw.u[0];
   aux[7]=uw.u[1];
-  write(fd,aux,8);
+  for(i=0;i<8;i++){write(fd,aux+i,1); usleep(CHSLEEP);}
 }
+
+// finire la revisione e applicare anche a m_so
+
+
 
 void myw_raw(int fd,uint8_t *ss,uint8_t len){
   union uw uw;
