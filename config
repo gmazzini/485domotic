@@ -1,3 +1,16 @@
+Con K1,1 R1,5 R1,6 R2,5
+Coff K2,1 R1,5 R1,6 R2,5
+Con K1,2 R1,7 R1,8
+Coff K2,2 R1,7 R1,8
+Con K1,3 R2,1
+Coff K2,3 R2,1
+Con K1,4 R2,2 R2,3 R2,4
+Coff K2,4 R2,2 R2,3 R2,4
+Con K1,4 R2,2 R2,3 R2,4
+Coff K2,4 R2,2 R2,3 R2,4
+Con K1,5 R2,6 R2,7 R3,1 R3,3 R3,3
+Coff K2,5 R2,6 R2,7 R3,1 R3,3 R3,3
+Con K1,9 R1,3
+Coff K2,9 R1,3
 Coff R2,8 R1,1 E9
 Con R2,8 R1,1 E10
-Conoff R2,8 R1,1 K1,1
