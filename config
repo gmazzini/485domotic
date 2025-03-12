@@ -12,5 +12,7 @@ Con K1,5 R2,6 R2,7 R3,1 R3,2 R3,3
 Coff K2,5 R2,6 R2,7 R3,1 R3,2 R3,3
 Con K1,9 R1,3
 Coff K2,9 R1,3
+Con K3,1 R3,4
+Coff K4,1 R3,4
 Coff R2,8 R1,1 E9
 Con R2,8 R1,1 E10
