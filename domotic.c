@@ -323,6 +323,8 @@ int main(){
               for(q=1,j=0;j<en->nT;j++)q&=(relais[en->T[j]%1000]==(en->T[j]/1000));
               if(q)for(j=0;j<en->nR;j++)mod[en->R[j]]=0;
               break;
+            case 6:
+              break;
           }
         }
       }
