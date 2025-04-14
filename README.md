@@ -24,7 +24,8 @@ Con {Ki,j} {Ri,j} {Ew} {Di,j}
 Ccondon {Ki,j} {Ri,j} {Di,j} {Ti,j,s}
 Ccondoff {Ki,j} {Ri,j} {Di,j} {Ti,j,s}
 
-  to be done Cset {Ki,j} {Ew} {Di,j} {Sw+t} set Ew (w=11,12,13) at time actual+t sec
+  to be done Cset {Ki,j} {Ew} {Di,j} {Sw} set Ew event 10+w%10 after w/10 sec 
+
   
 <b>Hardware notes:</b>
 1. In the 8relais cut the 1KOhm resistance of RX led to avoid multiple impedence parallel
