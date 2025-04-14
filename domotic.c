@@ -18,7 +18,7 @@
 #define TOTWHITE 50
 #define LAT 44.5
 #define LNG 11.3
-#define SERIAL "/dev/ttyGM1"
+#define SERIAL "/dev/ttyAMA0"
 #define CONFIG "config"
 #define SAVESTATUS "status"
 #define SAVELOG "log"
