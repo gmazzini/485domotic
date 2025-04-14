@@ -33,6 +33,9 @@ struct ek{
   uint64_t *D;
   uint16_t nT;
   uint16_t *T;
+  uint8_t nS;
+  uint8_t *Sa;
+  uint32_t *St;
   struct ek *next;
 };
 struct log{
@@ -57,6 +60,8 @@ int main(){
   time_t myt;
   struct tm info;
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30,esun;
+  uint8_t nS,*lSa;
+  uint32_t *lSt,xx;
   uint64_t *lD;
   struct ek *en,*em;
   int sockwww,fd;
@@ -74,6 +79,8 @@ int main(){
   lC=(uint16_t *)malloc(100*sizeof(uint16_t));
   lD=(uint64_t *)malloc(23*sizeof(uint64_t));
   lT=(uint16_t *)malloc(100*sizeof(uint16_t));
+  lSa=(uint8_t *)malloc(10*sizeof(uint8_t));
+  lSt=(uint32_t *)malloc(10*sizeof(uint32_t));
   fp=fopen(CONFIG,"r");
   nevent=1;
   for(;;){
@@ -81,7 +88,7 @@ int main(){
     if(feof(fp))break;
     if(strlen(buf)<5)continue;
     if(buf[0]=='#')continue;
-    nlK=nlR=nlE=nlC=nlT=0;
+    nlK=nlR=nlE=nlC=nlT=nlS=0;
     for(q=0;q<23;q++)lD[q]=0;
     for(token=strtok(buf," \n\r\t");token;token=strtok(NULL," \n\r\t")){
       switch(token[0]){
@@ -111,6 +118,11 @@ int main(){
           f=strchr(token,','); *f='\0'; g=strchr(f+1,','); *g='\0';
           lT[nlT++]=10*atoi(token+1)+atoi(f+1)+1000*atoi(g+1);
           break;
+        case 'S':
+          xx=atol(token+1);
+          lSa[nls]=xx%10;
+          lSt[nls++]=xx/10;
+          break;
       }
     }
     for(q=0;q<nlK+nlE;q++){
@@ -134,6 +146,17 @@ int main(){
       en->nT=nlT;
       en->T=(uint16_t *)malloc(nlT*sizeof(uint16_t));
       for(j=0;j<nlT;j++)en->T[j]=lT[j];
+      en->ns=nlS;
+      en->Sa=(uint8_t *)malloc(nlS*sizeof(uint8_t));
+      for(j=0;j<nlS;j++)en->Sa[j]=lSa[j];
+      en->St=(uint32_t *)malloc(nlS*sizeof(uint32_t));
+      for(j=0;j<nlS;j++)en->St[j]=lSt[j];
+      
+
+uint8_t nS;
+  uint8_t *Sa;
+  uint32_t *St;
+        
       en->next=NULL;
     } 
   }
