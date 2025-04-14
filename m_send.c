@@ -1,5 +1,5 @@
 #define noDEBUG
-#define SERIAL "/dev/ttyACM2"
+#define SERIAL "/dev/ttyACM1"
 #define HOSTNAME "2a0e:97c0:3ea:4fa::1"
 #define PORT 44444
 #include "m_functions.c"
