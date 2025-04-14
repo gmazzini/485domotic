@@ -1,5 +1,5 @@
 #define noDEBUG
-#define SERIAL "/dev/ttyACM3"
+#define SERIAL "/dev/ttyACM2"
 #include "m_functions.c"
 
 void main(){
