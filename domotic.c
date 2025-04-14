@@ -150,13 +150,7 @@ int main(){
       en->Sa=(uint8_t *)malloc(nlS*sizeof(uint8_t));
       for(j=0;j<nlS;j++)en->Sa[j]=lSa[j];
       en->St=(uint32_t *)malloc(nlS*sizeof(uint32_t));
-      for(j=0;j<nlS;j++)en->St[j]=lSt[j];
-      
-
-uint8_t nS;
-  uint8_t *Sa;
-  uint32_t *St;
-        
+      for(j=0;j<nlS;j++)en->St[j]=time()+lSt[j];        
       en->next=NULL;
     } 
   }
