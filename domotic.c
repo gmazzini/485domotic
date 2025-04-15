@@ -65,7 +65,7 @@ int main(){
   char *token,*f,*g,*mye;
   time_t myt;
   struct tm info;
-  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,nS,*lSe,*lSt,last_min,last_hour,sched,every10,every30,esun;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,nlS,*lSe,*lSt,last_min,last_hour,sched,every10,every30,esun;
   uint64_t *lD;
   struct ek *en,*em;
   struct es *es,*esa,*esb;
