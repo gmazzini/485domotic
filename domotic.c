@@ -339,7 +339,7 @@ int main(){
               if(q)for(j=0;j<en->nR;j++)mod[en->R[j]]=0;
               break;
             case 6:
-              for(q=1,j=0;j<en->nS;j++){
+              for(j=0;j<en->nS;j++){
                 if(es==NULL)es=esa=(struct es *)malloc(sizeof(struct es));
                 else {
                   for(esa=es;esa->next!=NULL;esa=esa->next);
