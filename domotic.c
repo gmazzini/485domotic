@@ -170,6 +170,8 @@ int main(){
   free(lSe);
   free(lSt);
 
+  printf("ciao\n"); exit(0);
+
   // initilize
   time(&start);
   sockwww=socket(PF_INET6,SOCK_DGRAM,0);
