@@ -35,8 +35,8 @@ struct ek{
   uint16_t nT;
   uint16_t *T;
   uint16_t nS;
-  uint16_t *Sa;
-  uint32_t *St;
+  uint16_t *Se;
+  uint16_t *St;
   struct ek *next;
 };
 struct log{
@@ -153,9 +153,9 @@ int main(){
       en->T=(uint16_t *)malloc(nlT*sizeof(uint16_t));
       for(j=0;j<nlT;j++)en->T[j]=lT[j];
       en->nS=nlS;
-      en->Sa=(uint8_t *)malloc(nlS*sizeof(uint16_t));
-      for(j=0;j<nlS;j++)en->Sa[j]=lSa[j];
-      en->St=(uint32_t *)malloc(nlS*sizeof(uint32_t));
+      en->Se=(uint16_t *)malloc(nlS*sizeof(uint16_t));
+      for(j=0;j<nlS;j++)en->Se[j]=lSe[j];
+      en->St=(uint16_t *)malloc(nlS*sizeof(uint16_t));
       for(j=0;j<nlS;j++)en->St[j]=lSt[j];        
       en->next=NULL;
     } 
@@ -167,7 +167,7 @@ int main(){
   free(lC);
   free(lD);
   free(lT);
-  free(lSa);
+  free(lSe);
   free(lSt);
 
   // initilize
