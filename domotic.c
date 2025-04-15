@@ -347,8 +347,8 @@ int main(){
                   esa=esa->next;
                 }
                 esa->next=NULL;
-                esa->time=myt+St[j];
-                esa->event=Se[j];
+                esa->time=myt+en->St[j];
+                esa->event=en->Se[j];
               }
               break;
           }
