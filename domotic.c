@@ -14,7 +14,7 @@
 #define PORT 55556
 #define TOTEK 500
 #define TOTEX 20
-#define TOTES 10
+#define TOTES 100
 #define TOTRELAIS 120
 #define TOTWHITE 50
 #define LAT 44.5
@@ -45,8 +45,9 @@ struct log{
   char desc[12];
 };
 struct es{
+  uint16_t event;
   time_t time;
-  uint8_t event;
+  struct es *next;
 };
 struct ek *ee,*ex;
 struct log *mylog;
@@ -65,8 +66,7 @@ int main(){
   char *token,*f,*g,*mye;
   time_t myt;
   struct tm info;
-  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,nS,*lSalast_min,last_hour,sched,every10,every30,esun;
-  uint32_t *lSt;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,nS,*lSe,*lSt,last_min,last_hour,sched,every10,every30,esun;
   uint64_t *lD;
   struct ek *en,*em;
   int sockwww,fd;
@@ -76,18 +76,17 @@ int main(){
   for(q=0;q<64;q++)mask[q]=1ULL<<q;
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
   ex=(struct ek *)malloc(TOTEX*sizeof(struct ek));
-  es=(struct es *)malloc(TOTES*sizeof(struct es));
+  es=NULL;
   for(q=0;q<TOTEK;q++)ee[q].event=0;
   for(q=0;q<TOTEX;q++)ex[q].event=0;
-  for(q=0;q<TOTES;q++)es[q].event=0;
   lK=(uint16_t *)malloc(100*sizeof(uint16_t));
   lR=(uint16_t *)malloc(100*sizeof(uint16_t));
   lE=(uint16_t *)malloc(100*sizeof(uint16_t));
   lC=(uint16_t *)malloc(100*sizeof(uint16_t));
   lD=(uint64_t *)malloc(23*sizeof(uint64_t));
   lT=(uint16_t *)malloc(100*sizeof(uint16_t));
-  lSa=(uint8_t *)malloc(100*sizeof(uint16_t));
-  lSt=(uint32_t *)malloc(100*sizeof(uint32_t));
+  lSe=(uint16_t *)malloc(100*sizeof(uint16_t));
+  lSt=(uint16_t *)malloc(100*sizeof(uint16_t));
   fp=fopen(CONFIG,"r");
   nevent=1;
   for(;;){
@@ -126,9 +125,9 @@ int main(){
           lT[nlT++]=10*atoi(token+1)+atoi(f+1)+1000*atoi(g+1);
           break;
         case 'S':
-          xx=atol(token+1);
-          lSa[nls]=xx%10;
-          lSt[nls++]=xx/10;
+          f=strchr(token,','); *f='\0';
+          lSe[nlS]=atoi(token+1);
+          lSt[nlS++]=atoi(f+1);
           break;
       }
     }
