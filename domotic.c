@@ -51,7 +51,7 @@ struct es{
 };
 struct ek *ee,*ex;
 struct log *mylog;
-struct es *es;
+struct es *es,*esa;
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS],fulllog;
 uint16_t nevent,poslog,rr,totwhite;
 time_t start;
@@ -332,11 +332,17 @@ int main(){
               if(q)for(j=0;j<en->nR;j++)mod[en->R[j]]=0;
               break;
             case 6:
-
-
-
-
-              
+              for(q=1,j=0;j<en->nS;j++){
+                if(es==NULL)es=esa=(struct es *)malloc(sizeof(struct es));
+                else {
+                  for(esa=es;esa->next!=NULL;esa=esa->next);
+                  esa->next=(struct es *)malloc(sizeof(struct es));
+                  esa=esa->next;
+                }
+                esa->next=NULL;
+                esa->time=myt+St[j];
+                esa->event=Se[j];
+              }
               break;
           }
         }
