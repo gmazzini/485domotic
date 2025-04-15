@@ -14,6 +14,7 @@
 #define PORT 55556
 #define TOTEK 500
 #define TOTEX 20
+#define TOTES 10
 #define TOTRELAIS 120
 #define TOTWHITE 50
 #define LAT 44.5
@@ -33,8 +34,8 @@ struct ek{
   uint64_t *D;
   uint16_t nT;
   uint16_t *T;
-  uint8_t nS;
-  uint8_t *Sa;
+  uint16_t nS;
+  uint16_t *Sa;
   uint32_t *St;
   struct ek *next;
 };
@@ -43,8 +44,13 @@ struct log{
   uint8_t action;
   char desc[12];
 };
+struct es{
+  time_t time;
+  uint8_t event;
+};
 struct ek *ee,*ex;
 struct log *mylog;
+struct es *es;
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS],fulllog;
 uint16_t nevent,poslog,rr,totwhite;
 time_t start;
@@ -59,9 +65,8 @@ int main(){
   char *token,*f,*g,*mye;
   time_t myt;
   struct tm info;
-  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,last_min,last_hour,sched,every10,every30,esun;
-  uint8_t nS,*lSa;
-  uint32_t *lSt,xx;
+  uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,nS,*lSalast_min,last_hour,sched,every10,every30,esun;
+  uint32_t *lSt;
   uint64_t *lD;
   struct ek *en,*em;
   int sockwww,fd;
@@ -71,16 +76,18 @@ int main(){
   for(q=0;q<64;q++)mask[q]=1ULL<<q;
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
   ex=(struct ek *)malloc(TOTEX*sizeof(struct ek));
+  es=(struct es *)malloc(TOTES*sizeof(struct es));
   for(q=0;q<TOTEK;q++)ee[q].event=0;
   for(q=0;q<TOTEX;q++)ex[q].event=0;
+  for(q=0;q<TOTES;q++)es[q].event=0;
   lK=(uint16_t *)malloc(100*sizeof(uint16_t));
   lR=(uint16_t *)malloc(100*sizeof(uint16_t));
   lE=(uint16_t *)malloc(100*sizeof(uint16_t));
   lC=(uint16_t *)malloc(100*sizeof(uint16_t));
   lD=(uint64_t *)malloc(23*sizeof(uint64_t));
   lT=(uint16_t *)malloc(100*sizeof(uint16_t));
-  lSa=(uint8_t *)malloc(10*sizeof(uint8_t));
-  lSt=(uint32_t *)malloc(10*sizeof(uint32_t));
+  lSa=(uint8_t *)malloc(100*sizeof(uint16_t));
+  lSt=(uint32_t *)malloc(100*sizeof(uint32_t));
   fp=fopen(CONFIG,"r");
   nevent=1;
   for(;;){
@@ -146,11 +153,11 @@ int main(){
       en->nT=nlT;
       en->T=(uint16_t *)malloc(nlT*sizeof(uint16_t));
       for(j=0;j<nlT;j++)en->T[j]=lT[j];
-      en->ns=nlS;
-      en->Sa=(uint8_t *)malloc(nlS*sizeof(uint8_t));
+      en->nS=nlS;
+      en->Sa=(uint8_t *)malloc(nlS*sizeof(uint16_t));
       for(j=0;j<nlS;j++)en->Sa[j]=lSa[j];
       en->St=(uint32_t *)malloc(nlS*sizeof(uint32_t));
-      for(j=0;j<nlS;j++)en->St[j]=time()+lSt[j];        
+      for(j=0;j<nlS;j++)en->St[j]=lSt[j];        
       en->next=NULL;
     } 
   }
@@ -161,6 +168,8 @@ int main(){
   free(lC);
   free(lD);
   free(lT);
+  free(lSa);
+  free(lSt);
 
   // initilize
   time(&start);
@@ -324,6 +333,11 @@ int main(){
               if(q)for(j=0;j<en->nR;j++)mod[en->R[j]]=0;
               break;
             case 6:
+
+
+
+
+              
               break;
           }
         }
