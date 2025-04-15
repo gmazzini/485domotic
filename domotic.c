@@ -51,7 +51,6 @@ struct es{
 };
 struct ek *ee,*ex;
 struct log *mylog;
-struct es *es,*esa;
 uint8_t HHr,MMr,HHs,MMs,relais[TOTRELAIS],fulllog;
 uint16_t nevent,poslog,rr,totwhite;
 time_t start;
@@ -69,6 +68,7 @@ int main(){
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,nS,*lSe,*lSt,last_min,last_hour,sched,every10,every30,esun;
   uint64_t *lD;
   struct ek *en,*em;
+  struct es *es,*esa,*esb;
   int sockwww,fd;
   struct sockaddr_in6 server_addr;
 
@@ -282,6 +282,13 @@ int main(){
         strcpy(buf,"E10");
       }
       else {
+        for(esa=esb=es;esa!=NULL && esa->time>myt;esa=esa->next)esb=esa;
+        if(esa!=NULL){
+          sprintf(buf,"E%d",esa->event);
+          esb=esa->next;
+          free(esa);
+          continue;
+        }
         rr=myread(fd);
         if(rr && rr%2){
           sprintf(buf,"K%d,%d",rr/256,(rr%256)>>4);
