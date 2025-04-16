@@ -310,6 +310,7 @@ int main(){
     }
     else if(buf[0]=='E'){
       q=atoi(buf+1);
+      printf("-- E %d\n",q);
       en=ex+q;
     }
     else continue;
