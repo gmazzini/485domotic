@@ -128,6 +128,7 @@ int main(){
           f=strchr(token,','); *f='\0';
           lSe[nlS]=atoi(token+1);
           lSt[nlS++]=atoi(f+1);
+          printf("-- %d %d %s\n",nlS,lSe[nlS-1],lSt[nlS-1]);
           break;
       }
     }
