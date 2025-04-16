@@ -17,6 +17,7 @@ w:
   8 Every day at 1800
   9 Every sunrise
   10 Every sunset
+  11-499 ti be set
 
 Conoff {Ki,j} {Ri,j} {Ew} {Di,j}
 Coff {Ki,j} {Ri,j} {Ew} {Di,j}
