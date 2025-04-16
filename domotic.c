@@ -13,8 +13,7 @@
 
 #define PORT 55556
 #define TOTEK 500
-#define TOTEX 20
-#define TOTES 100
+#define TOTEX 500
 #define TOTRELAIS 120
 #define TOTWHITE 50
 #define LAT 44.5
@@ -128,7 +127,6 @@ int main(){
           f=strchr(token,','); *f='\0';
           lSe[nlS]=atoi(token+1);
           lSt[nlS++]=atoi(f+1);
-          printf("-- %d %d %d\n",nlS,lSe[nlS-1],lSt[nlS-1]);
           break;
       }
     }
@@ -155,9 +153,11 @@ int main(){
       for(j=0;j<nlT;j++)en->T[j]=lT[j];
       en->nS=nlS;
       en->Se=(uint16_t *)malloc(nlS*sizeof(uint16_t));
-      for(j=0;j<nlS;j++)en->Se[j]=lSe[j];
       en->St=(uint16_t *)malloc(nlS*sizeof(uint16_t));
-      for(j=0;j<nlS;j++)en->St[j]=lSt[j];        
+      for(j=0;j<nlS;j++){
+        en->Se[j]=lSe[j];
+        en->St[j]=lSt[j];
+      }
       en->next=NULL;
     } 
   }
@@ -285,7 +285,6 @@ int main(){
       else {
         for(esa=esb=es;esa!=NULL && esa->time>myt;esa=esa->next)esb=esa;
         if(esa!=NULL){
-          printf("-- C %d\n",esa->event);
           sprintf(buf,"E%d",esa->event);
           if(esb==es)es=esa->next;
           else esb->next=esa->next;
@@ -311,7 +310,6 @@ int main(){
     }
     else if(buf[0]=='E'){
       q=atoi(buf+1);
-      printf("-- E %d\n",q);
       en=ex+q;
     }
     else continue;
@@ -345,7 +343,6 @@ int main(){
               break;
             case 6:
               for(j=0;j<en->nS;j++){
-                printf("-- I %d %d %d\n",en->nS,en->Se[j],en->St[j]);
                 if(es==NULL)es=esa=(struct es *)malloc(sizeof(struct es));
                 else {
                   for(esa=es;esa->next!=NULL;esa=esa->next);
@@ -356,7 +353,6 @@ int main(){
                 esa->time=myt+en->St[j];
                 esa->event=en->Se[j];
               }
-              for(esa=es;esa!=NULL;esa=esa->next)printf("-- V %d %ld\n",esa->event,esa->time);
               break;
           }
         }
