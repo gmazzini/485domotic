@@ -340,6 +340,7 @@ int main(){
               if(q)for(j=0;j<en->nR;j++)mod[en->R[j]]=0;
               break;
             case 6:
+              printf("-- R6 %d\n",en->nS);
               for(j=0;j<en->nS;j++){
                 if(es==NULL)es=esa=(struct es *)malloc(sizeof(struct es));
                 else {
@@ -347,7 +348,6 @@ int main(){
                   esa->next=(struct es *)malloc(sizeof(struct es));
                   esa=esa->next;
                 }
-                printf("inserted\n");
                 esa->next=NULL;
                 esa->time=myt+en->St[j];
                 esa->event=en->Se[j];
