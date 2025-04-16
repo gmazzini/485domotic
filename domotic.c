@@ -117,7 +117,7 @@ int main(){
           break;
         case 'C':
           slC=0;
-          for(q=1;q<6;q++)if(strcmp(token+1,cmd[q])==0){slC=q; break;}
+          for(q=1;q<=6;q++)if(strcmp(token+1,cmd[q])==0){slC=q; break;}
           if(slC>0)lC[nlC++]=slC;
           break;
         case 'T':
