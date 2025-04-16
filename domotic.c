@@ -290,16 +290,17 @@ int main(){
           if(esb==es)es=esa->next;
           else esb->next=esa->next;
           free(esa);
-          continue;
-        }
-        rr=myread(fd);
-        if(rr && rr%2){
-          sprintf(buf,"K%d,%d",rr/256,(rr%256)>>4);
-          inslog(myt,2,buf);
         }
         else {
-          usleep(10000);
-          continue;
+          rr=myread(fd);
+          if(rr && rr%2){
+            sprintf(buf,"K%d,%d",rr/256,(rr%256)>>4);
+            inslog(myt,2,buf);
+          }
+          else {
+            usleep(10000);
+            continue;
+          }
         }
       }
     }
