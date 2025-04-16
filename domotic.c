@@ -353,6 +353,7 @@ int main(){
                 esa->time=myt+en->St[j];
                 esa->event=en->Se[j];
               }
+              for(esa=es;esa->next!=NULL;esa=esa->next)printf("-- V %d %ld\n",esa->event,esa->time);
               break;
           }
         }
