@@ -346,6 +346,7 @@ int main(){
                   esa->next=(struct es *)malloc(sizeof(struct es));
                   esa=esa->next;
                 }
+                printf("inserted\n");
                 esa->next=NULL;
                 esa->time=myt+en->St[j];
                 esa->event=en->Se[j];
