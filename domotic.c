@@ -341,8 +341,8 @@ int main(){
               if(q)for(j=0;j<en->nR;j++)mod[en->R[j]]=0;
               break;
             case 6:
-              printf("-- R6 %d\n",en->nS);
               for(j=0;j<en->nS;j++){
+                printf("-- I %d %d %d\n",en->nS,en->Se[j],en->St[j]);
                 if(es==NULL)es=esa=(struct es *)malloc(sizeof(struct es));
                 else {
                   for(esa=es;esa->next!=NULL;esa=esa->next);
