@@ -285,6 +285,7 @@ int main(){
       else {
         for(esa=esb=es;esa!=NULL && esa->time>myt;esa=esa->next)esb=esa;
         if(esa!=NULL){
+          printf("-- C %d\n",esa->event);
           sprintf(buf,"E%d",esa->event);
           esb->next=esa->next;
           free(esa);
