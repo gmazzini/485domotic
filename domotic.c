@@ -287,7 +287,8 @@ int main(){
         if(esa!=NULL){
           printf("-- C %d\n",esa->event);
           sprintf(buf,"E%d",esa->event);
-          esb->next=esa->next;
+          if(esb==es)es=esa->next;
+          else esb->next=esa->next;
           free(esa);
           continue;
         }
