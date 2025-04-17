@@ -42,6 +42,8 @@ void setserial(int fd){
   tty.c_oflag &= ~(OPOST|ONLCR);
   tty.c_cflag = (CS8|CREAD|CLOCAL);
   tty.c_cflag &= ~(PARENB|CSTOPB|CSIZE|CRTSCTS);
+  tty.c_cc[VTIME] = 0;
+  tty.c_cc[VMIN] = 0;
   tcsetattr(fd,TCSANOW,&tty);
 }
 
