@@ -1,3 +1,4 @@
+#define VERSION "domotic v2.0 by GM @2024-2025\n"
 #define LOGLEN 1000
 #define PAGE 500
 #define PI 3.1415926
@@ -131,7 +132,7 @@ char * managewww(int sock,int fd){
   for(i=0;i<totwhite;i++)if(memcmp(&(from.sin6_addr),&white[i],sizeof(struct in6_addr))==0)break;
   if(i==totwhite)return ret;
   *(buf+rr)='\0';
-  myout(sock,0,"domotic by GM @2024-2025\n");
+  myout(sock,0,VERSION);
   myout(sock,1,"cmd: %s\n",buf);
   t1=strtok(buf," \n\r\t");
   t2=strtok(NULL," \n\r\t");
