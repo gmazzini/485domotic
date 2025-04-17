@@ -18,28 +18,29 @@ union uw {uint16_t w; uint8_t u[2]; };
 union ul {uint32_t l; uint8_t u[4]; };
 union uf {float f; uint8_t u[4]; };
 
-void setserial(int fd){
+void setserial(int fd,char p){
   struct termios tty;
+  memset(&tty,0,sizeof(tty));
   tcgetattr(fd,&tty);
-  tty.c_cflag &= PARENB;
-  tty.c_cflag &= ~CSTOPB;
-  tty.c_cflag &= ~CSIZE;
-  tty.c_cflag |= CS8;
-  tty.c_cflag &= ~CRTSCTS;
-  tty.c_cflag |= CREAD | CLOCAL;
-  tty.c_lflag &= ~ICANON;
-  tty.c_lflag &= ~ECHO;
-  tty.c_lflag &= ~ECHOE;
-  tty.c_lflag &= ~ECHONL;
-  tty.c_lflag &= ~ISIG;
-  tty.c_iflag &= ~(IXON | IXOFF | IXANY);
-  tty.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL);
-  tty.c_oflag &= ~OPOST;
-  tty.c_oflag &= ~ONLCR;
-  tty.c_cc[VTIME] = 0;
-  tty.c_cc[VMIN] = 0;
   cfsetispeed(&tty,B9600);
   cfsetospeed(&tty,B9600);
+  tty.c_lflag &= ~(ICANON|ECHO|ECHOE|ECHONL|ISIG);
+  tty.c_iflag &= ~(IXON|IXOFF|IXANY|IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL);
+  tty.c_oflag &= ~(OPOST|ONLCR);
+  switch(p){
+    case 'e':
+      tty.c_cflag = (CS8|PARENB|CREAD|CLOCAL);
+      tty.c_cflag &= ~(PARODD|CSTOPB|CSIZE|CRTSCTS);
+      break;
+    case 'o':
+      tty.c_cflag = (CS8|PARENB|CREAD|CLOCAL);
+      tty.c_cflag &= ~(CSTOPB|CSIZE|CRTSCTS);
+      break;
+    case 'n':
+      tty.c_cflag = (CS8|CREAD|CLOCAL);
+      tty.c_cflag &= ~(PARENB|CSTOPB|CSIZE|CRTSCTS);
+      break;
+  }
   tcsetattr(fd,TCSANOW,&tty);
 }
 
