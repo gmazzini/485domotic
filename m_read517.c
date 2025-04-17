@@ -8,7 +8,7 @@ void main(){
   uint8_t *os;
 
   fd=open(SERIAL,O_RDWR);
-  setserial(fd);
+  setserial(fd,'e');
 
   myw(fd,"\x01\x03\x00\x03",1); ow=myr_w(fd); printf("Baud: %d\n",ow);
   myw(fd,"\x01\x03\x00\x0E",2); of=myr_f(fd); printf("Tensione 1: %f\n",of);
