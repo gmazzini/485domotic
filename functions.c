@@ -34,15 +34,15 @@ static unsigned char const crc8_table[] = {
 void setserial(int fd){
   struct termios tty;
   tcgetattr(fd,&tty);
-  cfsetispeed(&tty,B9600);
-  cfsetospeed(&tty,B9600);
   tty.c_lflag &= ~(ICANON|ECHO|ECHOE|ECHONL|ISIG);
   tty.c_iflag &= ~(IXON|IXOFF|IXANY|IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL);
   tty.c_oflag &= ~(OPOST|ONLCR);
-  tty.c_cflag = (CS8|CREAD|CLOCAL);
+  tty.c_cflag |= (CS8|CREAD|CLOCAL);
   tty.c_cflag &= ~(PARENB|CSTOPB|CSIZE|CRTSCTS);
   tty.c_cc[VTIME] = 0;
   tty.c_cc[VMIN] = 0;
+  cfsetispeed(&tty,B9600);
+  cfsetospeed(&tty,B9600);
   tcsetattr(fd,TCSANOW,&tty);
 }
 
