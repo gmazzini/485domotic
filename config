@@ -18,3 +18,9 @@ Con K3,1 R3,4
 Coff K4,1 R3,4
 Coff R2,8 R1,1 E9
 Con R2,8 R1,1 E10
+Con K3,2 R9,8
+Cset K3,2 S100,10
+Coff E100 R9,8
+Con K4,2 R10,1
+Cset K4,2 S101,10
+Coff E101 R10,1
