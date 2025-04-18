@@ -31,9 +31,8 @@ static unsigned char const crc8_table[] = {
   0xd0, 0xee, 0xac, 0x92, 0x28, 0x16, 0x54, 0x6a, 0x45, 0x7b, 0x39, 0x07,
   0xbd, 0x83, 0xc1, 0xff};
 
-void newsetserial(int fd){
+void setserial(int fd){
   struct termios tty;
-  memset(&tty,0,sizeof(tty));
   tcgetattr(fd,&tty);
   cfsetispeed(&tty,B9600);
   cfsetospeed(&tty,B9600);
@@ -47,7 +46,7 @@ void newsetserial(int fd){
   tcsetattr(fd,TCSANOW,&tty);
 }
 
-void setserial(int fd){
+void oldsetserial(int fd){
   struct termios tty;
   tcgetattr(fd,&tty);
   tty.c_cflag &= ~PARENB;
