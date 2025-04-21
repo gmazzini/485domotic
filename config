@@ -1,26 +1,39 @@
+# Luci stanza ingresso e anticantina
 Con K1,1 R1,5 R1,6 R2,5
 Coff K2,1 R1,5 R1,6 R2,5
+# Luci studio di angolo 
 Con K1,2 R1,7 R1,8
 Coff K2,2 R1,7 R1,8
+# Luci cantina
 Con K1,3 R2,1
 Coff K2,3 R2,1
+# Luci cucina 
 Con K1,4 R2,2 R2,3 R2,4
 Coff K2,4 R2,2 R2,3 R2,4
-Con K1,4 R2,2 R2,3 R2,4
-Coff K2,4 R2,2 R2,3 R2,4
+# Luci living
 Con K1,5 R2,6 R2,7 R3,1 R3,2 R3,3
 Coff K2,5 R2,6 R2,7 R3,1 R3,2 R3,3
+# Luci sala radio e bagno
 Con K1,6 R3,5 R3,8
 Coff K2,6 R3,5 R3,8
+# prese volanti garage
 Con K1,9 R1,3
 Coff K2,9 R1,3
+# wifi
 Con K3,1 R3,4
 Coff K4,1 R3,4
+# lampione alla cabina
 Coff R2,8 R1,1 E9
 Con R2,8 R1,1 E10
+# apre acqua generale
 Con K3,2 R9,8
 Cset K3,2 S100,10
 Coff E100 R9,8
+# chiude acqua generale
 Con K4,2 R10,1
 Cset K4,2 S101,10
 Coff E101 R10,1
+# stacco bagno
+Con K3,3 R1,2
+Cset K3,3 S102,2
+Coff E102 R1,2
