@@ -1,4 +1,3 @@
-#include <wiringPi.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -9,23 +8,16 @@
 #include <sys/time.h>
 #include <time.h>
 #include <string.h>
-#define PIN_IN 2
 #define HOSTNAME "2a0e:97c0:3ea:4fa::1"
 #define PORT 44444
-
-uint32_t cwater=0;
-void iwater(void){
-  cwater++;
-}
 
 int main(void){
   int fd2;
   char buf[100];
+  long temp;
   struct sockaddr_in6 servaddr;
-
-  wiringPiSetup();
-  pinMode(PIN_IN,INPUT);
-  wiringPiISR(PIN_IN,INT_EDGE_RISING,&iwater);
+  FILE *fp;
+  
   fd2=socket(AF_INET6,SOCK_DGRAM,0);
   bzero(&servaddr,sizeof(servaddr));
   servaddr.sin6_family=AF_INET6;
@@ -33,12 +25,15 @@ int main(void){
   servaddr.sin6_port=htons(PORT);
 
   for(;;){
-    if(cwater>0){
-      *buf=3;
-      memcpy((void *)buf+1,(void *)&cwater,4);
+    fp=fopen("/sys/class/thermal/thermal_zone0/temp","r");
+    if(fp!=NULL){
+      fscanf(fp,"%ld",&temp);
+      temp/=100;
+      *buf=4;
+      memcpy((void *)buf+1,(void *)&temp,4);
       sendto(fd2,buf,5,0,(struct sockaddr *)&servaddr,sizeof(servaddr));
+      fclose(fp);
     }
-    cwater=0;
     sleep(10);
   }
 }
