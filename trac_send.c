@@ -24,7 +24,7 @@ int main(void) {
   curl_easy_setopt(curl,CURLOPT_SSL_VERIFYPEER,0L);
   curl_easy_setopt(curl,CURLOPT_SSL_VERIFYHOST,0L);
   curl_easy_setopt(curl,CURLOPT_TIMEOUT,5L);
-  sprintf(buf,"key=7jN9amrEf1XO&temp=%ld",mtemp/100);
+  sprintf(buf,"key=%s&temp=%ld",MYKEY,temp/100);
   curl_easy_setopt(curl,CURLOPT_POSTFIELDS,buf);
   curl_easy_setopt(curl,CURLOPT_WRITEFUNCTION,output);
   res=curl_easy_perform(curl);
