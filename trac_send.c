@@ -1,39 +1,35 @@
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <unistd.h>
-#include <sys/time.h>
-#include <time.h>
-#include <string.h>
-#define HOSTNAME "2a0e:97c0:3ea:4fa::1"
-#define PORT 44444
+#include <curl/curl.h>
+#include "/home/gmazzini/local.c"
 
-int main(void){
-  int fd2;
-  char buf[100];
-  long temp;
-  struct sockaddr_in6 servaddr;
-  FILE *fp;
-  
-  fd2=socket(AF_INET6,SOCK_DGRAM,0);
-  bzero(&servaddr,sizeof(servaddr));
-  servaddr.sin6_family=AF_INET6;
-  inet_pton(AF_INET6,HOSTNAME,&(servaddr.sin6_addr));
-  servaddr.sin6_port=htons(PORT);
-
-  for(;;){
-    fp=fopen("/sys/class/thermal/thermal_zone0/temp","r");
-    if(fp!=NULL){
-      fscanf(fp,"%ld",&temp);
-      temp/=100;
-      *buf=4;
-      memcpy((void *)buf+1,(void *)&temp,4);
-      sendto(fd2,buf,5,0,(struct sockaddr *)&servaddr,sizeof(servaddr));
-      fclose(fp);
-    }
-    sleep(10);
-  }
+size_t output(void *ptr,size_t size,size_t nmemb,void *userdata){
+    return size * nmemb;
 }
+
+int main(void) {
+  CURL *curl;
+  CURLcode res;
+  long temp;
+  FILE *fp;
+  char buf[200];
+  fp=fopen("/sys/class/thermal/thermal_zone0/temp","r");
+  if(fp==NULL)return 0;
+  fscanf(fp,"%ld",&temp);
+  fclose(fp);
+  curl_global_init(CURL_GLOBAL_DEFAULT);
+  curl=curl_easy_init();
+  if(!curl) return 0;
+  curl_easy_setopt(curl,CURLOPT_URL,URL);
+  curl_easy_setopt(curl,CURLOPT_SSL_VERIFYPEER,0L);
+  curl_easy_setopt(curl,CURLOPT_SSL_VERIFYHOST,0L);
+  curl_easy_setopt(curl,CURLOPT_TIMEOUT,5L);
+  sprintf(buf,"key=7jN9amrEf1XO&temp=%ld",mtemp/100);
+  curl_easy_setopt(curl,CURLOPT_POSTFIELDS,buf);
+  curl_easy_setopt(curl,CURLOPT_WRITEFUNCTION,output);
+  res=curl_easy_perform(curl);
+  curl_easy_cleanup(curl);
+  curl_global_cleanup();
+  return 0;
+}
+
