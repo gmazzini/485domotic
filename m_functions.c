@@ -5,6 +5,8 @@
 #include <time.h>
 #include <fcntl.h>
 #include <math.h>
+#include <netdb.h>
+#include <poll.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
