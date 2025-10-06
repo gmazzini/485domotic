@@ -3,17 +3,19 @@
 #include "/home/tools/setup_energy.c"
 
 int main(int argc,char **argv){
-  const char *host=IPCC,*port="80";
+  const char *host[]={"",IPCC,IPCC,IPCC,IPSORC},*port="80";
   struct addrinfo h={0},*r;
   char path[30],buf[1024],*aa,query[200];
   ssize_t n;
   time_t t;
   float v[6];
   MYSQL *con=mysql_init(NULL);
-  
-  sprintf(path,"/cgi-bin/m_read?%d",atoi(argv[1]));
+  int ii;
+
+  ii=atoi(argv[1]);
+  sprintf(path,"/cgi-bin/m_read?%d",ii);
   h.ai_socktype=SOCK_STREAM;
-  if(getaddrinfo(host,port,&h,&r))return 1;
+  if(getaddrinfo(host[ii],port,&h,&r))return 1;
   int s=socket(r->ai_family,r->ai_socktype,r->ai_protocol);
   fcntl(s,F_SETFL,O_NONBLOCK);
   connect(s,r->ai_addr,r->ai_addrlen);
