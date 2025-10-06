@@ -1,4 +1,4 @@
-#define FFF "/home/gmazzini/water.txt"
+#define FFF "/dev/shm/water.txt"
 #include <wiringPi.h>
 #include <stdio.h>
 #include <stdlib.h>
