@@ -1,4 +1,4 @@
-#define FILE "/home/gmazzini/water.txt"
+#define FFF "/home/gmazzini/water.txt"
 #include <wiringPi.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,17 +15,16 @@ void iwater(void){
 
 int main(void){
   FILE *fp;
-  char buf[100];
 
   wiringPiSetup();
   pinMode(PIN_IN,INPUT);
   wiringPiISR(PIN_IN,INT_EDGE_RISING,&iwater);
-  fp=fopen(FILE,"r");
+  fp=fopen(FFF,"r");
   fscanf(fp,"%" SCNu64,&cwater);
   fclose(fp);
   for(;;){
     sleep(10);
-    fp=fopen(FILE,"w");
+    fp=fopen(FFF,"w");
     fprintf(fp,"%" PRIu64 "\n",cwater);
     fclose(fp);
   }
