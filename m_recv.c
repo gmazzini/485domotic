@@ -12,7 +12,7 @@ int main(int argc,char **argv){
   struct sockaddr_in server;
   MYSQL *con=mysql_init(NULL);
   
-  sprintf(path,"/cgi-bin/m_read?%d",atoi(argv[1]);
+  sprintf(path,"/cgi-bin/m_read?%d",atoi(argv[1]));
   h.ai_socktype=SOCK_STREAM;
   if(getaddrinfo(host,port,&h,&r))return 1;
   int s=socket(r->ai_family,r->ai_socktype,r->ai_protocol);
