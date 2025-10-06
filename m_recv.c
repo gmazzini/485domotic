@@ -26,7 +26,7 @@ int main(int argc,char **argv){
   while(poll(&p,1,2000)>0 && (n=read(s,buf,sizeof buf))>0){
     aa=strstr(buf,"\r\n1,");
     if(aa!=NULL && sscanf(aa,"\r\n1,%f,%f,%f,%f,%f,%f",&v[0],&v[1],&v[2],&v[3],&v[4],&v[5])==6){
-      sprintf(query,"insert into vi_so (epoch,v1,v2,v3,i1,i2,i3) values(%ld,%f,%f,%f,%f,%f,%f)",t,v[0],v[1],v[2],v[3],v[4],v[5]);
+      sprintf(query,"insert into vi_cc (epoch,v1,v2,v3,i1,i2,i3) values(%ld,%f,%f,%f,%f,%f,%f)",t,v[0],v[1],v[2],v[3],v[4],v[5]);
       mysql_query(con,query);
     }
   }
