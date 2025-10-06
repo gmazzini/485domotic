@@ -10,10 +10,10 @@ int main(int argc,char **argv){
   time_t t;
   float v[6];
   MYSQL *con=mysql_init(NULL);
-  int ii,jj;
+  int ii,jj,ww[]={0,1,2,3,4,4};
 
   ii=atoi(argv[1]);
-  sprintf(path,"/cgi-bin/m_read?%d",ii);
+  sprintf(path,"/cgi-bin/m_read?%d",ww[ii]);
   h.ai_socktype=SOCK_STREAM;
   if(getaddrinfo(host[ii],port,&h,&r))return 1;
   int s=socket(r->ai_family,r->ai_socktype,r->ai_protocol);
@@ -29,34 +29,35 @@ int main(int argc,char **argv){
     aa=strstr(buf,"\r\n\r\n");
     if(aa==NULL)continue;
     if(sscanf(aa+4,"%d,",&jj)!=1)continue;
+    if(ww[ii]!=jj)continue;
     aa=strstr(aa+4,",")+1;
     switch(ii){
       case 1:
-        if(jj==1 && sscanf(aa,"%f,%f,%f,%f,%f,%f",&v[0],&v[1],&v[2],&v[3],&v[4],&v[5])==6){
+        if(sscanf(aa,"%f,%f,%f,%f,%f,%f",&v[0],&v[1],&v[2],&v[3],&v[4],&v[5])==6){
           sprintf(query,"insert into vi_cc (epoch,v1,v2,v3,i1,i2,i3) values(%ld,%f,%f,%f,%f,%f,%f)",t,v[0],v[1],v[2],v[3],v[4],v[5]);
           mysql_query(con,query);
         }
         break;
       case 2:
-        if(jj==2 && sscanf(aa,"%f,%f,%f",&v[0],&v[1],&v[2])==3){
+        if(sscanf(aa,"%f,%f,%f",&v[0],&v[1],&v[2])==3){
           sprintf(query,"insert into energy_cc (epoch,e1,e2,e3) values(%ld,%f,%f,%f)",t,v[0],v[1],v[2]);
           mysql_query(con,query);
         }
         break;
       case 3:
-        if(jj==3 && sscanf(aa,"%f",&v[0])==1){
+        if(sscanf(aa,"%f",&v[0])==1){
           sprintf(query,"insert into energy_le1 (epoch,e) values(%ld,%f)",t,v[0]);
           mysql_query(con,query);
         }
         break;
       case 4:
-        if(jj==4 && sscanf(aa,"%f",&v[0])==1){
+        if(sscanf(aa,"%f",&v[0])==1){
           sprintf(query,"insert into temp_srso (epoch,t) values(%ld,%f)",t,v[0]);
           mysql_query(con,query);
         }
         break;
       case 5:
-        if(jj==4 && sscanf(aa,"%f",&v[0])==1){
+        if(sscanf(aa,"%f",&v[0])==1){
           sprintf(query,"insert into temp_fgm (epoch,t) values(%ld,%f)",t,v[0]);
           mysql_query(con,query);
         }
