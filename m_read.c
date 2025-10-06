@@ -7,7 +7,7 @@ int main(void){
   float *of;
   char *query;
   
-  *query=getenv("QUERY_STRING");  
+  query=getenv("QUERY_STRING");  
   printf("Content-Type: text/plain\n\n");
   switch(atoi(query)){
     case 1: // 1 v1 v2 v3 i1 i2 i3
