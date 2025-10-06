@@ -44,6 +44,12 @@ int main(int argc,char **argv){
       mysql_query(con,query);
       continue;
     }
+    aa=strstr(buf,"\r\n4,");
+    if(aa!=NULL && sscanf(aa,"\r\n4,%f",&v[0])==1){
+      sprintf(query,"insert into temp_srso (epoch,t) values(%ld,%f)",t,v[0]);
+      mysql_query(con,query);
+      continue;
+    }
   }
   mysql_close(con);
   close(s);
