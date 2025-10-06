@@ -25,7 +25,7 @@ void main(int argc,char **argv){
       of=myr_fn(fd,3);
       close(fd);
       if(of==NULL)break;
-      printf("2,%f,%f,%f,%f,%f,%f\n",of[0],of[1],of[2]);
+      printf("2,%f,%f,%f\n",of[0],of[1],of[2]);
       break;
   }
 }
