@@ -9,7 +9,6 @@ int main(int argc,char **argv){
   ssize_t n;
   time_t t;
   float v[6];
-  struct sockaddr_in server;
   MYSQL *con=mysql_init(NULL);
   
   sprintf(path,"/cgi-bin/m_read?%d",atoi(argv[1]));
