@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <termios.h>
+#include <inttypes.h>
 #define FAKE -11111
 #define CHSLEEP 1150 
 
