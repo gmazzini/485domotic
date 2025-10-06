@@ -72,7 +72,7 @@ int myr_w(int fd){
 float myr_f(int fd){
   union uw uw;
   union uf uf;
-  int x,i;
+  int i;
   uint8_t aux[9];
   for(i=0;i<9;i++)while(!read(fd,aux+i,1))usleep(CHSLEEP);
   uw.u[0]=aux[7]; uw.u[1]=aux[8];
@@ -125,7 +125,7 @@ float *myr_fn(int fd,int n){
 
 void myw(int fd,uint8_t *ss,uint8_t nn){
   union uw uw;
-  uint8_t aux[8],i;
+  uint8_t aux[8];
   memcpy(aux,ss,4);
   aux[4]=0;
   aux[5]=nn;
@@ -138,7 +138,7 @@ void myw(int fd,uint8_t *ss,uint8_t nn){
 
 void myw_raw(int fd,uint8_t *ss,uint8_t len){
   union uw uw;
-  uint8_t aux[50],i;
+  uint8_t aux[50];
   memcpy(aux,ss,len);
   uw.w=crc(aux,len);
   aux[len]=uw.u[0];
