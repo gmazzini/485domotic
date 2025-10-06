@@ -36,6 +36,12 @@ int main(int argc,char **argv){
       mysql_query(con,query);
       continue;
     }
+    aa=strstr(buf,"\r\n3,");
+    if(aa!=NULL && sscanf(aa,"\r\n3,%f",&v[0])==1){
+      sprintf(query,"insert into energy_le1 (epoch,e) values(%ld,%f)",t,v[0]);
+      mysql_query(con,query);
+      continue;
+    }
   }
   mysql_close(con);
   close(s);
