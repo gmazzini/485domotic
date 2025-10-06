@@ -1,4 +1,4 @@
-#define "/home/gmazzini/water.txt"
+#define FILE "/home/gmazzini/water.txt"
 #include <wiringPi.h>
 #include <stdio.h>
 #include <stdlib.h>
