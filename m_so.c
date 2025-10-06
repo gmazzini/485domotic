@@ -14,7 +14,7 @@ void main(int argc,char **argv){
   fd=socket(AF_INET,SOCK_STREAM,0);
   server.sin_family=AF_INET;
   server.sin_port=htons(4196);
-  server.sin_addr.s_addr=inet_addr(IP);
+  server.sin_addr.s_addr=inet_addr(IPSO);
   connect(fd,(struct sockaddr *)&server,sizeof(server)); 
   mysql_real_connect(con,"localhost",USER,PASSWORD,DB,0,NULL,0);
   t=time(NULL);
