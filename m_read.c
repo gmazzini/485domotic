@@ -43,7 +43,7 @@ int main(void){
       printf("4,%f\n",atol(buf)/1000.0);
       break;
     case 5: // 5 Water CC
-      fd=open("/home/gmazzini/water.txt",O_RDONLY); if(fd==-1)return 1;
+      fd=open("/dev/shm/water.txt",O_RDONLY); if(fd==-1)return 1;
       read(fd,buf,99);
       close(fd);
       printf("5,%" PRIu64 "\n",strtoull(buf,NULL,10));
