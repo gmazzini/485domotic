@@ -2,15 +2,14 @@
 #define SERIAL "/dev/ttyACM1"
 #include "m_functions.c"
 
-void main(int argc,char **argv){
-  int fd,ow,mode;
+int main(void){
+  int fd;
   float *of;
-  uint8_t *os;
-
-  mode=atoi(argv[1]);
+  char *query;
+  
+  *query=getenv("QUERY_STRING");  
   printf("Content-Type: text/plain\n\n");
-
-  switch(mode){
+  switch(atoi(query)){
     case 1: // 1 v1 v2 v3 i1 i2 i3
       fd=open(SERIAL,O_RDWR); setserial(fd,'e');
       myw(fd,"\x01\x03\x00\x0E",14); 
