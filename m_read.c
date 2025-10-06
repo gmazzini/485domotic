@@ -4,7 +4,7 @@ int main(void){
   int fd;
   float *of;
   uint32_t *ol;
-  char *query;
+  char *query,buf[100];
   
   query=getenv("QUERY_STRING");  
   printf("Content-Type: text/plain\n\n");
@@ -35,6 +35,12 @@ int main(void){
       close(fd);
       if(ol==NULL)break;
       printf("3,%f\n",ol[0]/100.0);
+      break;
+    case 4: // Temp CPU Raspberry
+      fd=open("/sys/class/thermal/thermal_zone0/temp",O_RDONLY); if(fd==-1)return 1;
+      read(fd,buf,99);
+      close(fd);
+      printf("4,%f\n",atol(buf)/1000.0);
       break;
   }
 }
