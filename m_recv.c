@@ -28,6 +28,13 @@ int main(int argc,char **argv){
     if(aa!=NULL && sscanf(aa,"\r\n1,%f,%f,%f,%f,%f,%f",&v[0],&v[1],&v[2],&v[3],&v[4],&v[5])==6){
       sprintf(query,"insert into vi_cc (epoch,v1,v2,v3,i1,i2,i3) values(%ld,%f,%f,%f,%f,%f,%f)",t,v[0],v[1],v[2],v[3],v[4],v[5]);
       mysql_query(con,query);
+      continue;
+    }
+    aa=strstr(buf,"\r\n2,");
+    if(aa!=NULL && sscanf(aa,"\r\n2,%f,%f,%f",&v[0],&v[1],&v[2])==3){
+      sprintf(query,"insert into energy_cc (epoch,e1,e2,e3) values(%ld,%f,%f,%f)",t,v[0],v[1],v[2]);
+      mysql_query(con,query);
+      continue;
     }
   }
   mysql_close(con);
