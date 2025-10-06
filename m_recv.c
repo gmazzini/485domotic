@@ -21,7 +21,7 @@ int main(int argc,char **argv){
   connect(s,r->ai_addr,r->ai_addrlen);
   struct pollfd p={s,POLLOUT,0};
   if(poll(&p,1,2000)<=0)return 2;
-  dprintf(s,"GET %s HTTP/1.0\r\nHost: %s\r\nConnection: close\r\n\r\n",path,host);
+  dprintf(s,"GET %s HTTP/1.0\r\nHost: %s\r\nConnection: close\r\n\r\n",path,host[ii]);
   p.events=POLLIN;
   mysql_real_connect(con,"localhost",USER,PASSWORD,DB,0,NULL,0);
   t=time(NULL);
