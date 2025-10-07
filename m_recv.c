@@ -3,14 +3,17 @@
 #include "/home/tools/setup_energy.c"
 
 int main(int argc,char **argv){
-  const char *host[]={"",IPCC,IPCC,IPCC,IPSORC,IPFGM},*port="80";
+  const char *host[]={"",IPCC,IPCC,IPCC,IPSORC,IPFGM,IPCC};
+  int ww[]={0,1,2,3,4,4,5};
+  const char *port="80";
   struct addrinfo h={0},*r;
   char path[30],buf[1024],*aa,query[200];
   ssize_t n;
+  uint64_t u64;
   time_t t;
   float v[6];
   MYSQL *con=mysql_init(NULL);
-  int ii,jj,ww[]={0,1,2,3,4,4};
+  int ii,jj;
 
   ii=atoi(argv[1]);
   sprintf(path,"/cgi-bin/m_read?%d",ww[ii]);
@@ -59,6 +62,12 @@ int main(int argc,char **argv){
       case 5:
         if(sscanf(aa,"%f",&v[0])==1){
           sprintf(query,"insert into temp_fgm (epoch,t) values(%ld,%f)",t,v[0]);
+          mysql_query(con,query);
+        }
+        break;
+      case 6:
+        if(sscanf(aa,"%" SCNu64,&u64)==1){
+          sprintf(query,"insert into water_cc (epoch,w) values(%ld,%" PRIu64 ")",t,u64);
           mysql_query(con,query);
         }
         break;
