@@ -9,11 +9,13 @@ int main(int argc,char **argv){
   struct addrinfo h={0},*r;
   char path[30],buf[1024],*aa,query[200];
   ssize_t n;
-  uint64_t u64;
+  uint64_t u1,u2;
   time_t t;
   float v[6];
   MYSQL *con=mysql_init(NULL);
   int ii,jj;
+  MYSQL_RES *res;
+  MYSQL_ROW row;
 
   ii=atoi(argv[1]);
   sprintf(path,"/cgi-bin/m_read?%d",ww[ii]);
@@ -66,8 +68,16 @@ int main(int argc,char **argv){
         }
         break;
       case 6:
-        if(sscanf(aa,"%" SCNu64,&u64)==1){
-          sprintf(query,"insert into water_cc (epoch,w) values(%ld,%" PRIu64 ")",t,u64);
+        if(sscanf(aa,"%" SCNu64,&u1)==1){
+          sprintf(query,"select w from water_cc order by epoch desc limit 1");
+          mysql_query(con,query);
+          res=mysql_store_result(con);
+          row=mysql_fetch_row(res);
+          u2=strtoll(row[0],NULL,10);
+          mysql_free_result(res);
+          if(u2==u1)break;
+          if(u1>u2)sprintf(query,"insert into water_cc (epoch,w,d) values(%ld,%" PRIu64 ",%ld)",t,u1,u1-u2);
+          else sprintf(query,"insert into water_cc (epoch,w,d) values(%ld,%" PRIu64 ",%ld)",t,u1,0);
           mysql_query(con,query);
         }
         break;
