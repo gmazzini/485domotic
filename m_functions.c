@@ -24,6 +24,34 @@ union uf {float f; uint8_t u[4]; };
 void setserial(int fd,char p){
   struct termios tty;
   memset(&tty,0,sizeof(tty));
+  if(tcgetattr(fd,&tty)!=0)return;
+  cfsetispeed(&tty,B9600);
+  cfsetospeed(&tty,B9600);
+  tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHONL | ISIG);
+  tty.c_iflag &= ~(IXON | IXOFF | IXANY | IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
+  tty.c_oflag &= ~(OPOST | ONLCR);
+  tty.c_cflag &= ~(PARENB | PARODD | CSTOPB | CSIZE | CRTSCTS);
+  tty.c_cflag |= CS8 | CREAD | CLOCAL;
+  switch (p) {
+    case 'e':
+      tty.c_cflag |= PARENB;
+      break;
+    case 'o':
+      tty.c_cflag |= PARENB | PARODD;
+      break;
+    case 'n':
+    default:
+      break;
+  }
+  tty.c_cc[VMIN] = 1;
+  tty.c_cc[VTIME] = 0;
+  tcflush(fd,TCIOFLUSH);
+  tcsetattr(fd,TCSANOW,&tty);
+}
+
+void OLDsetserial(int fd,char p){
+  struct termios tty;
+  memset(&tty,0,sizeof(tty));
   tcgetattr(fd,&tty);
   cfsetispeed(&tty,B9600);
   cfsetospeed(&tty,B9600);
