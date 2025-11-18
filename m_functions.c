@@ -21,7 +21,7 @@ union uw {uint16_t w; uint8_t u[2]; };
 union ul {uint32_t l; uint8_t u[4]; };
 union uf {float f; uint8_t u[4]; };
 
-void setserial(int fd,char p){
+void NOOOOsetserial(int fd,char p){
   struct termios tty;
   memset(&tty,0,sizeof(tty));
   if(tcgetattr(fd,&tty)!=0)return;
@@ -49,7 +49,7 @@ void setserial(int fd,char p){
   tcsetattr(fd,TCSANOW,&tty);
 }
 
-void OLDsetserial(int fd,char p){
+void setserial(int fd,char p){
   struct termios tty;
   memset(&tty,0,sizeof(tty));
   tcgetattr(fd,&tty);
