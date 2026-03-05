@@ -53,7 +53,7 @@ void setserial(int fd, char p) {
     tcsetattr(fd, TCSANOW, &tty);
 }
 
-void setserial(int fd,char p){
+void oldsetserial(int fd,char p){
   struct termios tty;
   memset(&tty,0,sizeof(tty));
   tcgetattr(fd,&tty);
