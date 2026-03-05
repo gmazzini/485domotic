@@ -21,32 +21,36 @@ union uw {uint16_t w; uint8_t u[2]; };
 union ul {uint32_t l; uint8_t u[4]; };
 union uf {float f; uint8_t u[4]; };
 
-void NOOOOsetserial(int fd,char p){
-  struct termios tty;
-  memset(&tty,0,sizeof(tty));
-  if(tcgetattr(fd,&tty)!=0)return;
-  cfsetispeed(&tty,B9600);
-  cfsetospeed(&tty,B9600);
-  tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHONL | ISIG);
-  tty.c_iflag &= ~(IXON | IXOFF | IXANY | IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
-  tty.c_oflag &= ~(OPOST | ONLCR);
-  tty.c_cflag &= ~(PARENB | PARODD | CSTOPB | CSIZE | CRTSCTS);
-  tty.c_cflag |= CS8 | CREAD | CLOCAL;
-  switch (p) {
-    case 'e':
-      tty.c_cflag |= PARENB;
-      break;
-    case 'o':
-      tty.c_cflag |= PARENB | PARODD;
-      break;
-    case 'n':
-    default:
-      break;
-  }
-  tty.c_cc[VMIN] = 1;
-  tty.c_cc[VTIME] = 0;
-  tcflush(fd,TCIOFLUSH);
-  tcsetattr(fd,TCSANOW,&tty);
+void setserial(int fd, char p) {
+    struct termios tty;
+    if (tcgetattr(fd, &tty) != 0) return;
+
+    cfsetospeed(&tty, B9600);
+    cfsetispeed(&tty, B9600);
+    tty.c_cflag &= ~CSIZE;
+    tty.c_cflag |= CS8;
+    tty.c_cflag |= (CLOCAL | CREAD);
+    if (p == 'e') {
+        tty.c_cflag |= PARENB;
+        tty.c_cflag &= ~PARODD;
+        tty.c_iflag |= (INPCK | ISTRIP);
+    } else if (p == 'o') {
+        tty.c_cflag |= (PARENB | PARODD);
+        tty.c_iflag |= (INPCK | ISTRIP);
+    } else {
+        tty.c_cflag &= ~PARENB;
+        tty.c_iflag &= ~(INPCK | ISTRIP);
+    }
+    tty.c_cflag &= ~CSTOPB;
+    tty.c_cflag &= ~CRTSCTS;
+    tty.c_iflag &= ~(IXON | IXOFF | IXANY);
+    tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
+    tty.c_oflag &= ~OPOST;
+    tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+    tty.c_cc[VMIN] = 0;
+    tty.c_cc[VTIME] = 5;
+    tcflush(fd, TCIOFLUSH);
+    tcsetattr(fd, TCSANOW, &tty);
 }
 
 void setserial(int fd,char p){
