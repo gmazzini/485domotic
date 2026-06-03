@@ -3,7 +3,9 @@
 #define PAGE 500
 #define PI 3.1415926
 #define ZENITH 1
+#define RELAY_PORT 4196
 
+static int relay_fd=-1;
 struct sockaddr_in6 from;
 unsigned int fromlen=sizeof(from);
 char *cmd[]={"","onoff","on","off","condon","condoff","set"};
@@ -71,7 +73,45 @@ void setserial(int fd){
   tcsetattr(fd,TCSANOW,&tty);
 }
 
-void myset(int fd,uint8_t dev,uint8_t relais){
+static unsigned short modbus_crc16(unsigned char *data, int len){
+  unsigned short crc;
+  int i,b;
+  crc=0xFFFF;
+  for(i=0;i<len;i++){
+    crc^=data[i];
+    for(b=0;b<8;b++)crc=(crc & 1)?((crc >> 1) ^ 0xA001) : (crc >> 1);
+  }
+  return crc;
+}
+
+void myset(char *code, int on){
+    struct sockaddr_in addr;
+    unsigned char frame[8];
+    unsigned short coil,value,crc;
+    int dev,relais;
+    if(relay_fd<0)relay_fd=socket(AF_INET,SOCK_DGRAM,0);
+    dev=code[0]-'0';
+    relais=((code[1]-'0')*10)+(code[2]-'0');
+    coil=relais-1;
+    value=on?0xFF00:0x0000;
+    frame[0]=0x01;
+    frame[1]=0x05;
+    frame[2]=(unsigned char)(coil >> 8);
+    frame[3]=(unsigned char)(coil & 0xFF);
+    frame[4]=(unsigned char)(value >> 8);
+    frame[5]=(unsigned char)(value & 0xFF);
+    crc=modbus_crc16(frame,6);
+    frame[6]=(unsigned char)(crc & 0xFF);
+    frame[7]=(unsigned char)(crc >> 8);
+    memset(&addr,0,sizeof(addr));
+    addr.sin_family=AF_INET;
+    addr.sin_port=htons(RELAY_PORT);
+    addr.sin_addr.s_addr=htonl(0x0A0A0A0A+dev);
+    sendto(relay_fd,frame,8,0,(struct sockaddr *)&addr,sizeof(addr));
+}
+
+
+void OLDmyset(int fd,uint8_t dev,uint8_t relais){
   uint8_t oo[4],i;
   oo[0]=0xCC;
   oo[1]=dev;
