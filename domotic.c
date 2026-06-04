@@ -63,7 +63,7 @@ int main(){
   char buf[100];
   char code[4];
   uint8_t modS[MAXEVENTRELAIS];
-  char *token,*f,*g,*mye;
+  char *token,*f,*mye;
   time_t myt;
   struct tm info;
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,nlS,*lSe,*lSt;
