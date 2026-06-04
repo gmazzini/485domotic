@@ -1,4 +1,4 @@
-#define VERSION "domotic v3.1 by GM @2026\n"
+#define VERSION "domotic v3.2 by GM @2026\n"
 #define LOGLEN 1000
 #define PAGE 500
 #define PI 3.1415926
@@ -47,13 +47,31 @@ int parse_key(char *s,uint16_t *v){
   if(s[0]=='K')s++;
 
   for(i=0;i<3;i++){
-    if(s[i]<'0' || s[i]>'0'+9)return 0;
+    if(s[i]<'0' || s[i]>'9')return 0;
   }
 
   if(s[3]!='\0')return 0;
 
   n=(s[0]-'0')*100+(s[1]-'0')*10+(s[2]-'0');
   if(n<1 || n>=TOTEK)return 0;
+
+  *v=(uint16_t)n;
+  return 1;
+}
+
+int parse_ex(char *s,uint16_t *v){
+  int i,n;
+
+  if(s==NULL)return 0;
+  if(s[0]=='E')s++;
+  if(s[0]=='\0')return 0;
+
+  n=0;
+  for(i=0;s[i]!='\0';i++){
+    if(s[i]<'0' || s[i]>'9')return 0;
+    n=(n*10)+(s[i]-'0');
+    if(n>=TOTEX)return 0;
+  }
 
   *v=(uint16_t)n;
   return 1;
@@ -335,20 +353,32 @@ int pop_event(struct es **head,time_t now,uint16_t *event){
 
 void myout(int sock,int end,char *format,...){
   static char out[PAGE*3];
-  unsigned int len;
   va_list argptr;
+  int used,room,n;
 
   if(end==0)*out='\0';
 
-  va_start(argptr,format);
-  vsprintf(out+strlen(out),format,argptr);
-  va_end(argptr);
+  used=strlen(out);
+  room=(int)sizeof(out)-used;
 
-  len=strlen(out);
+  if(room>1){
+    va_start(argptr,format);
+    n=vsnprintf(out+used,room,format,argptr);
+    va_end(argptr);
 
-  if(len>PAGE || end==2){
-    if(end==1)sprintf(out+strlen(out),"<next>");
-    else sprintf(out+strlen(out),"<end>");
+    if(n<0)return;
+    out[sizeof(out)-1]='\0';
+  }
+
+  if(strlen(out)>PAGE || end==2){
+    used=strlen(out);
+    room=(int)sizeof(out)-used;
+
+    if(room>1){
+      if(end==1)snprintf(out+used,room,"<next>");
+      else snprintf(out+used,room,"<end>");
+      out[sizeof(out)-1]='\0';
+    }
 
     fromlen=sizeof(from);
     sendto(sock,out,strlen(out),0,(struct sockaddr *)&from,fromlen);
@@ -372,7 +402,7 @@ char *managewww(int sock){
   static char ret[50];
   char buf[100],code[4],*t1,*t2,*t3;
   int rr,quit,qi;
-  uint16_t i,j,k,q,dis,totdis,relay,key;
+  uint16_t i,j,k,q,dis,totdis,relay,key,event;
   int fb,fe;
   uint64_t flag;
   FILE *fp;
@@ -457,7 +487,7 @@ char *managewww(int sock){
     else myout(sock,2,"bad relais\n");
   }
   else if(strcmp(t1,"showon")==0){
-    myout(sock,2,"showon disabled: use read Rabc\n");
+    myout(sock,2,"showon disabled: use read Rabb\n");
   }
   else if(strcmp(t1,"zigbee")==0){
     if(t2!=NULL && t3!=NULL && find_kmap(t2,t3,&key)){
@@ -532,31 +562,46 @@ char *managewww(int sock){
   }
   else if(strcmp(t1,"inject")==0){
     if(t2!=NULL){
-      if(t2[0]=='K' && !parse_key(t2+1,&q))myout(sock,2,"bad key event\n");
-      else {
-        myout(sock,2,"inject: %s\n",t2);
-        strcpy(ret,t2);
+      if(t2[0]=='K'){
+        if(parse_key(t2+1,&key)){
+          sprintf(ret,"K%03d",key);
+          myout(sock,2,"inject: K%03d\n",key);
+        }
+        else myout(sock,2,"bad key event\n");
       }
+      else if(t2[0]=='E'){
+        if(parse_ex(t2+1,&event)){
+          sprintf(ret,"E%d",event);
+          myout(sock,2,"inject: E%d\n",event);
+        }
+        else myout(sock,2,"bad system event\n");
+      }
+      else myout(sock,2,"bad event\n");
     }
     else myout(sock,2,"missing event\n");
   }
   else if(strcmp(t1,"showlog")==0){
-    if(t2!=NULL)k=atoi(t2)%LOGLEN;
-    else k=10;
-
-    i=0;
-    fb=(fulllog)?poslog-1+LOGLEN:poslog-1;
-    fe=(fulllog)?poslog:0;
-
-    for(qi=fb;qi>=fe && i<k;qi--){
-      j=qi%LOGLEN;
-      memcpy(&info,localtime(&mylog[j].time),sizeof(struct tm));
-      strftime(buf,100,"%d/%m/%y %H:%M:%S %A",&info);
-      myout(sock,1,"%s %03d %d %s\n",buf,j,mylog[j].action,mylog[j].desc);
-      i++;
+    if(!fulllog && poslog==0){
+      myout(sock,2,"log empty\n");
     }
+    else {
+      if(t2!=NULL)k=atoi(t2)%LOGLEN;
+      else k=10;
 
-    myout(sock,2,"End showlog of %03d entries, total %03d\n",i,(fulllog)?LOGLEN:poslog);
+      i=0;
+      fb=(fulllog)?poslog-1+LOGLEN:poslog-1;
+      fe=(fulllog)?poslog:0;
+
+      for(qi=fb;qi>=fe && i<k;qi--){
+        j=qi%LOGLEN;
+        memcpy(&info,localtime(&mylog[j].time),sizeof(struct tm));
+        strftime(buf,100,"%d/%m/%y %H:%M:%S %A",&info);
+        myout(sock,1,"%s %03d %d %s\n",buf,j,mylog[j].action,mylog[j].desc);
+        i++;
+      }
+
+      myout(sock,2,"End showlog of %03d entries, total %03d\n",i,(fulllog)?LOGLEN:poslog);
+    }
   }
   else if(strcmp(t1,"quit")==0){
     myout(sock,2,"quitting\n");
@@ -564,16 +609,16 @@ char *managewww(int sock){
   }
   else if(strcmp(t1,"help")==0){
     myout(sock,1,"status, show actual status informations\n");
-    myout(sock,1,"seton Rabc, set relay Rabc to on\n");
-    myout(sock,1,"setoff Rabc, set relay Rabc to off\n");
-    myout(sock,1,"read Rabc, read relay Rabc state\n");
-    myout(sock,1,"showon, disabled: use read Rabc\n");
-    myout(sock,1,"zigbee dev action, map input event to Kxxx using Kmap\n");
+    myout(sock,1,"seton Rabb, set relay Rabb to on, example R101\n");
+    myout(sock,1,"setoff Rabb, set relay Rabb to off, example R101\n");
+    myout(sock,1,"read Rabb, read relay Rabb state, example R101\n");
+    myout(sock,1,"zigbee dev action, map input event using Kmap\n");
     myout(sock,1,"showkmap, show sorted Kmap table\n");
-    myout(sock,1,"showevents, show all the events\n");
-    myout(sock,1,"inject Kxxx, inject key event, like K001\n");
-    myout(sock,1,"inject Ex, inject system event, like E5\n");
+    myout(sock,1,"showevents, show all configured events\n");
+    myout(sock,1,"inject Kxxx, inject key event K001..K999\n");
+    myout(sock,1,"inject Ex, inject system event, example E5\n");
     myout(sock,1,"showlog n, show rotative log last n lines\n");
+    myout(sock,1,"showon, disabled: use read Rabb\n");
     myout(sock,1,"quit, shutdown the system\n");
     myout(sock,2,"help, this help\n");
   }
