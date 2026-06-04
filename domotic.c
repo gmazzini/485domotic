@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,9 +6,11 @@
 #include <time.h>
 #include <fcntl.h>
 #include <math.h>
+#include <errno.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/time.h>
+#include <sys/select.h>
 #include <unistd.h>
 #include <stdarg.h>
 
@@ -19,6 +22,7 @@
 #define MAXKMAP 500
 #define KDEVLEN 64
 #define KACTLEN 32
+#define MAXKNOWNRELAIS 500
 #define LAT 44.5
 #define LNG 11.3
 #define CONFIG "/home/tools/485domotic/config"
@@ -61,8 +65,9 @@ struct kmap{
 struct ek *ee,*ex;
 struct log *mylog;
 struct kmap kmap[MAXKMAP];
+uint16_t knownrelais[MAXKNOWNRELAIS];
 uint8_t HHr,MMr,HHs,MMs,fulllog;
-uint16_t nevent,poslog,totwhite,nkmap;
+uint16_t nevent,poslog,totwhite,nkmap,nknownrelais;
 time_t start;
 uint64_t mask[64];
 struct in6_addr white[TOTWHITE];
@@ -90,6 +95,7 @@ int main(){
   ex=(struct ek *)malloc(TOTEX*sizeof(struct ek));
   es=NULL;
   nkmap=0;
+  nknownrelais=0;
 
   for(q=0;q<TOTEK;q++)ee[q].event=0;
   for(q=0;q<TOTEX;q++)ex[q].event=0;
@@ -115,6 +121,11 @@ int main(){
 
       if(is_kmap_line(buf)){
         load_kmap_line(buf);
+        continue;
+      }
+
+      if(is_rrange_line(buf)){
+        load_rrange_line(buf);
         continue;
       }
 
@@ -231,6 +242,7 @@ int main(){
   }
 
   sort_kmap();
+  sort_known_relais();
 
   free(lK);
   free(lR);
