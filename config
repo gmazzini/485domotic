@@ -1,9 +1,14 @@
+# mappatura pulsanti
 Kmap 0x5c0272fffe067ec9 1_single K001
 Kmap 0x5c0272fffe067ec9 2_single K002
 Kmap 0x5c0272fffe067ec9 3_single K003
 Kmap 0x5c0272fffe067ec9 1_double K004
 Kmap 0x5c0272fffe067ec9 2_double K005
 Kmap 0x5c0272fffe067ec9 3_double K006
+# dichiarazione relail
+Rrange R101 R130
+Rrange R201 R230
+Rrange R301 R330
 # Luci stanza ingresso e anticantina
 Con K001 R105 R106 R205
 Coff K002 R105 R106 R205
