@@ -1,6 +1,6 @@
 # Luci stanza ingresso e anticantina
-Con K1,1 R105 R106 R205
-Coff K2,1 R105 R106 R205
+Con K001 R105 R106 R205
+Coff K002 R105 R106 R205
 # Luci studio di angolo 
 # Con K1,2 R107 R108
 # Coff K2,2 R107 R108
