@@ -59,7 +59,11 @@ int parse_relais(char *s,uint16_t *v){
 }
 
 void relais_code(uint16_t r,char *code){
-  sprintf(code,"%03u",(unsigned int)r);
+  r=r%1000;
+  code[0]='0'+(r/100);
+  code[1]='0'+((r/10)%10);
+  code[2]='0'+(r%10);
+  code[3]='\0';
 }
 
 void setrelais(char *code,int on){
