@@ -1,11 +1,15 @@
-#define VERSION "domotic v3.2 by GM @2026\n"
+#include <errno.h>
+
+#define VERSION "domotic v3.3 by GM @2026\n"
 #define LOGLEN 1000
 #define PAGE 500
 #define PI 3.1415926
 #define ZENITH 1
 #define RELAY_PORT 4196
+#define RELAY_CONNECT_TIMEOUT_US 150000
+#define RELAY_IO_TIMEOUT_US 150000
+#define RELAY_SET_REPLY_TIMEOUT_US 80000
 
-static int relay_fd=-1;
 struct sockaddr_in6 from;
 socklen_t fromlen=sizeof(from);
 char *cmd[]={"","onoff","on","off","condon","condoff","set"};
@@ -25,19 +29,131 @@ static unsigned short modbus_crc16(unsigned char *data,int len){
   return crc;
 }
 
-static int relay_socket(){
+static int relay_wait_fd(int fd,int writeflag,int usec){
+  fd_set rfds,wfds;
   struct timeval tv;
+  int r;
 
-  if(relay_fd>=0)return relay_fd;
+  FD_ZERO(&rfds);
+  FD_ZERO(&wfds);
 
-  relay_fd=socket(AF_INET,SOCK_DGRAM,0);
-  if(relay_fd<0)return -1;
+  if(writeflag)FD_SET(fd,&wfds);
+  else FD_SET(fd,&rfds);
 
-  tv.tv_sec=0;
-  tv.tv_usec=200000;
-  setsockopt(relay_fd,SOL_SOCKET,SO_RCVTIMEO,&tv,sizeof(tv));
+  tv.tv_sec=usec/1000000;
+  tv.tv_usec=usec%1000000;
 
-  return relay_fd;
+  if(writeflag)r=select(fd+1,NULL,&wfds,NULL,&tv);
+  else r=select(fd+1,&rfds,NULL,NULL,&tv);
+
+  if(r>0)return 1;
+  return 0;
+}
+
+static int relay_ip_from_code(char *code,struct sockaddr_in *addr){
+  int dev;
+
+  if(code==NULL)return 0;
+
+  dev=code[0]-'0';
+  if(dev<0 || dev>9)return 0;
+
+  memset(addr,0,sizeof(struct sockaddr_in));
+  addr->sin_family=AF_INET;
+  addr->sin_port=htons(RELAY_PORT);
+  addr->sin_addr.s_addr=htonl(0x0a0a0a0a+dev);
+
+  return 1;
+}
+
+static int relay_connect(char *code){
+  struct sockaddr_in addr;
+  int fd,flags,err;
+  socklen_t len;
+
+  if(!relay_ip_from_code(code,&addr))return -1;
+
+  fd=socket(AF_INET,SOCK_STREAM,0);
+  if(fd<0)return -1;
+
+  flags=fcntl(fd,F_GETFL,0);
+  if(flags<0){
+    close(fd);
+    return -1;
+  }
+
+  if(fcntl(fd,F_SETFL,flags|O_NONBLOCK)<0){
+    close(fd);
+    return -1;
+  }
+
+  if(connect(fd,(struct sockaddr *)&addr,sizeof(addr))<0){
+    if(errno!=EINPROGRESS){
+      close(fd);
+      return -1;
+    }
+
+    if(!relay_wait_fd(fd,1,RELAY_CONNECT_TIMEOUT_US)){
+      close(fd);
+      return -1;
+    }
+
+    err=0;
+    len=sizeof(err);
+    if(getsockopt(fd,SOL_SOCKET,SO_ERROR,&err,&len)<0 || err!=0){
+      close(fd);
+      return -1;
+    }
+  }
+
+  return fd;
+}
+
+static int relay_send_all(int fd,unsigned char *buf,int len,int usec){
+  int sent,n;
+
+  sent=0;
+
+  while(sent<len){
+    if(!relay_wait_fd(fd,1,usec))return sent;
+
+    n=send(fd,buf+sent,len-sent,0);
+    if(n<0){
+      if(errno==EAGAIN || errno==EWOULDBLOCK || errno==EINTR)continue;
+      return sent;
+    }
+    if(n==0)return sent;
+
+    sent+=n;
+  }
+
+  return sent;
+}
+
+static int relay_recv_wait(int fd,unsigned char *buf,int len,int usec){
+  int n;
+
+  if(!relay_wait_fd(fd,0,usec))return -1;
+
+  n=recv(fd,buf,len,0);
+  if(n<0){
+    if(errno==EAGAIN || errno==EWOULDBLOCK || errno==EINTR)return -1;
+    return -1;
+  }
+
+  return n;
+}
+
+static int relay_check_crc(unsigned char *buf,int len){
+  unsigned short got,calc;
+
+  if(len<3)return 0;
+
+  got=buf[len-2]|(buf[len-1]<<8);
+  calc=modbus_crc16(buf,len-2);
+
+  if(got==calc)return 1;
+  return 0;
 }
 
 int parse_key(char *s,uint16_t *v){
@@ -198,18 +314,19 @@ int find_kmap(char *dev,char *action,uint16_t *key){
 }
 
 void setrelais(char *code,int on){
-  struct sockaddr_in addr;
-  unsigned char frame[8];
+  unsigned char frame[8],resp[32];
   unsigned short coil,value,crc;
-  int dev,relais;
+  int fd,dev,relais,n;
 
   if(code==NULL)return;
-  if(relay_socket()<0)return;
 
   dev=code[0]-'0';
   relais=((code[1]-'0')*10)+(code[2]-'0');
   if(dev<0 || dev>9)return;
   if(relais<1)return;
+
+  fd=relay_connect(code);
+  if(fd<0)return;
 
   coil=relais-1;
   value=on?0xff00:0x0000;
@@ -225,28 +342,26 @@ void setrelais(char *code,int on){
   frame[6]=(unsigned char)(crc&0xff);
   frame[7]=(unsigned char)(crc>>8);
 
-  memset(&addr,0,sizeof(addr));
-  addr.sin_family=AF_INET;
-  addr.sin_port=htons(RELAY_PORT);
-  addr.sin_addr.s_addr=htonl(0x0a0a0a0a+dev);
+  n=relay_send_all(fd,frame,8,RELAY_IO_TIMEOUT_US);
+  if(n==8)relay_recv_wait(fd,resp,sizeof(resp),RELAY_SET_REPLY_TIMEOUT_US);
 
-  sendto(relay_fd,frame,8,0,(struct sockaddr *)&addr,sizeof(addr));
+  close(fd);
 }
 
 int readrelais(char *code){
-  struct sockaddr_in addr;
   unsigned char frame[8],resp[32];
   unsigned short coil,crc;
-  int dev,relais,n;
-  socklen_t addrlen;
+  int fd,dev,relais,n;
 
   if(code==NULL)return 2;
-  if(relay_socket()<0)return 2;
 
   dev=code[0]-'0';
   relais=((code[1]-'0')*10)+(code[2]-'0');
   if(dev<0 || dev>9)return 2;
   if(relais<1)return 2;
+
+  fd=relay_connect(code);
+  if(fd<0)return 2;
 
   coil=relais-1;
 
@@ -261,17 +376,23 @@ int readrelais(char *code){
   frame[6]=(unsigned char)(crc&0xff);
   frame[7]=(unsigned char)(crc>>8);
 
-  memset(&addr,0,sizeof(addr));
-  addr.sin_family=AF_INET;
-  addr.sin_port=htons(RELAY_PORT);
-  addr.sin_addr.s_addr=htonl(0x0a0a0a0a+dev);
+  n=relay_send_all(fd,frame,8,RELAY_IO_TIMEOUT_US);
+  if(n<8){
+    close(fd);
+    return 2;
+  }
 
-  sendto(relay_fd,frame,8,0,(struct sockaddr *)&addr,sizeof(addr));
+  n=relay_recv_wait(fd,resp,sizeof(resp),RELAY_IO_TIMEOUT_US);
+  close(fd);
 
-  addrlen=sizeof(addr);
-  n=recvfrom(relay_fd,resp,sizeof(resp),0,(struct sockaddr *)&addr,&addrlen);
+  if(n<5)return 2;
+  if(!relay_check_crc(resp,n))return 2;
+  if(resp[0]!=0x01)return 2;
 
-  if(n<4)return 2;
+  if(resp[1]&0x80)return 2;
+  if(resp[1]!=0x01)return 2;
+  if(n<6)return 2;
+  if(resp[2]<1)return 2;
 
   return (resp[3]&1)?1:0;
 }
@@ -288,7 +409,7 @@ int effective_relais(uint16_t relay,uint16_t *modR,uint8_t *modS,uint16_t nmod){
   relais_code(relay,code);
   s=readrelais(code);
 
-  if(s==1)return 1;
+  if(s==0 || s==1)return s;
   return 0;
 }
 
