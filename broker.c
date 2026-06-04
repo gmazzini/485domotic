@@ -3,13 +3,11 @@
 #include <string.h>
 #include <stdint.h>
 #include <unistd.h>
-#include <errno.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include <sys/time.h>
 #include <mosquitto.h>
 
-#define VERSION "zigbee_broker v1.0 by GM @2026\n"
+#define VERSION "zigbee_broker v1.1 by GM @2026\n"
 #define MQTT_HOST "localhost"
 #define MQTT_PORT 1883
 #define MQTT_KEEPALIVE 60
@@ -29,6 +27,8 @@ struct conf{
 };
 
 static struct conf cfg;
+static int udp_fd=-1;
+static struct sockaddr_in6 domotic_addr;
 
 static int get_action(const char *s,char *out,int max){
   const char *p;
@@ -51,52 +51,38 @@ static int get_action(const char *s,char *out,int max){
   return 0;
 }
 
+static int udp_init(){
+  if(udp_fd>=0)return 1;
+
+  udp_fd=socket(AF_INET6,SOCK_DGRAM,0);
+  if(udp_fd<0)return 0;
+
+  memset(&domotic_addr,0,sizeof(domotic_addr));
+  domotic_addr.sin6_family=AF_INET6;
+  domotic_addr.sin6_port=htons(cfg.domotic_port);
+
+  if(inet_pton(AF_INET6,cfg.domotic_ip,&domotic_addr.sin6_addr)!=1){
+    close(udp_fd);
+    udp_fd=-1;
+    return 0;
+  }
+
+  return 1;
+}
+
 static int send_domotic(char *device,char *action){
-  struct sockaddr_in6 addr;
-  struct timeval tv;
-  char msg[MAXMSG],buf[2000];
-  int fd,n,len,ret;
-  socklen_t addrlen;
+  char msg[MAXMSG];
+  int len,n;
 
   if(device==NULL || action==NULL)return 0;
+  if(!udp_init())return 0;
 
   len=snprintf(msg,sizeof(msg),"zigbee %s %s",device,action);
   if(len<1 || len>=(int)sizeof(msg))return 0;
 
-  fd=socket(AF_INET6,SOCK_DGRAM,0);
-  if(fd<0)return 0;
+  n=sendto(udp_fd,msg,strlen(msg),0,(struct sockaddr *)&domotic_addr,sizeof(domotic_addr));
+  if(n<0)return 0;
 
-  tv.tv_sec=3;
-  tv.tv_usec=0;
-  setsockopt(fd,SOL_SOCKET,SO_RCVTIMEO,&tv,sizeof(tv));
-
-  memset(&addr,0,sizeof(addr));
-  addr.sin6_family=AF_INET6;
-  addr.sin6_port=htons(cfg.domotic_port);
-
-  if(inet_pton(AF_INET6,cfg.domotic_ip,&addr.sin6_addr)!=1){
-    close(fd);
-    return 0;
-  }
-
-  ret=sendto(fd,msg,strlen(msg),0,(struct sockaddr *)&addr,sizeof(addr));
-  if(ret<0){
-    close(fd);
-    return 0;
-  }
-
-  for(;;){
-    addrlen=sizeof(addr);
-    n=recvfrom(fd,buf,sizeof(buf)-1,0,(struct sockaddr *)&addr,&addrlen);
-    if(n<1)break;
-
-    buf[n]='\0';
-    printf("%s",buf);
-
-    if(strstr(buf,"<end>")!=NULL)break;
-  }
-
-  close(fd);
   return 1;
 }
 
@@ -141,7 +127,7 @@ static void on_message(struct mosquitto *m,void *u,const struct mosquitto_messag
     fflush(stdout);
 
     if(!send_domotic(device,action)){
-      fprintf(stderr,"send_domotic error: %s %s\n",device,action);
+      fprintf(stderr,"send error: %s %s\n",device,action);
       fflush(stderr);
     }
   }
@@ -173,6 +159,7 @@ int main(int argc,char **argv){
       usage(argv[0]);
       return 0;
     }
+
     strncpy(cfg.domotic_ip,argv[1],sizeof(cfg.domotic_ip)-1);
     cfg.domotic_ip[sizeof(cfg.domotic_ip)-1]='\0';
   }
@@ -185,6 +172,11 @@ int main(int argc,char **argv){
   }
 
   if(argc>4)cfg.mqtt_port=atoi(argv[4]);
+
+  if(!udp_init()){
+    fprintf(stderr,"udp init error\n");
+    return 1;
+  }
 
   mosquitto_lib_init();
 
@@ -217,9 +209,12 @@ int main(int argc,char **argv){
   printf("%s",VERSION);
   printf("mqtt: %s:%d topic %s\n",cfg.mqtt_host,cfg.mqtt_port,MQTT_TOPIC);
   printf("domotic: [%s]:%d\n",cfg.domotic_ip,cfg.domotic_port);
+  printf("mode: udp fire and forget\n");
   fflush(stdout);
 
   rc=mosquitto_loop_forever(m,-1,1);
+
+  if(udp_fd>=0)close(udp_fd);
 
   mosquitto_destroy(m);
   mosquitto_lib_cleanup();
