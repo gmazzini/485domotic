@@ -69,7 +69,11 @@ uint8_t HHr,MMr,HHs,MMs,fulllog;
 uint16_t nevent,poslog,totwhite,nkmap,nknownrelais;
 time_t start;
 uint64_t mask[64];
-struct in6_addr white[TOTWHITE];
+struct acl{
+  struct in6_addr addr;
+  uint8_t prefix;
+};
+struct acl white[TOTWHITE];
 
 #include "functions.c"
 
@@ -298,15 +302,14 @@ int main(){
   if(fp!=NULL){
     for(totwhite=0;totwhite<TOTWHITE;){
       if(fgets(buf,100,fp)==NULL)break;
-      i=strlen(buf);
-      if(i>10){
-        buf[i-1]='\0';
-        if(inet_pton(AF_INET6,buf,&white[totwhite])==1)totwhite++;
-      }
+      trim_line(buf);
+      if(buf[0]=='\0')continue;
+      if(buf[0]=='#')continue;
+      if(parse_acl_line(buf,&white[totwhite]))totwhite++;
     }
     fclose(fp);
   }
-
+  
   fp=fopen(SAVELOG,"rb");
   if(fp!=NULL){
     fread(&poslog,sizeof(uint16_t),1,fp);
