@@ -35,5 +35,5 @@ Coff K002 R105 R106 R205
 # Coff E101 R901
 # stacco bagno
 # Con K3,3 R102
-Cset K3,3 S102,2
-Coff E102 R102
+# Cset K3,3 S102,2
+# Coff E102 R102
