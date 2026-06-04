@@ -2,38 +2,38 @@
 Con K1,1 R105 R106 R205
 Coff K2,1 R105 R106 R205
 # Luci studio di angolo 
-Con K1,2 R107 R108
-Coff K2,2 R107 R108
+# Con K1,2 R107 R108
+# Coff K2,2 R107 R108
 # Luci cantina
-Con K1,3 R201
-Coff K2,3 R201
+# Con K1,3 R201
+# Coff K2,3 R201
 # Luci cucina 
-Con K1,4 R202 R203 R204
-Coff K2,4 R202 R203 R204
+# Con K1,4 R202 R203 R204
+# Coff K2,4 R202 R203 R204
 # Luci living
-Con K1,5 R206 R207 R301 R302 R303
-Coff K2,5 R206 R207 R301 R302 R303
+# Con K1,5 R206 R207 R301 R302 R303
+# Coff K2,5 R206 R207 R301 R302 R303
 # Luci sala radio e bagno
-Con K1,6 R305 R308
-Coff K2,6 R305 R308
+# Con K1,6 R305 R308
+# Coff K2,6 R305 R308
 # prese volanti garage
-Con K1,9 R103
-Coff K2,9 R103
+# Con K1,9 R103
+# Coff K2,9 R103
 # wifi
-Con K3,1 R304
-Coff K4,1 R304
+# Con K3,1 R304
+# Coff K4,1 R304
 # lampione alla cabina
-Coff R208 R101 E9
-Con R208 R101 E10
+# Coff R208 R101 E9
+# Con R208 R101 E10
 # apre acqua generale
-Con K3,2 R908
-Cset K3,2 S100,10
-Coff E100 R908
+# Con K3,2 R908
+# Cset K3,2 S100,10
+# Coff E100 R908
 # chiude acqua generale
-Con K4,2 R901
-Cset K4,2 S101,10
-Coff E101 R901
+# Con K4,2 R901
+# Cset K4,2 S101,10
+# Coff E101 R901
 # stacco bagno
-Con K3,3 R102
+# Con K3,3 R102
 Cset K3,3 S102,2
 Coff E102 R102
