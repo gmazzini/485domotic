@@ -7,14 +7,18 @@
 #include <math.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include <stdarg.h>
 
 #define PORT 55556
-#define TOTEK 500
+#define TOTEK 1000
 #define TOTEX 500
 #define MAXEVENTRELAIS 30
 #define TOTWHITE 50
+#define MAXKMAP 500
+#define KDEVLEN 64
+#define KACTLEN 32
 #define LAT 44.5
 #define LNG 11.3
 #define CONFIG "/home/tools/485domotic/config"
@@ -48,10 +52,17 @@ struct es{
   struct es *next;
 };
 
+struct kmap{
+  char dev[KDEVLEN];
+  char action[KACTLEN];
+  uint16_t key;
+};
+
 struct ek *ee,*ex;
 struct log *mylog;
+struct kmap kmap[MAXKMAP];
 uint8_t HHr,MMr,HHs,MMs,fulllog;
-uint16_t nevent,poslog,totwhite;
+uint16_t nevent,poslog,totwhite,nkmap;
 time_t start;
 uint64_t mask[64];
 struct in6_addr white[TOTWHITE];
@@ -78,6 +89,7 @@ int main(){
   ee=(struct ek *)malloc(TOTEK*sizeof(struct ek));
   ex=(struct ek *)malloc(TOTEX*sizeof(struct ek));
   es=NULL;
+  nkmap=0;
 
   for(q=0;q<TOTEK;q++)ee[q].event=0;
   for(q=0;q<TOTEX;q++)ex[q].event=0;
@@ -100,6 +112,11 @@ int main(){
       if(fgets(buf,100,fp)==NULL)break;
       if(strlen(buf)<5)continue;
       if(buf[0]=='#')continue;
+
+      if(is_kmap_line(buf)){
+        load_kmap_line(buf);
+        continue;
+      }
 
       nlK=0;
       nlR=0;
@@ -212,6 +229,8 @@ int main(){
 
     fclose(fp);
   }
+
+  sort_kmap();
 
   free(lK);
   free(lR);
