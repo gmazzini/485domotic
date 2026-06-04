@@ -1,4 +1,4 @@
-#define VERSION "domotic v3.0 by GM @2026\n"
+#define VERSION "domotic v3.1 by GM @2026\n"
 #define LOGLEN 1000
 #define PAGE 500
 #define PI 3.1415926
@@ -47,7 +47,7 @@ int parse_key(char *s,uint16_t *v){
   if(s[0]=='K')s++;
 
   for(i=0;i<3;i++){
-    if(s[i]<'0' || s[i]>'9')return 0;
+    if(s[i]<'0' || s[i]>'0'+9)return 0;
   }
 
   if(s[3]!='\0')return 0;
@@ -84,6 +84,99 @@ void relais_code(uint16_t r,char *code){
   code[1]='0'+((r/10)%10);
   code[2]='0'+(r%10);
   code[3]='\0';
+}
+
+int is_kmap_line(char *line){
+  char *p;
+
+  if(line==NULL)return 0;
+
+  p=line;
+  while(*p==' ' || *p=='\t')p++;
+
+  if(strncmp(p,"Kmap",4)!=0)return 0;
+  if(p[4]==' ' || p[4]=='\t' || p[4]=='\n' || p[4]=='\r')return 1;
+
+  return 0;
+}
+
+int load_kmap_line(char *line){
+  char *t,*dev,*action,*keytxt;
+  uint16_t key;
+
+  if(line==NULL)return 0;
+
+  t=strtok(line," \n\r\t");
+  dev=strtok(NULL," \n\r\t");
+  action=strtok(NULL," \n\r\t");
+  keytxt=strtok(NULL," \n\r\t");
+
+  if(t==NULL)return 0;
+  if(strcmp(t,"Kmap")!=0)return 0;
+  if(dev==NULL || action==NULL || keytxt==NULL)return 1;
+  if(nkmap>=MAXKMAP)return 1;
+  if(!parse_key(keytxt,&key))return 1;
+
+  strncpy(kmap[nkmap].dev,dev,KDEVLEN-1);
+  kmap[nkmap].dev[KDEVLEN-1]='\0';
+
+  strncpy(kmap[nkmap].action,action,KACTLEN-1);
+  kmap[nkmap].action[KACTLEN-1]='\0';
+
+  kmap[nkmap].key=key;
+  nkmap++;
+
+  return 1;
+}
+
+static int kmap_cmp_item(char *dev,char *action,struct kmap *m){
+  int c;
+
+  c=strcmp(dev,m->dev);
+  if(c!=0)return c;
+
+  return strcmp(action,m->action);
+}
+
+static int kmap_cmp_qsort(const void *a,const void *b){
+  struct kmap *ka,*kb;
+  int c;
+
+  ka=(struct kmap *)a;
+  kb=(struct kmap *)b;
+
+  c=strcmp(ka->dev,kb->dev);
+  if(c!=0)return c;
+
+  return strcmp(ka->action,kb->action);
+}
+
+void sort_kmap(){
+  if(nkmap>1)qsort(kmap,nkmap,sizeof(struct kmap),kmap_cmp_qsort);
+}
+
+int find_kmap(char *dev,char *action,uint16_t *key){
+  int lo,hi,mid,c;
+
+  if(dev==NULL || action==NULL || key==NULL)return 0;
+
+  lo=0;
+  hi=nkmap-1;
+
+  while(lo<=hi){
+    mid=(lo+hi)/2;
+    c=kmap_cmp_item(dev,action,&kmap[mid]);
+
+    if(c==0){
+      *key=kmap[mid].key;
+      return 1;
+    }
+
+    if(c<0)hi=mid-1;
+    else lo=mid+1;
+  }
+
+  return 0;
 }
 
 void setrelais(char *code,int on){
@@ -277,10 +370,10 @@ static void show_relais_state(int sock,uint16_t relay){
 
 char *managewww(int sock){
   static char ret[50];
-  char buf[100],code[4],*t1,*t2;
+  char buf[100],code[4],*t1,*t2,*t3;
   int rr,quit,qi;
-  uint16_t i,j,k,q,dis,totdis,relay;
-  uint16_t fb,fe;
+  uint16_t i,j,k,q,dis,totdis,relay,key;
+  int fb,fe;
   uint64_t flag;
   FILE *fp;
   time_t myt;
@@ -306,6 +399,7 @@ char *managewww(int sock){
 
   t1=strtok(buf," \n\r\t");
   t2=strtok(NULL," \n\r\t");
+  t3=strtok(NULL," \n\r\t");
 
   if(t1==NULL){
     myout(sock,2,"empty command\n");
@@ -315,6 +409,7 @@ char *managewww(int sock){
   if(strcmp(t1,"status")==0){
     myout(sock,1,"max event relais: %d\n",MAXEVENTRELAIS);
     myout(sock,1,"key events: %d\n",TOTEK-1);
+    myout(sock,1,"kmap entries: %d\n",nkmap);
     myout(sock,1,"system events: %d\n",nevent);
 
     time(&myt);
@@ -363,6 +458,19 @@ char *managewww(int sock){
   }
   else if(strcmp(t1,"showon")==0){
     myout(sock,2,"showon disabled: use read Rabc\n");
+  }
+  else if(strcmp(t1,"zigbee")==0){
+    if(t2!=NULL && t3!=NULL && find_kmap(t2,t3,&key)){
+      sprintf(ret,"K%03d",key);
+      myout(sock,2,"Kmap %s %s -> K%03d\n",t2,t3,key);
+    }
+    else myout(sock,2,"Kmap not found\n");
+  }
+  else if(strcmp(t1,"showkmap")==0){
+    for(i=0;i<nkmap;i++){
+      myout(sock,1,"Kmap %s %s K%03d\n",kmap[i].dev,kmap[i].action,kmap[i].key);
+    }
+    myout(sock,2,"");
   }
   else if(strcmp(t1,"showevents")==0){
     for(q=0;q<TOTEK+TOTEX;q++){
@@ -460,6 +568,8 @@ char *managewww(int sock){
     myout(sock,1,"setoff Rabc, set relay Rabc to off\n");
     myout(sock,1,"read Rabc, read relay Rabc state\n");
     myout(sock,1,"showon, disabled: use read Rabc\n");
+    myout(sock,1,"zigbee dev action, map input event to Kxxx using Kmap\n");
+    myout(sock,1,"showkmap, show sorted Kmap table\n");
     myout(sock,1,"showevents, show all the events\n");
     myout(sock,1,"inject Kxxx, inject key event, like K001\n");
     myout(sock,1,"inject Ex, inject system event, like E5\n");
