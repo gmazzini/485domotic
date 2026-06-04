@@ -17,9 +17,9 @@
 #define TOTWHITE 50
 #define LAT 44.5
 #define LNG 11.3
-#define CONFIG "config"
-#define SAVELOG "log"
-#define WHITEACCESS "access.v6"
+#define CONFIG "/home/tools/485domotic/config"
+#define SAVELOG "/home/tools/misc/domotic.log"
+#define WHITEACCESS "/home/tools/misc/domotic.access"
 
 struct ek{
   uint16_t event;
