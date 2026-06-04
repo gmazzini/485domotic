@@ -40,6 +40,25 @@ static int relay_socket(){
   return relay_fd;
 }
 
+int parse_key(char *s,uint16_t *v){
+  int i,n;
+
+  if(s==NULL)return 0;
+  if(s[0]=='K')s++;
+
+  for(i=0;i<3;i++){
+    if(s[i]<'0' || s[i]>'9')return 0;
+  }
+
+  if(s[3]!='\0')return 0;
+
+  n=(s[0]-'0')*100+(s[1]-'0')*10+(s[2]-'0');
+  if(n<1 || n>=TOTEK)return 0;
+
+  *v=(uint16_t)n;
+  return 1;
+}
+
 int parse_relais(char *s,uint16_t *v){
   int i,n;
 
@@ -53,8 +72,9 @@ int parse_relais(char *s,uint16_t *v){
   if(s[3]!='\0')return 0;
 
   n=(s[0]-'0')*100+(s[1]-'0')*10+(s[2]-'0');
-  *v=(uint16_t)n;
+  if(n<1 || n>999)return 0;
 
+  *v=(uint16_t)n;
   return 1;
 }
 
@@ -77,6 +97,7 @@ void setrelais(char *code,int on){
 
   dev=code[0]-'0';
   relais=((code[1]-'0')*10)+(code[2]-'0');
+  if(dev<0 || dev>9)return;
   if(relais<1)return;
 
   coil=relais-1;
@@ -113,6 +134,7 @@ int readrelais(char *code){
 
   dev=code[0]-'0';
   relais=((code[1]-'0')*10)+(code[2]-'0');
+  if(dev<0 || dev>9)return 2;
   if(relais<1)return 2;
 
   coil=relais-1;
@@ -256,8 +278,9 @@ static void show_relais_state(int sock,uint16_t relay){
 char *managewww(int sock){
   static char ret[50];
   char buf[100],code[4],*t1,*t2;
-  int rr,quit;
-  uint16_t i,j,k,q,dis,totdis,fb,fe,relay;
+  int rr,quit,qi;
+  uint16_t i,j,k,q,dis,totdis,relay;
+  uint16_t fb,fe;
   uint64_t flag;
   FILE *fp;
   time_t myt;
@@ -291,7 +314,8 @@ char *managewww(int sock){
 
   if(strcmp(t1,"status")==0){
     myout(sock,1,"max event relais: %d\n",MAXEVENTRELAIS);
-    myout(sock,1,"events: %d\n",nevent);
+    myout(sock,1,"key events: %d\n",TOTEK-1);
+    myout(sock,1,"system events: %d\n",nevent);
 
     time(&myt);
     memcpy(&info,localtime(&myt),sizeof(struct tm));
@@ -348,7 +372,7 @@ char *managewww(int sock){
       for(;;){
         if(en->event==0)break;
 
-        if(q<TOTEK)myout(sock,1,"---- EK K%d,%d %d ----\n",q/10,q%10,en->event);
+        if(q<TOTEK)myout(sock,1,"---- EK K%03d %d ----\n",q,en->event);
         else myout(sock,1,"---- EX E%d %d ----\n",q-TOTEK,en->event);
 
         if(en->nR>0){
@@ -400,8 +424,11 @@ char *managewww(int sock){
   }
   else if(strcmp(t1,"inject")==0){
     if(t2!=NULL){
-      myout(sock,2,"inject: %s\n",t2);
-      strcpy(ret,t2);
+      if(t2[0]=='K' && !parse_key(t2+1,&q))myout(sock,2,"bad key event\n");
+      else {
+        myout(sock,2,"inject: %s\n",t2);
+        strcpy(ret,t2);
+      }
     }
     else myout(sock,2,"missing event\n");
   }
@@ -413,8 +440,8 @@ char *managewww(int sock){
     fb=(fulllog)?poslog-1+LOGLEN:poslog-1;
     fe=(fulllog)?poslog:0;
 
-    for(q=fb;q>=fe && i<k;q--){
-      j=q%LOGLEN;
+    for(qi=fb;qi>=fe && i<k;qi--){
+      j=qi%LOGLEN;
       memcpy(&info,localtime(&mylog[j].time),sizeof(struct tm));
       strftime(buf,100,"%d/%m/%y %H:%M:%S %A",&info);
       myout(sock,1,"%s %03d %d %s\n",buf,j,mylog[j].action,mylog[j].desc);
@@ -434,7 +461,8 @@ char *managewww(int sock){
     myout(sock,1,"read Rabc, read relay Rabc state\n");
     myout(sock,1,"showon, disabled: use read Rabc\n");
     myout(sock,1,"showevents, show all the events\n");
-    myout(sock,1,"inject xxx, inject the xxx event, like K1,2 or E5\n");
+    myout(sock,1,"inject Kxxx, inject key event, like K001\n");
+    myout(sock,1,"inject Ex, inject system event, like E5\n");
     myout(sock,1,"showlog n, show rotative log last n lines\n");
     myout(sock,1,"quit, shutdown the system\n");
     myout(sock,2,"help, this help\n");
