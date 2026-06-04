@@ -1,6 +1,4 @@
-#include <errno.h>
-
-#define VERSION "domotic v3.3 by GM @2026\n"
+#define VERSION "domotic v3.4 by GM @2026\n"
 #define LOGLEN 1000
 #define PAGE 500
 #define PI 3.1415926
@@ -234,6 +232,20 @@ int is_kmap_line(char *line){
   return 0;
 }
 
+int is_rrange_line(char *line){
+  char *p;
+
+  if(line==NULL)return 0;
+
+  p=line;
+  while(*p==' ' || *p=='\t')p++;
+
+  if(strncmp(p,"Rrange",6)!=0)return 0;
+  if(p[6]==' ' || p[6]=='\t' || p[6]=='\n' || p[6]=='\r')return 1;
+
+  return 0;
+}
+
 int load_kmap_line(char *line){
   char *t,*dev,*action,*keytxt;
   uint16_t key;
@@ -261,6 +273,60 @@ int load_kmap_line(char *line){
   nkmap++;
 
   return 1;
+}
+
+int add_known_relais(uint16_t relay){
+  uint16_t i;
+
+  for(i=0;i<nknownrelais;i++){
+    if(knownrelais[i]==relay)return 1;
+  }
+
+  if(nknownrelais>=MAXKNOWNRELAIS)return 0;
+
+  knownrelais[nknownrelais++]=relay;
+  return 1;
+}
+
+int load_rrange_line(char *line){
+  char *t,*a,*b;
+  uint16_t r1,r2,r;
+
+  if(line==NULL)return 0;
+
+  t=strtok(line," \n\r\t");
+  a=strtok(NULL," \n\r\t");
+  b=strtok(NULL," \n\r\t");
+
+  if(t==NULL)return 0;
+  if(strcmp(t,"Rrange")!=0)return 0;
+  if(a==NULL || b==NULL)return 1;
+  if(!parse_relais(a,&r1))return 1;
+  if(!parse_relais(b,&r2))return 1;
+
+  if(r1<=r2){
+    for(r=r1;r<=r2;r++)add_known_relais(r);
+  }
+  else {
+    for(r=r2;r<=r1;r++)add_known_relais(r);
+  }
+
+  return 1;
+}
+
+static int known_relais_cmp(const void *a,const void *b){
+  uint16_t ra,rb;
+
+  ra=*((uint16_t *)a);
+  rb=*((uint16_t *)b);
+
+  if(ra<rb)return -1;
+  if(ra>rb)return 1;
+  return 0;
+}
+
+void sort_known_relais(){
+  if(nknownrelais>1)qsort(knownrelais,nknownrelais,sizeof(uint16_t),known_relais_cmp);
 }
 
 static int kmap_cmp_item(char *dev,char *action,struct kmap *m){
@@ -519,6 +585,38 @@ static void show_relais_state(int sock,uint16_t relay){
   else myout(sock,1,"R%s unreadable\n",code);
 }
 
+static void show_relais_on(int sock){
+  char code[4];
+  uint16_t i,on,unreadable;
+  int s;
+
+  if(nknownrelais==0){
+    myout(sock,2,"no Rrange configured\n");
+    return;
+  }
+
+  on=0;
+  unreadable=0;
+
+  myout(sock,1,"relais on:");
+
+  for(i=0;i<nknownrelais;i++){
+    relais_code(knownrelais[i],code);
+    s=readrelais(code);
+
+    if(s==1){
+      myout(sock,1," R%s",code);
+      on++;
+    }
+    else if(s==2)unreadable++;
+  }
+
+  myout(sock,1,"\n");
+  myout(sock,1,"checked: %d\n",nknownrelais);
+  myout(sock,1,"on: %d\n",on);
+  myout(sock,2,"unreadable: %d\n",unreadable);
+}
+
 char *managewww(int sock){
   static char ret[50];
   char buf[100],code[4],*t1,*t2,*t3;
@@ -559,6 +657,7 @@ char *managewww(int sock){
 
   if(strcmp(t1,"status")==0){
     myout(sock,1,"max event relais: %d\n",MAXEVENTRELAIS);
+    myout(sock,1,"known relais: %d\n",nknownrelais);
     myout(sock,1,"key events: %d\n",TOTEK-1);
     myout(sock,1,"kmap entries: %d\n",nkmap);
     myout(sock,1,"system events: %d\n",nevent);
@@ -608,7 +707,7 @@ char *managewww(int sock){
     else myout(sock,2,"bad relais\n");
   }
   else if(strcmp(t1,"showon")==0){
-    myout(sock,2,"showon disabled: use read Rabb\n");
+    show_relais_on(sock);
   }
   else if(strcmp(t1,"zigbee")==0){
     if(t2!=NULL && t3!=NULL && find_kmap(t2,t3,&key)){
@@ -733,13 +832,13 @@ char *managewww(int sock){
     myout(sock,1,"seton Rabb, set relay Rabb to on, example R101\n");
     myout(sock,1,"setoff Rabb, set relay Rabb to off, example R101\n");
     myout(sock,1,"read Rabb, read relay Rabb state, example R101\n");
+    myout(sock,1,"showon, show on relays declared by Rrange\n");
     myout(sock,1,"zigbee dev action, map input event using Kmap\n");
     myout(sock,1,"showkmap, show sorted Kmap table\n");
     myout(sock,1,"showevents, show all configured events\n");
     myout(sock,1,"inject Kxxx, inject key event K001..K999\n");
     myout(sock,1,"inject Ex, inject system event, example E5\n");
     myout(sock,1,"showlog n, show rotative log last n lines\n");
-    myout(sock,1,"showon, disabled: use read Rabb\n");
     myout(sock,1,"quit, shutdown the system\n");
     myout(sock,2,"help, this help\n");
   }
