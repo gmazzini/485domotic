@@ -162,9 +162,6 @@ int main(){
                 lT[nlT++]=relay+1000*atoi(f+1);
               }
             }
-            else {
-              g=NULL;
-            }
             break;
 
           case 'S':
