@@ -13,7 +13,7 @@
 #define PORT 55556
 #define TOTEK 500
 #define TOTEX 500
-#define TOTRELAIS 30
+#define MAXEVENTRELAIS 30
 #define TOTWHITE 50
 #define LAT 44.5
 #define LNG 11.3
