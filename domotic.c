@@ -13,7 +13,7 @@
 #define PORT 55556
 #define TOTEK 500
 #define TOTEX 500
-#define TOTRELAIS 120
+#define TOTRELAIS 30
 #define TOTWHITE 50
 #define LAT 44.5
 #define LNG 11.3
@@ -62,7 +62,7 @@ int main(){
   FILE *fp;
   char buf[100];
   char code[4];
-  uint8_t modS[TOTRELAIS];
+  uint8_t modS[MAXEVENTRELAIS];
   char *token,*f,*g,*mye;
   time_t myt;
   struct tm info;
@@ -91,7 +91,7 @@ int main(){
   lT=(uint16_t *)malloc(100*sizeof(uint16_t));
   lSe=(uint16_t *)malloc(100*sizeof(uint16_t));
   lSt=(uint16_t *)malloc(100*sizeof(uint16_t));
-  modR=(uint16_t *)malloc(TOTRELAIS*sizeof(uint16_t));
+  modR=(uint16_t *)malloc(MAXEVENTRELAIS*sizeof(uint16_t));
 
   fp=fopen(CONFIG,"r");
   nevent=1;
