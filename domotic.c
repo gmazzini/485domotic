@@ -60,14 +60,13 @@ struct in6_addr white[TOTWHITE];
 
 int main(){
   FILE *fp;
-  char buf[100];
-  char code[4];
+  char buf[100],code[4];
   uint8_t modS[MAXEVENTRELAIS];
   char *token,*f,*mye;
   time_t myt;
   struct tm info;
   uint16_t i,j,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,nlS,*lSe,*lSt;
-  uint16_t last_min,last_hour,sched,every10,every30,esun,event,nmod,*modR,relay;
+  uint16_t last_min,last_hour,sched,every10,every30,esun,event,nmod,*modR,relay,key;
   uint64_t *lD;
   struct ek *en,*em;
   struct es *es;
@@ -114,11 +113,7 @@ int main(){
       for(token=strtok(buf," \n\r\t");token;token=strtok(NULL," \n\r\t")){
         switch(token[0]){
           case 'K':
-            f=strchr(token,',');
-            if(f!=NULL){
-              *f='\0';
-              lK[nlK++]=10*atoi(token+1)+atoi(f+1);
-            }
+            if(parse_key(token+1,&key))lK[nlK++]=key;
             break;
 
           case 'R':
@@ -356,10 +351,7 @@ int main(){
     }
 
     if(buf[0]=='K'){
-      f=strchr(buf,',');
-      if(f==NULL)continue;
-      *f='\0';
-      q=10*atoi(buf+1)+atoi(f+1);
+      if(!parse_key(buf+1,&q))continue;
       en=ee+q;
     }
     else if(buf[0]=='E'){
