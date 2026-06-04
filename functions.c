@@ -1,4 +1,4 @@
-#define VERSION "domotic v3.4 by GM @2026\n"
+#define VERSION "domotic v3.5 by GM @2026\n"
 #define LOGLEN 1000
 #define PAGE 500
 #define PI 3.1415926
@@ -11,6 +11,81 @@
 struct sockaddr_in6 from;
 socklen_t fromlen=sizeof(from);
 char *cmd[]={"","onoff","on","off","condon","condoff","set"};
+
+void trim_line(char *s){
+  int i,n;
+
+  if(s==NULL)return;
+
+  n=strlen(s);
+  while(n>0 && (s[n-1]=='\n' || s[n-1]=='\r' || s[n-1]==' ' || s[n-1]=='\t')){
+    s[n-1]='\0';
+    n--;
+  }
+
+  i=0;
+  while(s[i]==' ' || s[i]=='\t')i++;
+
+  if(i>0)memmove(s,s+i,strlen(s+i)+1);
+}
+
+int parse_acl_line(char *line,struct acl *a){
+  char buf[100],*p;
+  int prefix;
+
+  if(line==NULL || a==NULL)return 0;
+
+  strncpy(buf,line,sizeof(buf)-1);
+  buf[sizeof(buf)-1]='\0';
+
+  p=strchr(buf,'/');
+  prefix=128;
+
+  if(p!=NULL){
+    *p='\0';
+    p++;
+    prefix=atoi(p);
+    if(prefix<0 || prefix>128)return 0;
+  }
+
+  if(inet_pton(AF_INET6,buf,&a->addr)!=1)return 0;
+
+  a->prefix=(uint8_t)prefix;
+  return 1;
+}
+
+int acl_match_addr(struct in6_addr *ip,struct acl *a){
+  int full,rem,i;
+  unsigned char mask;
+
+  if(ip==NULL || a==NULL)return 0;
+
+  full=a->prefix/8;
+  rem=a->prefix%8;
+
+  for(i=0;i<full;i++){
+    if(ip->s6_addr[i]!=a->addr.s6_addr[i])return 0;
+  }
+
+  if(rem){
+    mask=(unsigned char)(0xff<<(8-rem));
+    if((ip->s6_addr[full]&mask)!=(a->addr.s6_addr[full]&mask))return 0;
+  }
+
+  return 1;
+}
+
+int acl_allowed(struct in6_addr *ip){
+  uint16_t i;
+
+  if(ip==NULL)return 0;
+
+  for(i=0;i<totwhite;i++){
+    if(acl_match_addr(ip,&white[i]))return 1;
+  }
+
+  return 0;
+}
 
 static unsigned short modbus_crc16(unsigned char *data,int len){
   unsigned short crc;
@@ -636,10 +711,7 @@ char *managewww(int sock){
   rr=recvfrom(sock,buf,99,0,(struct sockaddr *)&from,&fromlen);
   if(rr<1)return ret;
 
-  for(i=0;i<totwhite;i++){
-    if(memcmp(&(from.sin6_addr),&white[i],sizeof(struct in6_addr))==0)break;
-  }
-  if(i==totwhite)return ret;
+  if(!acl_allowed(&(from.sin6_addr)))return ret;
 
   buf[rr]='\0';
 
@@ -660,6 +732,7 @@ char *managewww(int sock){
     myout(sock,1,"known relais: %d\n",nknownrelais);
     myout(sock,1,"key events: %d\n",TOTEK-1);
     myout(sock,1,"kmap entries: %d\n",nkmap);
+    myout(sock,1,"access entries: %d\n",totwhite);
     myout(sock,1,"system events: %d\n",nevent);
 
     time(&myt);
