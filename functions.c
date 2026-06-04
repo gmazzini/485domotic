@@ -165,7 +165,7 @@ void plan_relais(uint16_t relay,uint8_t state,uint16_t *modR,uint8_t *modS,uint1
     }
   }
 
-  if(*nmod<TOTRELAIS){
+  if(*nmod<MAXEVENTRELAIS){
     modR[*nmod]=relay;
     modS[*nmod]=state;
     (*nmod)++;
@@ -252,8 +252,8 @@ static void show_relais_state(int sock,uint16_t relay){
 char *managewww(int sock){
   static char ret[50];
   char buf[100],code[4],*t1,*t2;
-  int rr,quit,q,s,on,readable;
-  uint16_t i,j,k,dis,totdis,fb,fe,relay;
+  int rr,quit;
+  uint16_t i,j,k,q,dis,totdis,fb,fe,relay;
   uint64_t flag;
   FILE *fp;
   time_t myt;
@@ -286,18 +286,7 @@ char *managewww(int sock){
   }
 
   if(strcmp(t1,"status")==0){
-    on=0;
-    readable=0;
-
-    for(q=0;q<TOTRELAIS;q++){
-      relais_code(q,code);
-      s=readrelais(code);
-      if(s==1)on++;
-      if(s==0 || s==1)readable++;
-    }
-
-    myout(sock,1,"relais readable: %d/%d\n",readable,TOTRELAIS);
-    myout(sock,1,"relais on: %d\n",on);
+    myout(sock,1,"max event relais: %d\n",MAXEVENTRELAIS);
     myout(sock,1,"events: %d\n",nevent);
 
     time(&myt);
@@ -345,13 +334,7 @@ char *managewww(int sock){
     else myout(sock,2,"bad relais\n");
   }
   else if(strcmp(t1,"showon")==0){
-    myout(sock,1,"show relais on:");
-    for(q=0;q<TOTRELAIS;q++){
-      relais_code(q,code);
-      s=readrelais(code);
-      if(s==1)myout(sock,1," R%s",code);
-    }
-    myout(sock,2,"\n");
+    myout(sock,2,"showon disabled: use read Rabc\n");
   }
   else if(strcmp(t1,"showevents")==0){
     for(q=0;q<TOTEK+TOTEX;q++){
@@ -445,7 +428,7 @@ char *managewww(int sock){
     myout(sock,1,"seton Rabc, set relay Rabc to on\n");
     myout(sock,1,"setoff Rabc, set relay Rabc to off\n");
     myout(sock,1,"read Rabc, read relay Rabc state\n");
-    myout(sock,1,"showon, show relays in on state\n");
+    myout(sock,1,"showon, disabled: use read Rabc\n");
     myout(sock,1,"showevents, show all the events\n");
     myout(sock,1,"inject xxx, inject the xxx event, like K1,2 or E5\n");
     myout(sock,1,"showlog n, show rotative log last n lines\n");
