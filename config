@@ -9,44 +9,38 @@ Kmap 0x5c0272fffe067ec9 3_double K006
 Rrange R101 R130
 Rrange R201 R230
 Rrange R301 R330
-# PROVA
-Conoff K001 R101
 # Luci stanza ingresso e anticantina
-# Con K001 R105 R106 R205
-# Coff K002 R105 R106 R205
-# Conoff K003 R105 R106 R205
-# Luci studio di angolo 
-# Con K1,2 R107 R108
-# Coff K2,2 R107 R108
+Con K901 R203 R225 R113
+Coff K902 R203 R225 R113
+# Luci studio
+Con K912 R201 R110
+Coff K922 R201 R110
 # Luci cantina
-# Con K1,3 R201
-# Coff K2,3 R201
-# Luci cucina 
-# Con K1,4 R202 R203 R204
-# Coff K2,4 R202 R203 R204
-# Luci living
-# Con K1,5 R206 R207 R301 R302 R303
-# Coff K2,5 R206 R207 R301 R302 R303
-# Luci sala radio e bagno
-# Con K1,6 R305 R308
-# Coff K2,6 R305 R308
-# prese volanti garage
-# Con K1,9 R103
-# Coff K2,9 R103
-# wifi
-# Con K3,1 R304
-# Coff K4,1 R304
+Con K913 R202
+Coff K923 R202
+# Luci living 
+Con K914 R206 R207 R112
+Coff K924 R206 R207 R112
+# Luci salone
+# Con K915 R123 R124 R301 R111 R204
+# Coff K925 R123 R124 R301 R111 R204
+Luci sala radio e bagno
+Con K916 R315 R209
+Coff K926 R315 R209
+# Servizi commutati
+Con K917 R208
+Coff K927 R208
 # lampione alla cabina
-# Coff R208 R101 E9
-# Con R208 R101 E10
+Coff R114 R101 E9
+Con R114 R101 E10
 # apre acqua generale
-# Con K3,2 R908
-# Cset K3,2 S100,10
-# Coff E100 R908
+Con K918 R130
+Cset K918 S100,10
+Coff E100 R130
 # chiude acqua generale
-# Con K4,2 R901
-# Cset K4,2 S101,10
-# Coff E101 R901
+Con K928 R129
+Cset K928 S101,10
+Coff E101 R129
 # stacco bagno
 # Con K3,3 R102
 # Cset K3,3 S102,2
