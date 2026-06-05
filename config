@@ -10,8 +10,8 @@ Rrange R101 R130
 Rrange R201 R230
 Rrange R301 R330
 # Luci stanza ingresso e anticantina
-Con K911 R203 R225 R113
-Coff K921 R203 R225 R113
+Con K911 R203 R115 R113
+Coff K921 R203 R115 R113
 # Luci studio
 Con K912 R201 R110
 Coff K922 R201 R110
