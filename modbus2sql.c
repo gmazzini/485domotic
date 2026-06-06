@@ -184,7 +184,7 @@ int main(int argc,char **argv){
 
     case 3:
       server.sin_port=htons(PORTCC1);
-      server.sin_addr.s_addr=inet_addr(IPCC);
+      server.sin_addr.s_addr=inet_addr(IPCC1);
       ow=connect(fd,(struct sockaddr *)&server,sizeof(server));
       if(ow<0)break;
 
@@ -203,7 +203,7 @@ int main(int argc,char **argv){
 
     case 4:
       server.sin_port=htons(PORTCC1);
-      server.sin_addr.s_addr=inet_addr(IPCC);
+      server.sin_addr.s_addr=inet_addr(IPCC1);
       ow=connect(fd,(struct sockaddr *)&server,sizeof(server));
       if(ow<0)break;
 
