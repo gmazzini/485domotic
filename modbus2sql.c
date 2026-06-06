@@ -18,9 +18,9 @@
 #include <mysql/mysql.h>
 #include "/home/tools/setup_energy.c"
 
-#ifndef RWTIMEOUT
 #define RWTIMEOUT 3000
-#endif
+#define CHSLEEP 10000
+#define FAKE -999999.0
 
 union uw {uint16_t w; uint8_t u[2]; };
 union uf {float f; uint8_t u[4]; };
