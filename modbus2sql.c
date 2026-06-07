@@ -24,6 +24,7 @@
 
 union uw {uint16_t w; uint8_t u[2]; };
 union uf {float f; uint8_t u[4]; };
+union ul {uint32_t l; uint8_t u[4]; };
 
 uint16_t crc(uint8_t *buf,uint8_t lenbuf){
   int i,j;
@@ -112,9 +113,35 @@ float myr_f(int fd){
   return uf.f;
 }
 
+uint32_t *myr_ln(int fd,int n){
+  union uw uw;
+  static union ul ul[10];
+  int i;
+  uint8_t aux[50];
+
+  if(n<1 || n>10)return NULL;
+
+  if(readn(fd,aux,5+4*n)<0)return NULL;
+
+  uw.u[0]=aux[3+4*n]; uw.u[1]=aux[4+4*n];
+  if(crc(aux,3+4*n)!=uw.w)return NULL;
+  if(aux[1]&0x80)return NULL;
+  if(aux[2]!=(4*n))return NULL;
+
+  for(i=0;i<n;i++){
+    ul[i].u[3]=aux[3+4*i];
+    ul[i].u[2]=aux[4+4*i];
+    ul[i].u[1]=aux[5+4*i];
+    ul[i].u[0]=aux[6+4*i];
+  }
+
+  return &ul[0].l;
+}
+
 int main(int argc,char **argv){
   int fd,ow,mode;
   float v1,v2,v3,i1,i2,i3,e1,e2,e3;
+  uint32_t *ol;
   struct sockaddr_in server;
   MYSQL *con;
   time_t t;
@@ -213,6 +240,20 @@ int main(int argc,char **argv){
 
       if(e1>=0 && e2>=0 && e3>=0){
         snprintf(query,sizeof(query),"insert into energy_cc (epoch,e1,e2,e3) values(%ld,%f,%f,%f)",(long)t,e1,e2,e3);
+        mysql_query(con,query);
+      }
+      break;
+
+    case 5:
+      server.sin_port=htons(PORTLE1);
+      server.sin_addr.s_addr=inet_addr(IPLE1);
+      ow=connect(fd,(struct sockaddr *)&server,sizeof(server)); 
+      if(ow<0)break;
+
+      myw(fd,(uint8_t *)"\x01\x03\x01\x0E",2); ol=myr_ln(fd,1);
+
+      if(ol!=NULL){
+        snprintf(query,sizeof(query),"insert into energy_le1 (epoch,e1) values(%ld,%lu)",(long)t,(unsigned long)ol[0]);
         mysql_query(con,query);
       }
       break;
