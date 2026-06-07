@@ -19,6 +19,7 @@
 #include "/home/tools/setup_energy.c"
 
 #define RWTIMEOUT 3000
+#define CTIMEOUT 3000
 #define CHSLEEP 10000
 #define FAKE -999999.0
 
@@ -85,16 +86,73 @@ int writen(int fd,uint8_t *buf,int len){
   return 0;
 }
 
+int myconnect(int fd,struct sockaddr *addr,socklen_t len){
+  int r,err,flags;
+  socklen_t errlen;
+  struct pollfd pfd;
+
+  flags=fcntl(fd,F_GETFL,0);
+  if(flags<0)return -1;
+
+  if(fcntl(fd,F_SETFL,flags|O_NONBLOCK)<0)return -1;
+
+  r=connect(fd,addr,len);
+  if(r==0){
+    fcntl(fd,F_SETFL,flags);
+    return 0;
+  }
+
+  if(errno!=EINPROGRESS){
+    fcntl(fd,F_SETFL,flags);
+    return -1;
+  }
+
+  pfd.fd=fd;
+  pfd.events=POLLOUT;
+  pfd.revents=0;
+
+  r=poll(&pfd,1,CTIMEOUT);
+  if(r<=0){
+    fcntl(fd,F_SETFL,flags);
+    return -1;
+  }
+
+  if(pfd.revents&(POLLERR|POLLHUP|POLLNVAL)){
+    fcntl(fd,F_SETFL,flags);
+    return -1;
+  }
+
+  err=0;
+  errlen=sizeof(err);
+
+  if(getsockopt(fd,SOL_SOCKET,SO_ERROR,&err,&errlen)<0){
+    fcntl(fd,F_SETFL,flags);
+    return -1;
+  }
+
+  fcntl(fd,F_SETFL,flags);
+
+  if(err!=0){
+    errno=err;
+    return -1;
+  }
+
+  return 0;
+}
+
 void myw(int fd,uint8_t *ss,uint8_t nn){
   union uw uw;
   uint8_t aux[8];
+
   memcpy(aux,ss,4);
   aux[4]=0;
   aux[5]=nn;
   uw.w=crc(aux,6);
   aux[6]=uw.u[0];
   aux[7]=uw.u[1];
-  writen(fd,aux,8); usleep(8*CHSLEEP);
+
+  writen(fd,aux,8);
+  usleep(8*CHSLEEP);
 }
 
 float myr_f(int fd){
@@ -104,12 +162,18 @@ float myr_f(int fd){
 
   if(readn(fd,aux,9)<0)return FAKE;
 
-  uw.u[0]=aux[7]; uw.u[1]=aux[8];
+  uw.u[0]=aux[7];
+  uw.u[1]=aux[8];
+
   if(crc(aux,7)!=uw.w)return FAKE;
   if(aux[1]&0x80)return FAKE;
   if(aux[2]!=4)return FAKE;
 
-  uf.u[3]=aux[3]; uf.u[2]=aux[4]; uf.u[1]=aux[5]; uf.u[0]=aux[6];
+  uf.u[3]=aux[3];
+  uf.u[2]=aux[4];
+  uf.u[1]=aux[5];
+  uf.u[0]=aux[6];
+
   return uf.f;
 }
 
@@ -123,7 +187,9 @@ uint32_t *myr_ln(int fd,int n){
 
   if(readn(fd,aux,5+4*n)<0)return NULL;
 
-  uw.u[0]=aux[3+4*n]; uw.u[1]=aux[4+4*n];
+  uw.u[0]=aux[3+4*n];
+  uw.u[1]=aux[4+4*n];
+
   if(crc(aux,3+4*n)!=uw.w)return NULL;
   if(aux[1]&0x80)return NULL;
   if(aux[2]!=(4*n))return NULL;
@@ -177,7 +243,7 @@ int main(int argc,char **argv){
     case 1:
       server.sin_port=htons(PORTSO);
       server.sin_addr.s_addr=inet_addr(IPSO);
-      ow=connect(fd,(struct sockaddr *)&server,sizeof(server));
+      ow=myconnect(fd,(struct sockaddr *)&server,sizeof(server));
       if(ow<0)break;
 
       myw(fd,(uint8_t *)"\x01\x03\x00\x0E",2); v1=myr_f(fd);
@@ -196,7 +262,7 @@ int main(int argc,char **argv){
     case 2:
       server.sin_port=htons(PORTSO);
       server.sin_addr.s_addr=inet_addr(IPSO);
-      ow=connect(fd,(struct sockaddr *)&server,sizeof(server));
+      ow=myconnect(fd,(struct sockaddr *)&server,sizeof(server));
       if(ow<0)break;
 
       myw(fd,(uint8_t *)"\x01\x03\x01\x02",2); e1=myr_f(fd);
@@ -212,7 +278,7 @@ int main(int argc,char **argv){
     case 3:
       server.sin_port=htons(PORTCC1);
       server.sin_addr.s_addr=inet_addr(IPCC1);
-      ow=connect(fd,(struct sockaddr *)&server,sizeof(server));
+      ow=myconnect(fd,(struct sockaddr *)&server,sizeof(server));
       if(ow<0)break;
 
       myw(fd,(uint8_t *)"\x01\x03\x00\x0E",2); v1=myr_f(fd);
@@ -231,7 +297,7 @@ int main(int argc,char **argv){
     case 4:
       server.sin_port=htons(PORTCC1);
       server.sin_addr.s_addr=inet_addr(IPCC1);
-      ow=connect(fd,(struct sockaddr *)&server,sizeof(server));
+      ow=myconnect(fd,(struct sockaddr *)&server,sizeof(server));
       if(ow<0)break;
 
       myw(fd,(uint8_t *)"\x01\x03\x01\x02",2); e1=myr_f(fd);
@@ -247,13 +313,13 @@ int main(int argc,char **argv){
     case 5:
       server.sin_port=htons(PORTCC2);
       server.sin_addr.s_addr=inet_addr(IPCC2);
-      ow=connect(fd,(struct sockaddr *)&server,sizeof(server)); 
+      ow=myconnect(fd,(struct sockaddr *)&server,sizeof(server));
       if(ow<0)break;
 
       myw(fd,(uint8_t *)"\x01\x03\x01\x0E",2); ol=myr_ln(fd,1);
 
       if(ol!=NULL){
-        snprintf(query,sizeof(query),"insert into energy_le1 (epoch,e) values(%ld,%f)",(long)t,ol[0]/100.0);
+        snprintf(query,sizeof(query),"insert into energy_le1 (epoch,e) values(%ld,%f)",(long)t,(double)ol[0]/100.0);
         mysql_query(con,query);
       }
       break;
