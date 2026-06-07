@@ -253,7 +253,7 @@ int main(int argc,char **argv){
       myw(fd,(uint8_t *)"\x01\x03\x01\x0E",2); ol=myr_ln(fd,1);
 
       if(ol!=NULL){
-        snprintf(query,sizeof(query),"insert into energy_le1 (epoch,e) values(%ld,%lu)",(long)t,ol[0]/100.0);
+        snprintf(query,sizeof(query),"insert into energy_le1 (epoch,e) values(%ld,%f)",(long)t,ol[0]/100.0);
         mysql_query(con,query);
       }
       break;
