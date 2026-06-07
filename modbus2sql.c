@@ -245,8 +245,8 @@ int main(int argc,char **argv){
       break;
 
     case 5:
-      server.sin_port=htons(PORTLE1);
-      server.sin_addr.s_addr=inet_addr(IPLE1);
+      server.sin_port=htons(PORTCC2);
+      server.sin_addr.s_addr=inet_addr(IPCC2);
       ow=connect(fd,(struct sockaddr *)&server,sizeof(server)); 
       if(ow<0)break;
 
