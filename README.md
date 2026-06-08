@@ -1,7 +1,7 @@
 <pre>
 <b>Programming:</b>
-K=Key aaa=keynumber %03d
-R=Relais i=device,jj=relais
+K=Key aaa=keynumber[%03d]
+R=Relais i=device,jj=relais[%02d]
 E=Event w=event
 D=deactive i=HHMM start,j=HHMM stop
 T=test i=device,j=relais,s=status(0|1)
