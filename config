@@ -3,26 +3,33 @@ Rrange R101 R130
 Rrange R201 R230
 Rrange R301 R330
 # spegni tutti i relais
-Calloff K016
+Calloff K016 K026 K036 R130 R129 R114 R208 R101 R102 R107 R106
 # T01+T06 Luci stanza ingresso e anticantina
+Conoff K011 K023 R203 R115 R113
 Con K911 R203 R115 R113
 Coff K921 R203 R115 R113
-Conoff K011 R203 R115 R113
 # T02 Luci studio
+Conoff K012 K022 R201 R110
 Con K912 R201 R110
 Coff K922 R201 R110
-Conoff K012 R201 R110
 # T05+T11 Luci cantina
+Conoff K031 R202
 Con K913 R202
 Coff K923 R202
-Conoff K201 R202
 # T03+T04+T07+T08 Luci living 
+Conoff K013 K021 K032 R206 R207 R112
 Con K914 R206 R207 R112
 Coff K924 R206 R207 R112
-Conoff K013 R206 R207 R112
 # T12 Luci salone
+Conoff K033 K042 K812 R123 R124 R301 R111 R204
 Con K915 R123 R124 R301 R111 R204
 Coff K925 R123 R124 R301 R111 R204
+# T13+T14 Luci Garage
+Conoff K811 R303
+# T17 Bagno
+Conoff K041 K813 R209
+# T18 Sala Radio
+Conoff K043 K813 R315
 # T18+T17 Luci sala radio e bagno
 Con K916 R315 R209
 Coff K926 R315 R209
@@ -33,11 +40,11 @@ Coff K927 R208
 Coff R114 R101 E9
 Con R114 R101 E10
 # apre acqua generale
-Con K918 K014 R130
+Con K918 K034 R130
 Cset K918 S100,10
 Coff E100 R130
 # chiude acqua generale
-Con K928 K015 R129
+Con K928 K035 R129
 Cset K928 S101,10
 Coff E101 R129
 # stacco bagno
@@ -45,36 +52,42 @@ Coff E101 R129
 # Cset K3,3 S102,2
 # Coff E102 R102
 # mappatura pulsanti
+# K01x in T02 a sx porta ingresso
 Kmap 0x5c0272fffe225ae5 1_single K011
 Kmap 0x5c0272fffe225ae5 2_single K012
 Kmap 0x5c0272fffe225ae5 3_single K013
 Kmap 0x5c0272fffe225ae5 1_double K014
 Kmap 0x5c0272fffe225ae5 2_double K015
 Kmap 0x5c0272fffe225ae5 3_double K016
+# K02x in T02 a dx vicino a finestra 
 Kmap 0x5c0272fffe228ad7 1_single K021
 Kmap 0x5c0272fffe228ad7 2_single K022
 Kmap 0x5c0272fffe228ad7 3_single K023
 Kmap 0x5c0272fffe228ad7 1_double K024
 Kmap 0x5c0272fffe228ad7 2_double K025
 Kmap 0x5c0272fffe228ad7 3_double K026
+# K03x in T08 a sx vicino a porta
 Kmap 0x5c0272fffe067ec9 1_single K031
 Kmap 0x5c0272fffe067ec9 2_single K032
 Kmap 0x5c0272fffe067ec9 3_single K033
 Kmap 0x5c0272fffe067ec9 1_double K034
 Kmap 0x5c0272fffe067ec9 2_double K035
 Kmap 0x5c0272fffe067ec9 3_double K036
+# K04x in T12 a sx porta T18
 Kmap 0x5c0272fffe228a4b 1_single K041
 Kmap 0x5c0272fffe228a4b 2_single K042
 Kmap 0x5c0272fffe228a4b 3_single K043
 Kmap 0x5c0272fffe228a4b 1_double K044
 Kmap 0x5c0272fffe228a4b 2_double K045
 Kmap 0x5c0272fffe228a4b 3_double K046
+# K81x portatile
 Kmap 0xa4c1389b4dbd78e1 1_single K811
 Kmap 0xa4c1389b4dbd78e1 2_single K812
 Kmap 0xa4c1389b4dbd78e1 3_single K813
 Kmap 0xa4c1389b4dbd78e1 1_double K814
 Kmap 0xa4c1389b4dbd78e1 2_double K815
 Kmap 0xa4c1389b4dbd78e1 3_double K816
+# K82x portatile
 Kmap 0xa4c138f2d922fa10 1_single K821
 Kmap 0xa4c138f2d922fa10 2_single K822
 Kmap 0xa4c138f2d922fa10 3_single K823
