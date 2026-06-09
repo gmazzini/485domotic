@@ -40,11 +40,11 @@ Coff K927 R208
 Coff R114 R101 E9
 Con R114 R101 E10
 # apre acqua generale
-Con K918 K034 R130
+Con K918 K044 R130
 Cset K918 S100,10
 Coff E100 R130
 # chiude acqua generale
-Con K928 K035 R129
+Con K928 K045 R129
 Cset K928 S101,10
 Coff E101 R129
 # stacco bagno
