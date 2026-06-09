@@ -12,7 +12,7 @@
 #define MQTT_PORT 1883
 #define MQTT_KEEPALIVE 60
 #define MQTT_TOPIC "zigbee2mqtt/+"
-#define DOMOTIC_IP "2001:678:1158:101:23d4:c492:b014:8810"
+#define DOMOTIC_IP "2001:678:1158:102:7a7b:8aff:fec3:b986"
 #define DOMOTIC_PORT 55556
 #define MAXPAYLOAD 512
 #define MAXACTION 64
