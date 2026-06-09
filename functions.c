@@ -1,4 +1,4 @@
-#define VERSION "domotic v3.5 by GM @2026\n"
+#define VERSION "domotic v3.6 by GM @2026\n"
 #define LOGLEN 1000
 #define PAGE 500
 #define PI 3.1415926
@@ -10,7 +10,7 @@
 
 struct sockaddr_in6 from;
 socklen_t fromlen=sizeof(from);
-char *cmd[]={"","onoff","on","off","condon","condoff","set"};
+char *cmd[]={"","onoff","on","off","condon","condoff","set","alloff"};
 
 void trim_line(char *s){
   int i,n;
@@ -551,6 +551,16 @@ int effective_relais(uint16_t relay,uint16_t *modR,uint8_t *modS,uint16_t nmod){
   s=readrelais(code);
 
   if(s==0 || s==1)return s;
+  return 0;
+}
+
+int excluded_relais(uint16_t relay,uint16_t *list,uint16_t nlist){
+  uint16_t i;
+
+  for(i=0;i<nlist;i++){
+    if(list[i]==relay)return 1;
+  }
+
   return 0;
 }
 
