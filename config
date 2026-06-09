@@ -1,30 +1,25 @@
-# mappatura pulsanti
-Kmap 0x5c0272fffe225ae5 1_single K001
-Kmap 0x5c0272fffe225ae5 2_single K002
-Kmap 0x5c0272fffe225ae5 3_single K003
-Kmap 0x5c0272fffe225ae5 1_double K004
-Kmap 0x5c0272fffe225ae5 2_double K005
-Kmap 0x5c0272fffe225ae5 3_double K006
 # dichiarazione relail
 Rrange R101 R130
 Rrange R201 R230
 Rrange R301 R330
+# spegni tutti i relai
+Calloff K016
 # Luci stanza ingresso e anticantina
 Con K911 R203 R115 R113
 Coff K921 R203 R115 R113
-Conoff K001 R203 R115 R113
+Conoff K011 R203 R115 R113
 # Luci studio
 Con K912 R201 R110
 Coff K922 R201 R110
-Conoff K002 R201 R110
+Conoff K012 R201 R110
 # Luci cantina
 Con K913 R202
 Coff K923 R202
-Conoff K004 R202
+Conoff K014 R202
 # Luci living 
 Con K914 R206 R207 R112
 Coff K924 R206 R207 R112
-Conoff K003 R206 R207 R112
+Conoff K013 R206 R207 R112
 # Luci salone
 Con K915 R123 R124 R301 R111 R204
 Coff K925 R123 R124 R301 R111 R204
@@ -38,14 +33,21 @@ Coff K927 R208
 Coff R114 R101 E9
 Con R114 R101 E10
 # apre acqua generale
-Con K918 R130
+Con K918 K014 R130
 Cset K918 S100,10
 Coff E100 R130
 # chiude acqua generale
-Con K928 R129
+Con K928 K015 R129
 Cset K928 S101,10
 Coff E101 R129
 # stacco bagno
 # Con K3,3 R102
 # Cset K3,3 S102,2
 # Coff E102 R102
+# mappatura pulsanti
+Kmap 0x5c0272fffe225ae5 1_single K011
+Kmap 0x5c0272fffe225ae5 2_single K012
+Kmap 0x5c0272fffe225ae5 3_single K013
+Kmap 0x5c0272fffe225ae5 1_double K014
+Kmap 0x5c0272fffe225ae5 2_double K015
+Kmap 0x5c0272fffe225ae5 3_double K016
