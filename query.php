@@ -1,5 +1,5 @@
 <?php
-$server_ip="2001:678:1158:101:23d4:c492:b014:8810";
+$server_ip="2001:678:1158:102:7a7b:8aff:fec3:b986";
 $server_port=55556;
 $message=$argv[1];
 if(isset($argv[2]))$message=$message." ".$argv[2];
