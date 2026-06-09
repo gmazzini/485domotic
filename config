@@ -4,29 +4,29 @@ Rrange R201 R230
 Rrange R301 R330
 # spegni tutti i relais
 Calloff K016
-# Luci stanza ingresso e anticantina
+# T01+T06 Luci stanza ingresso e anticantina
 Con K911 R203 R115 R113
 Coff K921 R203 R115 R113
 Conoff K011 R203 R115 R113
-# Luci studio
+# T02 Luci studio
 Con K912 R201 R110
 Coff K922 R201 R110
 Conoff K012 R201 R110
-# Luci cantina
+# T05+T11 Luci cantina
 Con K913 R202
 Coff K923 R202
-Conoff K014 R202
-# Luci living 
+Conoff K201 R202
+# T03+T04+T07+T08 Luci living 
 Con K914 R206 R207 R112
 Coff K924 R206 R207 R112
 Conoff K013 R206 R207 R112
-# Luci salone
+# T12 Luci salone
 Con K915 R123 R124 R301 R111 R204
 Coff K925 R123 R124 R301 R111 R204
-Luci sala radio e bagno
+# T18+T17 Luci sala radio e bagno
 Con K916 R315 R209
 Coff K926 R315 R209
-# Servizi commutati
+# Prese commutate
 Con K917 R208
 Coff K927 R208
 # lampione alla cabina
