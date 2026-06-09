@@ -1,8 +1,8 @@
-# dichiarazione relail
+# dichiarazione relais
 Rrange R101 R130
 Rrange R201 R230
 Rrange R301 R330
-# spegni tutti i relai
+# spegni tutti i relais
 Calloff K016
 # Luci stanza ingresso e anticantina
 Con K911 R203 R115 R113
