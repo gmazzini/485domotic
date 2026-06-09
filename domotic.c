@@ -16,7 +16,7 @@
 #define PORT 55556
 #define TOTEK 1000
 #define TOTEX 500
-#define MAXEVENTRELAIS 30
+#define MAXEVENTRELAIS 500
 #define TOTWHITE 50
 #define MAXKMAP 500
 #define KDEVLEN 64
@@ -171,7 +171,7 @@ int main(){
 
           case 'C':
             slC=0;
-            for(q=1;q<=6;q++){
+            for(q=1;q<=7;q++){
               if(strcmp(token+1,cmd[q])==0){
                 slC=q;
                 break;
@@ -445,6 +445,17 @@ int main(){
             case 6:
               for(q=0;q<en->nS;q++)add_event(&es,en->Se[q],myt+en->St[q]);
               break;
+
+            case 7:
+              for(q=0;q<nknownrelais;q++){
+                relay=knownrelais[q];
+                if(excluded_relais(relay,en->R,en->nR))continue;
+                if(effective_relais(relay,modR,modS,nmod)==1){
+                  plan_relais(relay,0,modR,modS,&nmod);
+                }
+              }
+              break;
+            
           }
         }
       }
