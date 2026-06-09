@@ -1,4 +1,4 @@
-#define VERSION "domotic v3.6 by GM @2026\n"
+#define VERSION "domotic v3.7 by GM @2025-2026\n"
 #define LOGLEN 1000
 #define PAGE 500
 #define PI 3.1415926
@@ -702,6 +702,41 @@ static void show_relais_on(int sock){
   myout(sock,2,"unreadable: %d\n",unreadable);
 }
 
+void show_kmap_rules(int sock,uint16_t key){
+  struct ek *en;
+  uint16_t i,j;
+  char code[4];
+
+  en=ee+key;
+
+  for(;;){
+    if(en->event==0)break;
+
+    for(i=0;i<en->nC;i++){
+      myout(sock,1,"  C%s",cmd[en->C[i]]);
+
+      for(j=0;j<en->nR;j++){
+        relais_code(en->R[j],code);
+        myout(sock,1," R%s",code);
+      }
+
+      for(j=0;j<en->nT;j++){
+        relais_code(en->T[j]%1000,code);
+        myout(sock,1," T%s,%d",code,en->T[j]/1000);
+      }
+
+      for(j=0;j<en->nS;j++){
+        myout(sock,1," S%d,%d",en->Se[j],en->St[j]);
+      }
+
+      myout(sock,1,"\n");
+    }
+
+    if(en->next==NULL)break;
+    en=en->next;
+  }
+}
+
 char *managewww(int sock){
   static char ret[50];
   char buf[100],code[4],*t1,*t2,*t3;
@@ -802,6 +837,7 @@ char *managewww(int sock){
   else if(strcmp(t1,"showkmap")==0){
     for(i=0;i<nkmap;i++){
       myout(sock,1,"Kmap %s %s K%03d\n",kmap[i].dev,kmap[i].action,kmap[i].key);
+      show_kmap_rules(sock,kmap[i].key);
     }
     myout(sock,2,"");
   }
