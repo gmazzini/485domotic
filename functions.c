@@ -1,4 +1,4 @@
-#define VERSION "domotic v3.8 by GM @2025-2026\n"
+#define VERSION "domotic v3.9 by GM @2025-2026\n"
 #define LOGLEN 1000
 #define PAGE 500
 #define PI 3.1415926
@@ -454,6 +454,512 @@ int find_kmap(char *dev,char *action,uint16_t *key){
   return 0;
 }
 
+static int parse_digits(char *s){
+  int i;
+
+  if(s==NULL)return 0;
+  if(s[0]=='\0')return 0;
+
+  for(i=0;s[i]!='\0';i++){
+    if(s[i]<'0' || s[i]>'9')return 0;
+  }
+
+  return 1;
+}
+
+static int parse_hhmm(char *s,uint16_t *minute){
+  int h,m,i;
+
+  if(s==NULL || minute==NULL)return 0;
+  if(strlen(s)!=4)return 0;
+
+  for(i=0;i<4;i++){
+    if(s[i]<'0' || s[i]>'9')return 0;
+  }
+
+  h=(s[0]-'0')*10+(s[1]-'0');
+  m=(s[2]-'0')*10+(s[3]-'0');
+
+  if(h>23)return 0;
+  if(m>59)return 0;
+
+  *minute=(uint16_t)(h*60+m);
+  return 1;
+}
+
+static int parse_drange(char *token,uint16_t *startm,uint16_t *stopm){
+  char *f;
+
+  if(token==NULL || startm==NULL || stopm==NULL)return 0;
+  if(token[0]!='D')return 0;
+
+  f=strchr(token,',');
+  if(f==NULL)return 0;
+
+  *f='\0';
+  f++;
+
+  if(!parse_hhmm(token+1,startm))return 0;
+  if(!parse_hhmm(f,stopm))return 0;
+
+  return 1;
+}
+
+static void free_rule_data(struct ek *en){
+  if(en==NULL)return;
+
+  if(en->R!=NULL)free(en->R);
+  if(en->C!=NULL)free(en->C);
+  if(en->D!=NULL)free(en->D);
+  if(en->T!=NULL)free(en->T);
+  if(en->Se!=NULL)free(en->Se);
+  if(en->St!=NULL)free(en->St);
+
+  en->R=NULL;
+  en->C=NULL;
+  en->D=NULL;
+  en->T=NULL;
+  en->Se=NULL;
+  en->St=NULL;
+}
+
+static void clear_rule_list(struct ek *root){
+  struct ek *e,*n;
+
+  if(root==NULL)return;
+
+  e=root->next;
+  while(e!=NULL){
+    n=e->next;
+    free_rule_data(e);
+    free(e);
+    e=n;
+  }
+
+  free_rule_data(root);
+  memset(root,0,sizeof(struct ek));
+}
+
+void clear_config(){
+  uint16_t i;
+
+  if(ee!=NULL){
+    for(i=0;i<TOTEK;i++)clear_rule_list(ee+i);
+  }
+
+  if(ex!=NULL){
+    for(i=0;i<TOTEX;i++)clear_rule_list(ex+i);
+  }
+
+  nevent=1;
+  nkmap=0;
+  nknownrelais=0;
+}
+
+void clear_pending_events(struct es **head){
+  struct es *e,*n;
+
+  if(head==NULL)return;
+
+  e=*head;
+  while(e!=NULL){
+    n=e->next;
+    free(e);
+    e=n;
+  }
+
+  *head=NULL;
+}
+
+static int alloc_rule_data(struct ek *en,uint16_t *lR,uint16_t nlR,uint16_t *lC,uint16_t nlC,uint64_t *lD,uint16_t *lT,uint16_t nlT,uint16_t *lSe,uint16_t *lSt,uint16_t nlS,char *label){
+  uint16_t j;
+
+  en->R=NULL;
+  en->C=NULL;
+  en->D=NULL;
+  en->T=NULL;
+  en->Se=NULL;
+  en->St=NULL;
+
+  en->nR=nlR;
+  if(nlR>0){
+    en->R=(uint16_t *)malloc(nlR*sizeof(uint16_t));
+    if(en->R==NULL)return 0;
+    for(j=0;j<nlR;j++)en->R[j]=lR[j];
+  }
+
+  en->nC=nlC;
+  if(nlC>0){
+    en->C=(uint16_t *)malloc(nlC*sizeof(uint16_t));
+    if(en->C==NULL)return 0;
+    for(j=0;j<nlC;j++)en->C[j]=lC[j];
+  }
+
+  en->D=(uint64_t *)malloc(23*sizeof(uint64_t));
+  if(en->D==NULL)return 0;
+  for(j=0;j<23;j++)en->D[j]=lD[j];
+
+  en->nT=nlT;
+  if(nlT>0){
+    en->T=(uint16_t *)malloc(nlT*sizeof(uint16_t));
+    if(en->T==NULL)return 0;
+    for(j=0;j<nlT;j++)en->T[j]=lT[j];
+  }
+
+  en->nS=nlS;
+  if(nlS>0){
+    en->Se=(uint16_t *)malloc(nlS*sizeof(uint16_t));
+    en->St=(uint16_t *)malloc(nlS*sizeof(uint16_t));
+    if(en->Se==NULL || en->St==NULL)return 0;
+    for(j=0;j<nlS;j++){
+      en->Se[j]=lSe[j];
+      en->St[j]=lSt[j];
+    }
+  }
+
+  strncpy(en->label,label,LABELLEN-1);
+  en->label[LABELLEN-1]='\0';
+  en->next=NULL;
+
+  return 1;
+}
+
+static void init_internal_event(){
+  struct ek *en;
+  uint16_t q;
+
+  en=ex;
+  clear_rule_list(en);
+
+  en->event=nevent;
+  en->nR=1;
+  en->R=(uint16_t *)malloc(sizeof(uint16_t));
+  if(en->R!=NULL)en->R[0]=0;
+
+  en->nC=1;
+  en->C=(uint16_t *)malloc(sizeof(uint16_t));
+  if(en->C!=NULL)en->C[0]=0;
+
+  en->D=(uint64_t *)malloc(23*sizeof(uint64_t));
+  if(en->D!=NULL){
+    for(q=0;q<23;q++)en->D[q]=0;
+  }
+
+  en->nT=0;
+  en->T=NULL;
+  en->nS=0;
+  en->Se=NULL;
+  en->St=NULL;
+  en->label[0]='\0';
+  en->next=NULL;
+}
+
+uint16_t load_config(){
+  FILE *fp;
+  char buf[100],line[100],label[LABELLEN],*token,*f,*dev,*action,*keytxt,*extra;
+  uint16_t lineno,err,q,*lK,nlK,*lR,nlR,*lE,nlE,nlC,*lC,slC,*lT,nlT,nlS,*lSe,*lSt;
+  uint16_t relay,key,event,startm,stopm,state;
+  uint64_t *lD;
+  struct ek *en,*em;
+
+  lineno=0;
+  err=0;
+  fp=NULL;
+  lK=NULL;
+  lR=NULL;
+  lE=NULL;
+  lC=NULL;
+  lD=NULL;
+  lT=NULL;
+  lSe=NULL;
+  lSt=NULL;
+
+  nevent=1;
+  nkmap=0;
+  nknownrelais=0;
+
+  lK=(uint16_t *)malloc(100*sizeof(uint16_t));
+  lR=(uint16_t *)malloc(100*sizeof(uint16_t));
+  lE=(uint16_t *)malloc(100*sizeof(uint16_t));
+  lC=(uint16_t *)malloc(100*sizeof(uint16_t));
+  lD=(uint64_t *)malloc(23*sizeof(uint64_t));
+  lT=(uint16_t *)malloc(100*sizeof(uint16_t));
+  lSe=(uint16_t *)malloc(100*sizeof(uint16_t));
+  lSt=(uint16_t *)malloc(100*sizeof(uint16_t));
+
+  if(lK==NULL || lR==NULL || lE==NULL || lC==NULL || lD==NULL || lT==NULL || lSe==NULL || lSt==NULL){
+    err=1;
+    goto done;
+  }
+
+  fp=fopen(CONFIG,"r");
+  if(fp==NULL){
+    err=1;
+    goto done;
+  }
+
+  for(;;){
+    if(fgets(buf,100,fp)==NULL)break;
+    lineno++;
+
+    strncpy(line,buf,sizeof(line)-1);
+    line[sizeof(line)-1]='\0';
+    trim_line(line);
+
+    if(line[0]=='\0')continue;
+    if(line[0]=='#')continue;
+
+    strncpy(buf,line,sizeof(buf)-1);
+    buf[sizeof(buf)-1]='\0';
+
+    if(is_kmap_line(buf)){
+      token=strtok(buf," \n\r\t");
+      dev=strtok(NULL," \n\r\t");
+      action=strtok(NULL," \n\r\t");
+      keytxt=strtok(NULL," \n\r\t");
+      extra=strtok(NULL," \n\r\t");
+
+      if(token==NULL || dev==NULL || action==NULL || keytxt==NULL || extra!=NULL){
+        err=lineno;
+        break;
+      }
+      if(strcmp(token,"Kmap")!=0){
+        err=lineno;
+        break;
+      }
+      if(nkmap>=MAXKMAP){
+        err=lineno;
+        break;
+      }
+      if(!parse_key(keytxt,&key)){
+        err=lineno;
+        break;
+      }
+
+      strncpy(kmap[nkmap].dev,dev,KDEVLEN-1);
+      kmap[nkmap].dev[KDEVLEN-1]='\0';
+      strncpy(kmap[nkmap].action,action,KACTLEN-1);
+      kmap[nkmap].action[KACTLEN-1]='\0';
+      kmap[nkmap].key=key;
+      nkmap++;
+      continue;
+    }
+
+    strncpy(buf,line,sizeof(buf)-1);
+    buf[sizeof(buf)-1]='\0';
+
+    if(is_rrange_line(buf)){
+      token=strtok(buf," \n\r\t");
+      dev=strtok(NULL," \n\r\t");
+      action=strtok(NULL," \n\r\t");
+      extra=strtok(NULL," \n\r\t");
+
+      if(token==NULL || dev==NULL || action==NULL || extra!=NULL){
+        err=lineno;
+        break;
+      }
+      if(strcmp(token,"Rrange")!=0){
+        err=lineno;
+        break;
+      }
+      if(!parse_relais(dev,&key) || !parse_relais(action,&relay)){
+        err=lineno;
+        break;
+      }
+
+      if(key<=relay){
+        for(q=key;q<=relay;q++){
+          if(!add_known_relais(q)){
+            err=lineno;
+            break;
+          }
+        }
+      }
+      else {
+        for(q=relay;q<=key;q++){
+          if(!add_known_relais(q)){
+            err=lineno;
+            break;
+          }
+        }
+      }
+      if(err!=0)break;
+      continue;
+    }
+
+    nlK=0;
+    nlR=0;
+    nlE=0;
+    nlC=0;
+    nlT=0;
+    nlS=0;
+    label[0]='\0';
+
+    for(q=0;q<23;q++)lD[q]=0;
+
+    strncpy(buf,line,sizeof(buf)-1);
+    buf[sizeof(buf)-1]='\0';
+
+    for(token=strtok(buf," \n\r\t");token;token=strtok(NULL," \n\r\t")){
+      switch(token[0]){
+        case 'K':
+          if(nlK>=100 || !parse_key(token+1,&key))err=lineno;
+          else lK[nlK++]=key;
+          break;
+
+        case 'R':
+          if(nlR>=100 || !parse_relais(token+1,&relay))err=lineno;
+          else lR[nlR++]=relay;
+          break;
+
+        case 'E':
+          if(nlE>=100 || !parse_ex(token+1,&event))err=lineno;
+          else lE[nlE++]=event;
+          break;
+
+        case 'D':
+          if(!parse_drange(token,&startm,&stopm)){
+            err=lineno;
+            break;
+          }
+          if(startm<=stopm){
+            for(q=startm;q<=stopm;q++)lD[q/64]|=mask[q%64];
+          }
+          else {
+            for(q=startm;q<1440;q++)lD[q/64]|=mask[q%64];
+            for(q=0;q<=stopm;q++)lD[q/64]|=mask[q%64];
+          }
+          break;
+
+        case 'C':
+          slC=0;
+          for(q=1;q<=7;q++){
+            if(strcmp(token+1,cmd[q])==0){
+              slC=q;
+              break;
+            }
+          }
+          if(slC==0 || nlC>=100)err=lineno;
+          else lC[nlC++]=slC;
+          break;
+
+        case 'T':
+          if(nlT>=100){
+            err=lineno;
+            break;
+          }
+          f=strchr(token,',');
+          if(f==NULL){
+            err=lineno;
+            break;
+          }
+          *f='\0';
+          f++;
+          if(!parse_relais(token+1,&relay) || !parse_digits(f)){
+            err=lineno;
+            break;
+          }
+          state=(uint16_t)atoi(f);
+          if(state>1){
+            err=lineno;
+            break;
+          }
+          lT[nlT++]=relay+1000*state;
+          break;
+
+        case 'S':
+          if(nlS>=100){
+            err=lineno;
+            break;
+          }
+          f=strchr(token,',');
+          if(f==NULL){
+            err=lineno;
+            break;
+          }
+          *f='\0';
+          f++;
+          if(!parse_ex(token+1,&event) || !parse_digits(f)){
+            err=lineno;
+            break;
+          }
+          lSe[nlS]=event;
+          lSt[nlS++]=(uint16_t)atoi(f);
+          break;
+
+        case 'L':
+          if(token[1]=='\0'){
+            err=lineno;
+            break;
+          }
+          strncpy(label,token+1,LABELLEN-1);
+          label[LABELLEN-1]='\0';
+          break;
+
+        default:
+          err=lineno;
+          break;
+      }
+
+      if(err!=0)break;
+    }
+
+    if(err!=0)break;
+    if(nlC==0 || (nlK+nlE)==0){
+      err=lineno;
+      break;
+    }
+
+    for(q=0;q<nlK+nlE;q++){
+      if(q<nlK)en=ee+lK[q];
+      else en=ex+lE[q-nlK];
+
+      if(en->event>0){
+        for(;en->next!=NULL;en=en->next);
+        em=(struct ek *)malloc(sizeof(struct ek));
+        if(em==NULL){
+          err=lineno;
+          break;
+        }
+        memset(em,0,sizeof(struct ek));
+        en->next=em;
+        en=em;
+      }
+
+      en->event=nevent++;
+      if(!alloc_rule_data(en,lR,nlR,lC,nlC,lD,lT,nlT,lSe,lSt,nlS,label)){
+        free_rule_data(en);
+        memset(en,0,sizeof(struct ek));
+        err=lineno;
+        break;
+      }
+    }
+
+    if(err!=0)break;
+  }
+
+done:
+  if(fp!=NULL)fclose(fp);
+
+  sort_kmap();
+  sort_known_relais();
+  init_internal_event();
+
+  if(lK!=NULL)free(lK);
+  if(lR!=NULL)free(lR);
+  if(lE!=NULL)free(lE);
+  if(lC!=NULL)free(lC);
+  if(lD!=NULL)free(lD);
+  if(lT!=NULL)free(lT);
+  if(lSe!=NULL)free(lSe);
+  if(lSt!=NULL)free(lSt);
+
+  time(&last_reload);
+  last_reload_error=err;
+
+  return err;
+}
+
 void setrelais(char *code,int on){
   unsigned char frame[8],resp[32];
   unsigned short coil,value,crc;
@@ -849,6 +1355,12 @@ char *managewww(int sock){
     strftime(buf,100,"%d/%m/%y %H:%M:%S %A",&info);
     myout(sock,1,"time start: %s\n",buf);
 
+    memcpy(&info,localtime(&last_reload),sizeof(struct tm));
+    strftime(buf,100,"%d/%m/%y %H:%M:%S %A",&info);
+    myout(sock,1,"time reload: %s\n",buf);
+    if(last_reload_error==0)myout(sock,1,"reload status: ok\n");
+    else myout(sock,1,"reload status: error line %d\n",last_reload_error);
+
     myout(sock,1,"time sunrise: %02d:%02d\n",HHr,MMr);
     myout(sock,1,"time sunset: %02d:%02d\n",HHs,MMs);
     myout(sock,2,"log dimension: %d\n",(fulllog)?LOGLEN:poslog);
@@ -1012,6 +1524,10 @@ char *managewww(int sock){
       myout(sock,2,"End showlog of %03d entries, total %03d\n",i,(fulllog)?LOGLEN:poslog);
     }
   }
+  else if(strcmp(t1,"reload")==0){
+    myout(sock,1,"reload requested\n");
+    strcpy(ret,"RELOAD");
+  }
   else if(strcmp(t1,"quit")==0){
     myout(sock,2,"quitting\n");
     quit=1;
@@ -1028,6 +1544,7 @@ char *managewww(int sock){
     myout(sock,1,"inject Kxxx, inject key event K001..K999\n");
     myout(sock,1,"inject Ex, inject system event, example E5\n");
     myout(sock,1,"showlog n, show rotative log last n lines\n");
+    myout(sock,1,"reload, reload configuration file\n");
     myout(sock,1,"quit, shutdown the system\n");
     myout(sock,2,"help, this help\n");
   }
