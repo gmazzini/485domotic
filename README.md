@@ -2,8 +2,8 @@
 
 <p>
 The configuration file defines Zigbee/logical mappings, known relays, event rules,
-disabled time ranges, relay-state conditions, delayed events, and global actions
-such as <code>Calloff</code>.
+disabled time ranges, relay-state conditions, delayed events, labels, and global
+actions such as <code>Calloff</code>.
 </p>
 
 <p>
@@ -51,6 +51,14 @@ Empty lines and lines starting with <code>#</code> are ignored.
     Delayed event. <code>w</code> is the system event to generate and
     <code>t</code> is the delay in seconds.
     Example: <code>S100,10</code> generates <code>E100</code> after 10 seconds.
+  </dd>
+
+  <dt><code>Lname</code></dt>
+  <dd>
+    Optional descriptive label for the rule. The label must not contain spaces.
+    It does not change execution logic; it is only used by diagnostic commands
+    such as <code>showevents</code> and <code>showkmap</code>.
+    Example: <code>Lingresso_anticantina</code>.
   </dd>
 </dl>
 
@@ -105,6 +113,13 @@ The program looks up the pair <code>device + action</code> and internally
 generates the matching <code>Kaaa</code> event.
 </p>
 
+<p>
+Internally, the <code>Kmap</code> table is sorted by <code>device</code> and
+<code>action</code> for binary search. The <code>showkmap</code> diagnostic
+view is sorted by assigned <code>Kaaa</code>, then by <code>device</code>,
+then by <code>action</code>, without changing the runtime lookup order.
+</p>
+
 <h3>Known relays / Rrange</h3>
 
 <p>
@@ -129,7 +144,7 @@ This list is used by commands such as <code>showon</code> and by
 <p>
 Rules are made of a <code>C...</code> command, one or more triggers
 (<code>K...</code> or <code>E...</code>), optional relays, and optional
-<code>D</code>, <code>T</code>, or <code>S</code> tokens.
+<code>D</code>, <code>T</code>, <code>S</code>, or <code>L</code> tokens.
 </p>
 
 <p>
@@ -137,16 +152,16 @@ Token order is free: the program recognizes tokens by their first letter.
 For readability, this format is recommended:
 </p>
 
-<pre><code>Command Trigger Relays [options]</code></pre>
+<pre><code>Command Trigger Relays [conditions] [delayed-events] [label]</code></pre>
 
 <p>Examples:</p>
 
-<pre><code>Con K001 R101
-Coff K002 R101
-Conoff K003 R101 R102
-Ccondon K004 R201 T101,1
-Cset K005 S100,10
-Coff E100 R130</code></pre>
+<pre><code>Con K001 R101 Llight_on
+Coff K002 R101 Llight_off
+Conoff K003 R101 R102 Lroom_toggle
+Ccondon K004 R201 T101,1 Lconditional_on
+Cset K005 S100,10 Ldelayed_event
+Coff E100 R130 Ldelayed_off</code></pre>
 
 <h3>Config commands</h3>
 
@@ -154,21 +169,21 @@ Coff E100 R130</code></pre>
 
 <p>Turns on the listed relays.</p>
 
-<pre><code>Con {Kaaa|Ew} {Rijj...} {DHHMM,HHMM...}</code></pre>
+<pre><code>Con {Kaaa|Ew} {Rijj...} {DHHMM,HHMM...} {Lname}</code></pre>
 
 <p>Example:</p>
 
-<pre><code>Con K912 R201 R110</code></pre>
+<pre><code>Con K912 R201 R110 Lstudio_on</code></pre>
 
 <h4><code>Coff</code></h4>
 
 <p>Turns off the listed relays.</p>
 
-<pre><code>Coff {Kaaa|Ew} {Rijj...} {DHHMM,HHMM...}</code></pre>
+<pre><code>Coff {Kaaa|Ew} {Rijj...} {DHHMM,HHMM...} {Lname}</code></pre>
 
 <p>Example:</p>
 
-<pre><code>Coff K922 R201 R110</code></pre>
+<pre><code>Coff K922 R201 R110 Lstudio_off</code></pre>
 
 <h4><code>Conoff</code></h4>
 
@@ -177,11 +192,18 @@ Toggles the listed relays. If the majority of them are currently on,
 they are turned off. Otherwise, they are turned on.
 </p>
 
-<pre><code>Conoff {Kaaa|Ew} {Rijj...} {DHHMM,HHMM...}</code></pre>
+<pre><code>Conoff {Kaaa|Ew} {Rijj...} {DHHMM,HHMM...} {Lname}</code></pre>
 
-<p>Example:</p>
+<p>Examples:</p>
 
-<pre><code>Conoff K001 R203 R115 R113</code></pre>
+<pre><code>Conoff K001 R203 R115 R113 Lingresso_anticantina
+Conoff K002 R201 R110 Lstudio</code></pre>
+
+<p>
+With three relays, zero or one relay on means the future state will be on for
+all listed relays; two or three relays on means the future state will be off
+for all listed relays.
+</p>
 
 <h4><code>Ccondon</code></h4>
 
@@ -189,11 +211,11 @@ they are turned off. Otherwise, they are turned on.
 Turns on the listed relays only if all listed <code>T</code> tests are true.
 </p>
 
-<pre><code>Ccondon {Kaaa|Ew} {Rijj...} {DHHMM,HHMM...} {Tijj,s...}</code></pre>
+<pre><code>Ccondon {Kaaa|Ew} {Rijj...} {DHHMM,HHMM...} {Tijj,s...} {Lname}</code></pre>
 
 <p>Example:</p>
 
-<pre><code>Ccondon K010 R201 T101,1</code></pre>
+<pre><code>Ccondon K010 R201 T101,1 Lconditional_on</code></pre>
 
 <h4><code>Ccondoff</code></h4>
 
@@ -201,11 +223,11 @@ Turns on the listed relays only if all listed <code>T</code> tests are true.
 Turns off the listed relays only if all listed <code>T</code> tests are true.
 </p>
 
-<pre><code>Ccondoff {Kaaa|Ew} {Rijj...} {DHHMM,HHMM...} {Tijj,s...}</code></pre>
+<pre><code>Ccondoff {Kaaa|Ew} {Rijj...} {DHHMM,HHMM...} {Tijj,s...} {Lname}</code></pre>
 
 <p>Example:</p>
 
-<pre><code>Ccondoff K011 R201 T101,0</code></pre>
+<pre><code>Ccondoff K011 R201 T101,0 Lconditional_off</code></pre>
 
 <h4><code>Cset</code></h4>
 
@@ -213,12 +235,12 @@ Turns off the listed relays only if all listed <code>T</code> tests are true.
 Generates one or more delayed system events.
 </p>
 
-<pre><code>Cset {Kaaa|Ew} {Sw,t...} {DHHMM,HHMM...}</code></pre>
+<pre><code>Cset {Kaaa|Ew} {Sw,t...} {DHHMM,HHMM...} {Lname}</code></pre>
 
 <p>Example:</p>
 
-<pre><code>Cset K918 S100,10
-Coff E100 R130</code></pre>
+<pre><code>Cset K918 S100,10 Lwater_open_timer
+Coff E100 R130 Lwater_open_stop</code></pre>
 
 <h4><code>Calloff</code></h4>
 
@@ -227,7 +249,7 @@ Turns off all currently-on relays declared with <code>Rrange</code>, except
 the relays explicitly listed on the same rule.
 </p>
 
-<pre><code>Calloff {Kaaa|Ew} {Rijj...}</code></pre>
+<pre><code>Calloff {Kaaa|Ew} {Rijj...} {Lname}</code></pre>
 
 <p>
 In a <code>Calloff</code> rule, the listed <code>R...</code> relays are
@@ -236,7 +258,7 @@ In a <code>Calloff</code> rule, the listed <code>R...</code> relays are
 
 <p>Example:</p>
 
-<pre><code>Calloff K006 R129 R130</code></pre>
+<pre><code>Calloff K006 R129 R130 Lall_off_except_water</code></pre>
 
 <p>
 Meaning: when <code>K006</code> is received, turn off all known relays that
@@ -246,6 +268,53 @@ are currently on, except <code>R129</code> and <code>R130</code>.
 <p>
 Typical use: a reasoned “all off” command that keeps critical relays active,
 such as water, services, safety, or infrastructure relays.
+</p>
+
+<h3>Runtime indexing</h3>
+
+<p>
+Rules are not searched by scanning the whole configuration at runtime.
+During config loading, rules are indexed directly by their trigger:
+</p>
+
+<pre><code>ee[K] - rules associated with Kaaa
+ex[E] - rules associated with Ew</code></pre>
+
+<p>
+When <code>K010</code> is generated, the program directly accesses the
+rules associated with <code>ee[10]</code> and executes only that rule list.
+If a rule schedules a delayed event, for example <code>S100,10</code>, the
+program later generates <code>E100</code> and then executes the rules
+associated with <code>ex[100]</code>.
+</p>
+
+<h3>Reload behavior</h3>
+
+<p>
+The configuration can be reloaded at runtime with the remote UDP
+<code>reload</code> command.
+</p>
+
+<p>
+The reload procedure deliberately works in this order:
+</p>
+
+<ol>
+  <li>free the current configuration;</li>
+  <li>clear pending delayed events;</li>
+  <li>load the configuration file again from the beginning;</li>
+  <li>stop loading at the first invalid line;</li>
+  <li>report either success or the line number where loading stopped.</li>
+</ol>
+
+<p>
+If the configuration is correct, the program reports that it has been fully
+loaded. If an error is found, the program reports the failing line and keeps
+only the configuration loaded up to the previous valid line.
+</p>
+
+<p>
+The runtime log and process start time are not cleared by <code>reload</code>.
 </p>
 
 <h3>Complete config example</h3>
@@ -262,31 +331,31 @@ Rrange R201 R230
 Rrange R301 R330
 
 # entrance and antechamber lights
-Con K911 R203 R115 R113
-Coff K921 R203 R115 R113
-Conoff K001 R203 R115 R113
+Con K911 R203 R115 R113 Lingresso_anticantina_on
+Coff K921 R203 R115 R113 Lingresso_anticantina_off
+Conoff K001 R203 R115 R113 Lingresso_anticantina
 
 # study lights
-Con K912 R201 R110
-Coff K922 R201 R110
-Conoff K002 R201 R110
+Con K912 R201 R110 Lstudio_on
+Coff K922 R201 R110 Lstudio_off
+Conoff K002 R201 R110 Lstudio
 
 # reasoned all-off
-Calloff K006 R129 R130
+Calloff K006 R129 R130 Lall_off_except_water
 
 # cabin lamp
-Coff R114 R101 E9
-Con R114 R101 E10
+Coff R114 R101 E9 Lcabin_lamp_sunrise
+Con R114 R101 E10 Lcabin_lamp_sunset
 
 # open main water for 10 seconds
-Con K918 R130
-Cset K918 S100,10
-Coff E100 R130
+Con K918 R130 Lopen_main_water
+Cset K918 S100,10 Lopen_main_water_timer
+Coff E100 R130 Lopen_main_water_stop
 
 # close main water for 10 seconds
-Con K928 R129
-Cset K928 S101,10
-Coff E101 R129</code></pre>
+Con K928 R129 Lclose_main_water
+Cset K928 S101,10 Lclose_main_water_timer
+Coff E101 R129 Lclose_main_water_stop</code></pre>
 
 <h2>Remote UDP commands</h2>
 
@@ -312,7 +381,10 @@ Every remote command must include the installation password using this format:
     <tr>
       <td><code>status</code></td>
       <td></td>
-      <td>Shows general status information.</td>
+      <td>
+        Shows general status information, including current time, process start
+        time, last reload time, reload status, sunrise/sunset, counters, and log size.
+      </td>
     </tr>
     <tr>
       <td><code>seton</code></td>
@@ -342,12 +414,16 @@ Every remote command must include the installation password using this format:
     <tr>
       <td><code>showkmap</code></td>
       <td></td>
-      <td>Shows the sorted <code>Kmap</code> table.</td>
+      <td>
+        Shows the <code>Kmap</code> table sorted by assigned <code>Kaaa</code>.
+        Under each mapping, it also prints the direct config rules associated
+        with that <code>Kaaa</code>, if any.
+      </td>
     </tr>
     <tr>
       <td><code>showevents</code></td>
       <td></td>
-      <td>Shows all configured events.</td>
+      <td>Shows all configured events and labels.</td>
     </tr>
     <tr>
       <td><code>inject</code></td>
@@ -363,6 +439,14 @@ Every remote command must include the installation password using this format:
       <td><code>showlog</code></td>
       <td><code>[n]</code></td>
       <td>Shows the last <code>n</code> lines of the rotating log. Default is 10.</td>
+    </tr>
+    <tr>
+      <td><code>reload</code></td>
+      <td></td>
+      <td>
+        Frees the current configuration, clears pending delayed events, reloads
+        the config file, and reports either success or the first failing line.
+      </td>
     </tr>
     <tr>
       <td><code>quit</code></td>
@@ -387,7 +471,9 @@ echo "PASSWORD seton R101" | nc -6u -w1 &lt;ipv6&gt; 55556
 
 echo "PASSWORD zigbee 0x5c0272fffe225ae5 1_single" | nc -6u -w1 &lt;ipv6&gt; 55556
 
-echo "PASSWORD inject K006" | nc -6u -w1 &lt;ipv6&gt; 55556</code></pre>
+echo "PASSWORD inject K006" | nc -6u -w1 &lt;ipv6&gt; 55556
+
+echo "PASSWORD reload" | nc -6u -w1 &lt;ipv6&gt; 55556</code></pre>
 
 <h2>Remote access</h2>
 
