@@ -9,46 +9,46 @@ Conoff K012 K022 R203 R115 R113 LLuce_ingresso
 Con K911 R203 R115 R113 LOn_ingresso
 Coff K921 R203 R115 R113 LOff_ingresso
 # T01 Luci studio
-Conoff K011 K023 R201 R110
-Con K912 R201 R110
-Coff K922 R201 R110
+Conoff K011 K023 R201 R110 LLuce_studio
+Con K912 R201 R110 LOn_studio
+Coff K922 R201 R110 LOff_studio
 # T05+T11 Luci cantina
-Conoff K033 R202
-Con K913 R202
-Coff K923 R202
+Conoff K033 R202 LLuce_cantina
+Con K913 R202 LOn_cantina
+Coff K923 R202 LOff_cantina
 # T03+T04+T07+T08 Luci living 
-Conoff K013 K021 K032 R206 R207 R112
-Con K914 R206 R207 R112
-Coff K924 R206 R207 R112
+Conoff K013 K021 K032 R206 R207 R112 LLuce_living
+Con K914 R206 R207 R112 LOn_living
+Coff K924 R206 R207 R112 Loff_living
 # T12 Luci salone
-Conoff K031 K042 K812 R123 R124 R301 R111 R204
-Con K915 R123 R124 R301 R111 R204
-Coff K925 R123 R124 R301 R111 R204
+Conoff K031 K042 K812 R123 R124 R301 R111 R204 LLuce_salone
+Con K915 R123 R124 R301 R111 R204 LOn_salone
+Coff K925 R123 R124 R301 R111 R204 LOff_salone
 # T13+T14 Luci Garage
-Conoff K811 R303
+Conoff K811 R303 LLuce_garage
 # T17 Bagno
-Conoff K041 K813 R209
+Conoff K041 K813 R209 LLuce_bagno
 # T18 Sala Radio
-Conoff K043 K813 R315
+Conoff K043 K813 R315 LLuce_sala_radio
 # T18+T17 Luci sala radio e bagno
-Con K916 R315 R209
-Coff K926 R315 R209
+Con K916 R315 R209 LOn_bagno_sala_radio
+Coff K926 R315 R209 LOff_bagno_sala_radio
 # Prese commutate
 Con K917 R208
 Coff K927 R208
 # lampione alla cabina
-Coff R114 R101 E9
-Con R114 R101 E10
+Coff R114 R101 E9 LOff_lampione
+Con R114 R101 E10 LOn_lampione
 # apre acqua generale
-Con K918 K044 R130
+Con K918 K044 R130 LOn_acqua
 Cset K918 S100,10
 Cset K044 S100,10
-Coff E100 R130
+Coff E100 R130 Lchiudi_On_acqua
 # chiude acqua generale
-Con K928 K045 R129
+Con K928 K045 R129 LOff_acqua
 Cset K928 S101,10
 Cset K045 S101,10
-Coff E101 R129
+Coff E101 R129 Lchiudi_Off_acqua
 # stacco bagno
 # Con K3,3 R102
 # Cset K3,3 S102,2
