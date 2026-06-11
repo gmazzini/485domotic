@@ -1,4 +1,4 @@
-#define VERSION "domotic v3.7 by GM @2025-2026\n"
+#define VERSION "domotic v3.8 by GM @2025-2026\n"
 #define LOGLEN 1000
 #define PAGE 500
 #define PI 3.1415926
@@ -737,11 +737,68 @@ void show_kmap_rules(int sock,uint16_t key){
   }
 }
 
+static int show_kmap_less(uint16_t a,uint16_t b){
+  int c;
+
+  if(kmap[a].key<kmap[b].key)return 1;
+  if(kmap[a].key>kmap[b].key)return 0;
+
+  c=strcmp(kmap[a].dev,kmap[b].dev);
+  if(c<0)return 1;
+  if(c>0)return 0;
+
+  c=strcmp(kmap[a].action,kmap[b].action);
+  if(c<0)return 1;
+
+  return 0;
+}
+
+static int show_kmap_after(uint16_t a,uint16_t last,uint8_t haslast){
+  int c;
+
+  if(!haslast)return 1;
+
+  if(kmap[a].key>kmap[last].key)return 1;
+  if(kmap[a].key<kmap[last].key)return 0;
+
+  c=strcmp(kmap[a].dev,kmap[last].dev);
+  if(c>0)return 1;
+  if(c<0)return 0;
+
+  c=strcmp(kmap[a].action,kmap[last].action);
+  if(c>0)return 1;
+
+  return 0;
+}
+
+static int show_kmap_next(uint16_t last,uint8_t haslast,uint16_t *next){
+  uint16_t i,best;
+  uint8_t found;
+
+  found=0;
+  best=0;
+
+  for(i=0;i<nkmap;i++){
+    if(!show_kmap_after(i,last,haslast))continue;
+
+    if(!found || show_kmap_less(i,best)){
+      best=i;
+      found=1;
+    }
+  }
+
+  if(!found)return 0;
+
+  *next=best;
+  return 1;
+}
+
 char *managewww(int sock){
   static char ret[50];
   char buf[100],code[4],*t1,*t2,*t3;
   int rr,quit,qi;
-  uint16_t i,j,k,q,dis,totdis,relay,key,event;
+  uint16_t i,j,k,q,dis,totdis,relay,key,event,lastkmap,nextkmap;
+  uint8_t haslastkmap;
   int fb,fe;
   uint64_t flag;
   FILE *fp;
@@ -835,10 +892,16 @@ char *managewww(int sock){
     else myout(sock,2,"Kmap not found\n");
   }
   else if(strcmp(t1,"showkmap")==0){
-    for(i=0;i<nkmap;i++){
-      myout(sock,1,"Kmap %s %s K%03d\n",kmap[i].dev,kmap[i].action,kmap[i].key);
-      show_kmap_rules(sock,kmap[i].key);
+    haslastkmap=0;
+    lastkmap=0;
+
+    while(show_kmap_next(lastkmap,haslastkmap,&nextkmap)){
+      myout(sock,1,"Kmap %s %s K%03d\n",kmap[nextkmap].dev,kmap[nextkmap].action,kmap[nextkmap].key);
+      show_kmap_rules(sock,kmap[nextkmap].key);
+      lastkmap=nextkmap;
+      haslastkmap=1;
     }
+
     myout(sock,2,"");
   }
   else if(strcmp(t1,"showevents")==0){
