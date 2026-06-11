@@ -21,6 +21,7 @@
 #define MAXKMAP 500
 #define KDEVLEN 64
 #define KACTLEN 32
+#define LABELLEN 64
 #define MAXKNOWNRELAIS 500
 #define LAT 44.5
 #define LNG 11.3
@@ -40,6 +41,7 @@ struct ek{
   uint16_t nS;
   uint16_t *Se;
   uint16_t *St;
+  char label[LABELLEN];
   struct ek *next;
 };
 
@@ -79,7 +81,7 @@ struct acl white[TOTWHITE];
 
 int main(){
   FILE *fp;
-  char buf[100],code[4];
+  char buf[100],code[4],label[LABELLEN];
   uint8_t modS[MAXEVENTRELAIS];
   char *token,*f,*mye;
   time_t myt;
@@ -138,6 +140,7 @@ int main(){
       nlC=0;
       nlT=0;
       nlS=0;
+      label[0]='\0';
 
       for(q=0;q<23;q++)lD[q]=0;
 
@@ -198,6 +201,11 @@ int main(){
               lSt[nlS++]=atoi(f+1);
             }
             break;
+
+          case 'L':
+            strncpy(label,token+1,LABELLEN-1);
+            label[LABELLEN-1]='\0';
+            break;
         }
       }
 
@@ -236,6 +244,9 @@ int main(){
           en->Se[j]=lSe[j];
           en->St[j]=lSt[j];
         }
+
+        strncpy(en->label,label,LABELLEN-1);
+        en->label[LABELLEN-1]='\0';
 
         en->next=NULL;
       }
@@ -293,6 +304,7 @@ int main(){
   en->nS=0;
   en->Se=NULL;
   en->St=NULL;
+  en->label[0]='\0';
   en->next=NULL;
 
   mylog=(struct log *)malloc(LOGLEN*sizeof(struct log));
