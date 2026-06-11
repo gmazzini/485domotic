@@ -29,14 +29,25 @@ void trim_line(char *s){
   if(i>0)memmove(s,s+i,strlen(s+i)+1);
 }
 
+void copy_text(char *dst,int size,char *src){
+  int n;
+
+  if(dst==NULL || src==NULL || size<1)return;
+
+  n=strlen(src);
+  if(n>=size)n=size-1;
+
+  memcpy(dst,src,n);
+  dst[n]='\0';
+}
+
 int parse_acl_line(char *line,struct acl *a){
   char buf[100],*p;
   int prefix;
 
   if(line==NULL || a==NULL)return 0;
 
-  strncpy(buf,line,sizeof(buf)-1);
-  buf[sizeof(buf)-1]='\0';
+  copy_text(buf,sizeof(buf),line);
 
   p=strchr(buf,'/');
   prefix=128;
@@ -338,11 +349,9 @@ int load_kmap_line(char *line){
   if(nkmap>=MAXKMAP)return 1;
   if(!parse_key(keytxt,&key))return 1;
 
-  strncpy(kmap[nkmap].dev,dev,KDEVLEN-1);
-  kmap[nkmap].dev[KDEVLEN-1]='\0';
+  copy_text(kmap[nkmap].dev,KDEVLEN,dev);
 
-  strncpy(kmap[nkmap].action,action,KACTLEN-1);
-  kmap[nkmap].action[KACTLEN-1]='\0';
+  copy_text(kmap[nkmap].action,KACTLEN,action);
 
   kmap[nkmap].key=key;
   nkmap++;
@@ -617,8 +626,7 @@ static int alloc_rule_data(struct ek *en,uint16_t *lR,uint16_t nlR,uint16_t *lC,
     }
   }
 
-  strncpy(en->label,label,LABELLEN-1);
-  en->label[LABELLEN-1]='\0';
+  copy_text(en->label,LABELLEN,label);
   en->next=NULL;
 
   return 1;
@@ -702,15 +710,13 @@ uint16_t load_config(){
     if(fgets(buf,100,fp)==NULL)break;
     lineno++;
 
-    strncpy(line,buf,sizeof(line)-1);
-    line[sizeof(line)-1]='\0';
+    copy_text(line,sizeof(line),buf);
     trim_line(line);
 
     if(line[0]=='\0')continue;
     if(line[0]=='#')continue;
 
-    strncpy(buf,line,sizeof(buf)-1);
-    buf[sizeof(buf)-1]='\0';
+    copy_text(buf,sizeof(buf),line);
 
     if(is_kmap_line(buf)){
       token=strtok(buf," \n\r\t");
@@ -736,17 +742,14 @@ uint16_t load_config(){
         break;
       }
 
-      strncpy(kmap[nkmap].dev,dev,KDEVLEN-1);
-      kmap[nkmap].dev[KDEVLEN-1]='\0';
-      strncpy(kmap[nkmap].action,action,KACTLEN-1);
-      kmap[nkmap].action[KACTLEN-1]='\0';
+      copy_text(kmap[nkmap].dev,KDEVLEN,dev);
+      copy_text(kmap[nkmap].action,KACTLEN,action);
       kmap[nkmap].key=key;
       nkmap++;
       continue;
     }
 
-    strncpy(buf,line,sizeof(buf)-1);
-    buf[sizeof(buf)-1]='\0';
+    copy_text(buf,sizeof(buf),line);
 
     if(is_rrange_line(buf)){
       token=strtok(buf," \n\r\t");
@@ -797,8 +800,7 @@ uint16_t load_config(){
 
     for(q=0;q<23;q++)lD[q]=0;
 
-    strncpy(buf,line,sizeof(buf)-1);
-    buf[sizeof(buf)-1]='\0';
+    copy_text(buf,sizeof(buf),line);
 
     for(token=strtok(buf," \n\r\t");token;token=strtok(NULL," \n\r\t")){
       switch(token[0]){
@@ -892,8 +894,7 @@ uint16_t load_config(){
             err=lineno;
             break;
           }
-          strncpy(label,token+1,LABELLEN-1);
-          label[LABELLEN-1]='\0';
+          copy_text(label,LABELLEN,token+1);
           break;
 
         default:
@@ -1639,8 +1640,7 @@ void sun(int year,int month,int day,float lat,float lng,uint8_t *HHr,uint8_t *MM
 void inslog(time_t myt,int action,char *desc){
   mylog[poslog].time=myt;
   mylog[poslog].action=action;
-  strncpy(mylog[poslog].desc,desc,11);
-  mylog[poslog].desc[11]='\0';
+  copy_text(mylog[poslog].desc,12,desc);
 
   poslog++;
   if(poslog>=LOGLEN){
