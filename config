@@ -4,16 +4,16 @@ Rrange R201 R230
 Rrange R301 R330
 # spegni tutti i relais
 Calloff K016 K026 K036 R130 R129 R114 R208 R101 R102 R107 R106
-# T01+T06 Luci stanza ingresso e anticantina
-Conoff K011 K023 R203 R115 R113
+# T02+T06 Luci stanza ingresso e anticantina
+Conoff K012 K022 R203 R115 R113
 Con K911 R203 R115 R113
 Coff K921 R203 R115 R113
-# T02 Luci studio
-Conoff K012 K022 R201 R110
+# T01 Luci studio
+Conoff K011 K023 R201 R110
 Con K912 R201 R110
 Coff K922 R201 R110
 # T05+T11 Luci cantina
-Conoff K031 R202
+Conoff K033 R202
 Con K913 R202
 Coff K923 R202
 # T03+T04+T07+T08 Luci living 
@@ -21,7 +21,7 @@ Conoff K013 K021 K032 R206 R207 R112
 Con K914 R206 R207 R112
 Coff K924 R206 R207 R112
 # T12 Luci salone
-Conoff K033 K042 K812 R123 R124 R301 R111 R204
+Conoff K031 K042 K812 R123 R124 R301 R111 R204
 Con K915 R123 R124 R301 R111 R204
 Coff K925 R123 R124 R301 R111 R204
 # T13+T14 Luci Garage
@@ -42,10 +42,12 @@ Con R114 R101 E10
 # apre acqua generale
 Con K918 K044 R130
 Cset K918 S100,10
+Cset K044 S100,10
 Coff E100 R130
 # chiude acqua generale
 Con K928 K045 R129
 Cset K928 S101,10
+Cset K045 S101,10
 Coff E101 R129
 # stacco bagno
 # Con K3,3 R102
