@@ -702,7 +702,7 @@ static void show_relais_on(int sock){
   myout(sock,2,"unreadable: %d\n",unreadable);
 }
 
-void show_kmap_rules(int sock,uint16_t key){
+static void show_kmap_rules(int sock,uint16_t key){
   struct ek *en;
   uint16_t i,j;
   char code[4];
@@ -713,7 +713,8 @@ void show_kmap_rules(int sock,uint16_t key){
     if(en->event==0)break;
 
     for(i=0;i<en->nC;i++){
-      myout(sock,1,"  C%s",cmd[en->C[i]]);
+      if(en->C[i]==7)myout(sock,1,"  Calloff");
+      else myout(sock,1,"  C%s",cmd[en->C[i]]);
 
       for(j=0;j<en->nR;j++){
         relais_code(en->R[j],code);
@@ -728,6 +729,8 @@ void show_kmap_rules(int sock,uint16_t key){
       for(j=0;j<en->nS;j++){
         myout(sock,1," S%d,%d",en->Se[j],en->St[j]);
       }
+
+      if(en->label[0]!='\0')myout(sock,1," L%s",en->label);
 
       myout(sock,1,"\n");
     }
@@ -953,6 +956,10 @@ char *managewww(int sock){
         if(en->nS>0){
           for(j=0;j<en->nS;j++)myout(sock,1,"S%d,%d ",en->Se[j],en->St[j]);
           myout(sock,1,"\n");
+        }
+
+        if(en->label[0]!='\0'){
+          myout(sock,1,"L%s\n",en->label);
         }
 
         if(en->next==NULL)break;
