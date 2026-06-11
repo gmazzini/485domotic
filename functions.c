@@ -1517,8 +1517,8 @@ char *managewww(int sock){
       for(qi=fb;qi>=fe && i<k;qi--){
         j=qi%LOGLEN;
         memcpy(&info,localtime(&mylog[j].time),sizeof(struct tm));
-        strftime(buf,100,"%d/%m/%y %H:%M:%S %A",&info);
-        myout(sock,1,"%s %03d %d %s\n",buf,j,mylog[j].action,mylog[j].desc);
+        strftime(buf,100,"%d/%m/%y %H:%M:%S",&info);
+        myout(sock,1,"%s %03d %s\n",buf,j,mylog[j].desc);
         i++;
       }
 
