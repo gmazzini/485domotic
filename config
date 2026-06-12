@@ -33,9 +33,8 @@ Conoff K043 K813 R315 LLuce_sala_radio
 # T18+T17 Luci sala radio e bagno
 Con K916 R315 R209 LOn_bagno_sala_radio
 Coff K926 R315 R209 LOff_bagno_sala_radio
-# Prese commutate
-Con K917 R208
-Coff K927 R208
+# Prese commutate wifi
+Conoff K014 R208 LWiFi
 # lampione alla cabina
 Coff R114 R101 E9 LOff_lampione
 Con R114 R101 E10 LOn_lampione
