@@ -204,8 +204,90 @@ uint32_t *myr_ln(int fd,int n){
   return &ul[0].l;
 }
 
+int read_line_cr(int fd,char *buf,int len){
+  int i,r,n;
+  char c;
+  struct pollfd pfd;
+
+  if(len<2)return -1;
+
+  i=0;
+  while(i<len-1){
+    pfd.fd=fd;
+    pfd.events=POLLIN;
+    pfd.revents=0;
+
+    r=poll(&pfd,1,RWTIMEOUT);
+    if(r<0 && errno==EINTR)continue;
+    if(r<=0)return -1;
+    if(pfd.revents&(POLLERR|POLLHUP|POLLNVAL))return -1;
+
+    n=read(fd,&c,1);
+    if(n<0 && errno==EINTR)continue;
+    if(n<=0)return -1;
+
+    if(c=='\r' || c=='\n')break;
+
+    buf[i]=c;
+    i++;
+  }
+
+  buf[i]=0;
+
+  if(i<=0)return -1;
+  return 0;
+}
+
+int wj150_read_a0(int fd,int *a0){
+  char rx[80],*p,*endp;
+  long a,b;
+
+  if(writen(fd,(uint8_t *)"#015\r",5)<0)return -1;
+
+  if(read_line_cr(fd,rx,sizeof(rx))<0)return -1;
+
+  if(rx[0]!='!')return -1;
+
+  errno=0;
+  p=rx+1;
+  a=strtol(p,&endp,10);
+  if(errno!=0 || endp==p || *endp!=',')return -1;
+
+  p=endp+1;
+  errno=0;
+  b=strtol(p,&endp,10);
+  if(errno!=0 || endp==p)return -1;
+
+  *a0=(int)a;
+  return 0;
+}
+
+int mysql_last_water_w(MYSQL *con,int *lastw){
+  MYSQL_RES *res;
+  MYSQL_ROW row;
+  int out;
+
+  if(mysql_query(con,"select w from water_cc order by epoch desc limit 1")!=0)return -1;
+
+  res=mysql_store_result(con);
+  if(res==NULL)return -1;
+
+  row=mysql_fetch_row(res);
+  if(row==NULL || row[0]==NULL){
+    mysql_free_result(res);
+    return -1;
+  }
+
+  out=atoi(row[0]);
+  mysql_free_result(res);
+
+  *lastw=out;
+  return 0;
+}
+
+
 int main(int argc,char **argv){
-  int fd,ow,mode;
+  int fd,ow,mode,water_w,water_last,water_d;
   float v1,v2,v3,i1,i2,i3,e1,e2,e3;
   uint32_t *ol;
   struct sockaddr_in server;
@@ -320,6 +402,21 @@ int main(int argc,char **argv){
 
       if(ol!=NULL){
         snprintf(query,sizeof(query),"insert into energy_le1 (epoch,e) values(%ld,%f)",(long)t,(double)ol[0]/100.0);
+        mysql_query(con,query);
+      }
+      break;
+
+    case 6:
+      server.sin_port=htons(PORTCC3);
+      server.sin_addr.s_addr=inet_addr(IPCC3);
+      ow=myconnect(fd,(struct sockaddr *)&server,sizeof(server));
+      if(ow<0)break;
+
+      if(wj150_read_a0(fd,&water_w)==0){
+        water_d=0;
+        if(mysql_last_water_w(con,&water_last)==0)water_d=water_w-water_last;
+
+        snprintf(query,sizeof(query),"insert into water_cc (epoch,w,d) values(%ld,%d,%d)",(long)t,water_w,water_d);
         mysql_query(con,query);
       }
       break;
