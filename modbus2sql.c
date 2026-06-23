@@ -240,7 +240,7 @@ int read_line_cr(int fd,char *buf,int len){
 
 int wj150_read_a0(int fd,int *a0){
   char rx[80],*p,*endp;
-  long a,b;
+  long a;
 
   if(writen(fd,(uint8_t *)"#015\r",5)<0)return -1;
 
@@ -255,7 +255,7 @@ int wj150_read_a0(int fd,int *a0){
 
   p=endp+1;
   errno=0;
-  b=strtol(p,&endp,10);
+  strtol(p,&endp,10);
   if(errno!=0 || endp==p)return -1;
 
   *a0=(int)a;
