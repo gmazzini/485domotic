@@ -158,7 +158,7 @@ static int send_sensor(char *device,char *payload){
   if(!has_lqi)strcpy(lqi,"na");
 
   len=snprintf(msg,sizeof(msg),
-    "zigbee_sensor %s temperature %s humidity %s battery %s linkquality %s",
+    "zigbee_sensor %s temperature %s humidity %s battery %s linkquality %s\n",
     device,temp,hum,bat,lqi);
 
   if(len<1 || len>=(int)sizeof(msg))return 0;
