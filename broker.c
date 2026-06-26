@@ -7,39 +7,51 @@
 #include <sys/socket.h>
 #include <mosquitto.h>
 
-#define VERSION "zigbee_broker v1.1 by GM @2026\n"
+#define VERSION "zigbee_broker v2.0 by GM @2026\n"
 #define MQTT_HOST "localhost"
 #define MQTT_PORT 1883
 #define MQTT_KEEPALIVE 60
 #define MQTT_TOPIC "zigbee2mqtt/+"
+
 #define DOMOTIC_IP "2001:678:1158:102:7a7b:8aff:fec3:b986"
 #define DOMOTIC_PORT 55556
+
+#define SENSOR_IP "2a06:de00:400:7800::c"
+#define SENSOR_PORT 54321
+
 #define MAXPAYLOAD 512
 #define MAXACTION 64
 #define MAXDEVICE 128
 #define MAXMSG 256
+#define MAXVAL 64
 
 struct conf{
   char domotic_ip[128];
   int domotic_port;
+  char sensor_ip[128];
+  int sensor_port;
   char mqtt_host[128];
   int mqtt_port;
 };
 
 static struct conf cfg;
-static int udp_fd=-1;
+static int domotic_fd=-1;
+static int sensor_fd=-1;
 static struct sockaddr_in6 domotic_addr;
+static struct sockaddr_in6 sensor_addr;
 
-static int get_action(const char *s,char *out,int max){
+static int get_json_string(const char *s,const char *key,char *out,int max){
+  char pat[64];
   const char *p;
   int i;
 
-  p=strstr(s,"\"action\":\"");
-  i=0;
+  snprintf(pat,sizeof(pat),"\"%s\":\"",key);
 
+  p=strstr(s,pat);
   if(!p)return 0;
 
-  p+=strlen("\"action\":\"");
+  p+=strlen(pat);
+  i=0;
 
   while(*p && *p!='"' && i<max-1){
     out[i++]=*p++;
@@ -51,23 +63,61 @@ static int get_action(const char *s,char *out,int max){
   return 0;
 }
 
-static int udp_init(){
-  if(udp_fd>=0)return 1;
+static int get_json_value(const char *s,const char *key,char *out,int max){
+  char pat[64];
+  const char *p;
+  int i;
 
-  udp_fd=socket(AF_INET6,SOCK_DGRAM,0);
-  if(udp_fd<0)return 0;
+  snprintf(pat,sizeof(pat),"\"%s\":",key);
 
-  memset(&domotic_addr,0,sizeof(domotic_addr));
-  domotic_addr.sin6_family=AF_INET6;
-  domotic_addr.sin6_port=htons(cfg.domotic_port);
+  p=strstr(s,pat);
+  if(!p)return 0;
 
-  if(inet_pton(AF_INET6,cfg.domotic_ip,&domotic_addr.sin6_addr)!=1){
-    close(udp_fd);
-    udp_fd=-1;
+  p+=strlen(pat);
+  i=0;
+
+  if(*p=='"'){
+    p++;
+    while(*p && *p!='"' && i<max-1){
+      out[i++]=*p++;
+    }
+  }else{
+    while(*p && *p!=',' && *p!='}' && *p!=' ' && i<max-1){
+      out[i++]=*p++;
+    }
+  }
+
+  out[i]='\0';
+
+  if(i>0)return 1;
+  return 0;
+}
+
+static int udp_addr_init(int *fd,struct sockaddr_in6 *addr,char *ip,int port){
+  if(*fd>=0)return 1;
+
+  *fd=socket(AF_INET6,SOCK_DGRAM,0);
+  if(*fd<0)return 0;
+
+  memset(addr,0,sizeof(*addr));
+  addr->sin6_family=AF_INET6;
+  addr->sin6_port=htons(port);
+
+  if(inet_pton(AF_INET6,ip,&addr->sin6_addr)!=1){
+    close(*fd);
+    *fd=-1;
     return 0;
   }
 
   return 1;
+}
+
+static int domotic_init(){
+  return udp_addr_init(&domotic_fd,&domotic_addr,cfg.domotic_ip,cfg.domotic_port);
+}
+
+static int sensor_init(){
+  return udp_addr_init(&sensor_fd,&sensor_addr,cfg.sensor_ip,cfg.sensor_port);
 }
 
 static int send_domotic(char *device,char *action){
@@ -75,12 +125,45 @@ static int send_domotic(char *device,char *action){
   int len,n;
 
   if(device==NULL || action==NULL)return 0;
-  if(!udp_init())return 0;
+  if(!domotic_init())return 0;
 
   len=snprintf(msg,sizeof(msg),"zigbee %s %s",device,action);
   if(len<1 || len>=(int)sizeof(msg))return 0;
 
-  n=sendto(udp_fd,msg,strlen(msg),0,(struct sockaddr *)&domotic_addr,sizeof(domotic_addr));
+  n=sendto(domotic_fd,msg,strlen(msg),0,(struct sockaddr *)&domotic_addr,sizeof(domotic_addr));
+  if(n<0)return 0;
+
+  return 1;
+}
+
+static int send_sensor(char *device,char *payload){
+  char msg[MAXMSG];
+  char temp[MAXVAL],hum[MAXVAL],bat[MAXVAL],lqi[MAXVAL];
+  int has_temp,has_hum,has_bat,has_lqi;
+  int len,n;
+
+  if(device==NULL || payload==NULL)return 0;
+  if(!sensor_init())return 0;
+
+  has_temp=get_json_value(payload,"temperature",temp,sizeof(temp));
+  has_hum=get_json_value(payload,"humidity",hum,sizeof(hum));
+  has_bat=get_json_value(payload,"battery",bat,sizeof(bat));
+  has_lqi=get_json_value(payload,"linkquality",lqi,sizeof(lqi));
+
+  if(!has_temp && !has_hum)return 0;
+
+  if(!has_temp)strcpy(temp,"na");
+  if(!has_hum)strcpy(hum,"na");
+  if(!has_bat)strcpy(bat,"na");
+  if(!has_lqi)strcpy(lqi,"na");
+
+  len=snprintf(msg,sizeof(msg),
+    "zigbee_sensor %s temperature %s humidity %s battery %s linkquality %s",
+    device,temp,hum,bat,lqi);
+
+  if(len<1 || len>=(int)sizeof(msg))return 0;
+
+  n=sendto(sensor_fd,msg,strlen(msg),0,(struct sockaddr *)&sensor_addr,sizeof(sensor_addr));
   if(n<0)return 0;
 
   return 1;
@@ -122,27 +205,43 @@ static void on_message(struct mosquitto *m,void *u,const struct mosquitto_messag
   memcpy(payload,msg->payload,n);
   payload[n]='\0';
 
-  if(get_action(payload,action,sizeof(action))){
+  if(get_json_string(payload,"action",action,sizeof(action))){
     printf("zigbee %s %s\n",device,action);
     fflush(stdout);
 
     if(!send_domotic(device,action)){
-      fprintf(stderr,"send error: %s %s\n",device,action);
+      fprintf(stderr,"send error domotic: %s %s\n",device,action);
       fflush(stderr);
     }
+
+    return;
+  }
+
+  if(strstr(payload,"\"temperature\"") || strstr(payload,"\"humidity\"")){
+    printf("zigbee_sensor %s %s\n",device,payload);
+    fflush(stdout);
+
+    if(!send_sensor(device,payload)){
+      fprintf(stderr,"send error sensor: %s\n",device);
+      fflush(stderr);
+    }
+
+    return;
   }
 }
 
 static void usage(char *name){
   printf("%s",VERSION);
   printf("usage:\n");
-  printf("  %s [domotic_ipv6] [domotic_port] [mqtt_host] [mqtt_port]\n",name);
+  printf("  %s [domotic_ipv6] [domotic_port] [mqtt_host] [mqtt_port] [sensor_ipv6] [sensor_port]\n",name);
   printf("\n");
   printf("defaults:\n");
   printf("  domotic_ipv6: %s\n",DOMOTIC_IP);
   printf("  domotic_port: %d\n",DOMOTIC_PORT);
   printf("  mqtt_host: %s\n",MQTT_HOST);
   printf("  mqtt_port: %d\n",MQTT_PORT);
+  printf("  sensor_ipv6: %s\n",SENSOR_IP);
+  printf("  sensor_port: %d\n",SENSOR_PORT);
 }
 
 int main(int argc,char **argv){
@@ -151,6 +250,8 @@ int main(int argc,char **argv){
 
   strcpy(cfg.domotic_ip,DOMOTIC_IP);
   cfg.domotic_port=DOMOTIC_PORT;
+  strcpy(cfg.sensor_ip,SENSOR_IP);
+  cfg.sensor_port=SENSOR_PORT;
   strcpy(cfg.mqtt_host,MQTT_HOST);
   cfg.mqtt_port=MQTT_PORT;
 
@@ -173,8 +274,20 @@ int main(int argc,char **argv){
 
   if(argc>4)cfg.mqtt_port=atoi(argv[4]);
 
-  if(!udp_init()){
-    fprintf(stderr,"udp init error\n");
+  if(argc>5){
+    strncpy(cfg.sensor_ip,argv[5],sizeof(cfg.sensor_ip)-1);
+    cfg.sensor_ip[sizeof(cfg.sensor_ip)-1]='\0';
+  }
+
+  if(argc>6)cfg.sensor_port=atoi(argv[6]);
+
+  if(!domotic_init()){
+    fprintf(stderr,"domotic udp init error\n");
+    return 1;
+  }
+
+  if(!sensor_init()){
+    fprintf(stderr,"sensor udp init error\n");
     return 1;
   }
 
@@ -209,12 +322,14 @@ int main(int argc,char **argv){
   printf("%s",VERSION);
   printf("mqtt: %s:%d topic %s\n",cfg.mqtt_host,cfg.mqtt_port,MQTT_TOPIC);
   printf("domotic: [%s]:%d\n",cfg.domotic_ip,cfg.domotic_port);
+  printf("sensor: [%s]:%d\n",cfg.sensor_ip,cfg.sensor_port);
   printf("mode: udp fire and forget\n");
   fflush(stdout);
 
   rc=mosquitto_loop_forever(m,-1,1);
 
-  if(udp_fd>=0)close(udp_fd);
+  if(domotic_fd>=0)close(domotic_fd);
+  if(sensor_fd>=0)close(sensor_fd);
 
   mosquitto_destroy(m);
   mosquitto_lib_cleanup();
