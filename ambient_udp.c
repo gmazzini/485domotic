@@ -24,14 +24,15 @@ int parse_ambient(char *buf,char *device,float *temperature,float *humidity){
   k2[0]=0;
 
   if(sscanf(buf,"%63s %31s %63s %f %63s %f",tag,device,k1,temperature,k2,humidity)!=6)return -1;
-  if(strcmp(tag,"zigbee_sensor")!=0)return -1;
+
+  if(strcmp(tag,"zigbee_sensor")!=0 && strcmp(tag,"switchbot_sensor")!=0)return -1;
   if(strcmp(k1,"temperature")!=0)return -1;
   if(strcmp(k2,"humidity")!=0)return -1;
 
   return 0;
 }
 
-int main(int argc,char **argv){
+int main(){
   int fd,n;
   struct sockaddr_in6 addr;
   MYSQL *con;
@@ -40,9 +41,6 @@ int main(int argc,char **argv){
   char device[MAXDEVICE];
   char query[300];
   float temperature,humidity;
-
-  (void)argc;
-  (void)argv;
 
   con=mysql_init(NULL);
   if(con==NULL)return 1;
