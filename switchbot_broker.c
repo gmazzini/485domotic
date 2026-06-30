@@ -164,8 +164,7 @@ static struct devstate *get_devstate(char *mac){
   if(freepos<0)return NULL;
 
   devs[freepos].used=1;
-  strncpy(devs[freepos].mac,mac,sizeof(devs[freepos].mac)-1);
-  devs[freepos].mac[sizeof(devs[freepos].mac)-1]='\0';
+  snprintf(devs[freepos].mac,sizeof(devs[freepos].mac),"%s",mac);
   devs[freepos].temp[0]='\0';
   devs[freepos].hum[0]='\0';
   devs[freepos].last_send=0;
@@ -193,11 +192,8 @@ static int should_send(struct devstate *st,char *temp,char *hum){
 static void update_devstate(struct devstate *st,char *temp,char *hum){
   if(st==NULL)return;
 
-  strncpy(st->temp,temp,sizeof(st->temp)-1);
-  st->temp[sizeof(st->temp)-1]='\0';
-
-  strncpy(st->hum,hum,sizeof(st->hum)-1);
-  st->hum[sizeof(st->hum)-1]='\0';
+  snprintf(st->temp,sizeof(st->temp),"%s",temp);
+  snprintf(st->hum,sizeof(st->hum),"%s",hum);
 
   st->last_send=time(NULL);
 }
