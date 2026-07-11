@@ -238,9 +238,9 @@ int read_line_cr(int fd,char *buf,int len){
   return 0;
 }
 
-int wj150_read_a0(int fd,int *a0){
+int wj150_read_a0_b0(int fd,int *a0,int *b0){
   char rx[80],*p,*endp;
-  long a;
+  long a,b;
 
   if(writen(fd,(uint8_t *)"#015\r",5)<0)return -1;
 
@@ -255,10 +255,12 @@ int wj150_read_a0(int fd,int *a0){
 
   p=endp+1;
   errno=0;
-  strtol(p,&endp,10);
+  b=strtol(p,&endp,10);
   if(errno!=0 || endp==p)return -1;
 
   *a0=(int)a;
+  *b0=(int)b;
+
   return 0;
 }
 
@@ -285,9 +287,33 @@ int mysql_last_water_w(MYSQL *con,int *lastw){
   return 0;
 }
 
+int mysql_last_traffic_p(MYSQL *con,int *lastp){
+  MYSQL_RES *res;
+  MYSQL_ROW row;
+  int out;
+
+  if(mysql_query(con,"select p from traffic_cc order by epoch desc limit 1")!=0)return -1;
+
+  res=mysql_store_result(con);
+  if(res==NULL)return -1;
+
+  row=mysql_fetch_row(res);
+  if(row==NULL || row[0]==NULL){
+    mysql_free_result(res);
+    return -1;
+  }
+
+  out=atoi(row[0]);
+  mysql_free_result(res);
+
+  *lastp=out;
+  return 0;
+}
 
 int main(int argc,char **argv){
-  int fd,ow,mode,water_w,water_last,water_d;
+  int fd,ow,mode;
+  int water_w,water_last,water_d;
+  int traffic_p,traffic_last,traffic_d;
   float v1,v2,v3,i1,i2,i3,e1,e2,e3;
   uint32_t *ol;
   struct sockaddr_in server;
@@ -412,11 +438,23 @@ int main(int argc,char **argv){
       ow=myconnect(fd,(struct sockaddr *)&server,sizeof(server));
       if(ow<0)break;
 
-      if(wj150_read_a0(fd,&water_w)==0){
+      if(wj150_read_a0_b0(fd,&water_w,&traffic_p)==0){
         water_d=0;
-        if(mysql_last_water_w(con,&water_last)==0)water_d=water_w-water_last;
+        if(mysql_last_water_w(con,&water_last)==0){
+          water_d=water_w-water_last;
+          if(water_d<0)water_d=0;
+        }
+
+        traffic_d=0;
+        if(mysql_last_traffic_p(con,&traffic_last)==0){
+          traffic_d=traffic_p-traffic_last;
+          if(traffic_d<0)traffic_d=0;
+        }
 
         snprintf(query,sizeof(query),"insert into water_cc (epoch,w,d) values(%ld,%d,%d)",(long)t,water_w,water_d);
+        mysql_query(con,query);
+
+        snprintf(query,sizeof(query),"insert into traffic_cc (epoch,p,d) values(%ld,%d,%d)",(long)t,traffic_p,traffic_d);
         mysql_query(con,query);
       }
       break;
