@@ -309,7 +309,10 @@ static int send_sensor(char *mac,char *temp,char *hum){
   if(len<1 || len>=(int)sizeof(msg))return 0;
 
   n=sendto(sensor_fd,msg,strlen(msg),0,(struct sockaddr *)&sensor_addr,sizeof(sensor_addr));
-  if(n<0)return 0;
+  if(n<0){
+    perror("sendto");
+    return 0;
+  }
 
   return 1;
 }
